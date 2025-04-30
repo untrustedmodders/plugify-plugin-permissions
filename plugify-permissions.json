@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify/refs/heads/main/schemas/package.schema.json",
+  "content": {
+    "plugify-permissions": {
+      "name": "plugify-permissions",
+      "type": "plugin",
+      "author": "untrustedmodders",
+      "description": "Basic access control permission based system.",
+      "versions": []
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "fileVersion": 1,
+  "version": "${PERMISSIONS_VERSION}",
+  "friendlyName": "Permissions Plugin",
+  "description": "Basic access control permission based system.",
+  "createdBy": "untrustedmodders",
+  "createdByURL": "https://github.com/untrustedmodders/",
+  "docsURL": "https://github.com/untrustedmodders/plugify-permissions",
+  "downloadURL": "https://github.com/untrustedmodders/plugify-permissions/releases/download/v${PERMISSIONS_VERSION}/${PERMISSIONS_PACKAGE}.zip",
+  "updateURL": "https://untrustedmodders.github.io/plugify-permissions/plugify-permissions.json",
+  "entryPoint": "bin/plugify-permissions",
+  "supportedPlatforms": [],
+  "languageModule": {
+    "name": "cpp"
+  },
+  "dependencies": [],
+  "exportedMethods": []
+}
