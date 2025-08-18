@@ -1,0 +1,77 @@
+#pragma once
+#include "group.h"
+
+#include <plugify/any.hpp>
+#include <plugify/string.hpp>
+#include <plugify/vector.hpp>
+
+inline bool sortF(const Group* i, const Group* j) {
+	return i->_priority > j->_priority;
+}
+
+struct string_hash {
+	using is_transparent = void; // Enables heterogeneous lookup
+
+	auto operator()(const plg::string& txt) const {
+		if constexpr (sizeof(void*) == 8)
+			return XXH3_64bits(txt.data(), txt.size());
+		else
+			return XXH32(txt.data(), txt.size(), 0);
+	}
+};
+
+struct User {
+	Node nodes;// nodes of user
+	// 1. Load from groups settings
+	// 2. Load from players settings
+
+	std::unordered_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;
+	plg::vector<Group*> _groups;// groups that player belongs to
+	int _immunity;
+
+	bool hasGroup(const plg::string& s) {
+		for (const auto& g: _groups) {
+			const Group* i = g;
+			while (i) {
+				if (s == i->_name)
+					return true;
+				i = i->_parent;
+			}
+		}
+		return false;
+	}
+
+	Access hasPermission(const plg::string& perm) const {
+		auto ispl = std::views::split(perm, '.');
+		uint64_t hashes[256];
+		int i = 0;
+		for (auto s: ispl) {
+			// hashes[i] = calcHash(s);
+			hashes[i] = XXH3_64bits(s.data(), s.size());
+			++i;
+		}
+
+		Access hasPerm = nodes._hasPermission(hashes, i);
+		if (hasPerm != Access::NotFound)// Check if user defined this permission
+			return hasPerm;
+
+		if (!_groups.empty())
+			for (const auto g: _groups) {
+				hasPerm = g->_hasPermission(hashes, i);
+				if (hasPerm != Access::NotFound)
+					return hasPerm;
+			}
+		return Access::NotFound;
+	}
+
+	explicit User(int immunity = 0, const plg::vector<Group*>* groups = nullptr, const plg::vector<plg::string>* perms = nullptr) {
+		this->_immunity = immunity;
+		if (groups) {
+			this->_groups = *groups;
+			std::sort(this->_groups.begin(), this->_groups.end(), sortF);
+		} else
+			this->_groups = plg::vector<Group*>();
+		if (perms)
+			this->nodes = loadNode(*perms);
+	}
+};
