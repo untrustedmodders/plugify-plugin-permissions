@@ -6,14 +6,16 @@ _HasPermission
 _HasGroup
 _GetImmunity
 _AddPermission
+_AddPermissions
 _RemovePermission
+_RemovePermissions
 _AddGroup
 _RemoveGroup
 _GetCookie
 _SetCookie
 _CreateUser
 _DeleteUser
-_GetGroup
+_SetParent
 _HasPermissionGroup
 _HasParentGroup
 _GetPriorityGroup
