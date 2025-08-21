@@ -5,18 +5,14 @@
 #include <plugify/string.hpp>
 #include <plugify/vector.hpp>
 
-inline bool sortF(const Group* i, const Group* j) {
-	return i->_priority > j->_priority;
-}
+inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
 
 struct string_hash {
-	using is_transparent = void; // Enables heterogeneous lookup
+	using is_transparent = void;// Enables heterogeneous lookup
 
 	auto operator()(const plg::string& txt) const {
-		if constexpr (sizeof(void*) == 8)
-			return XXH3_64bits(txt.data(), txt.size());
-		else
-			return XXH32(txt.data(), txt.size(), 0);
+		if constexpr (sizeof(void*) == 8) return XXH3_64bits(txt.data(), txt.size());
+		else return XXH32(txt.data(), txt.size(), 0);
 	}
 };
 
@@ -33,8 +29,7 @@ struct User {
 		for (const auto& g: _groups) {
 			const Group* i = g;
 			while (i) {
-				if (s == i->_name)
-					return true;
+				if (s == i->_name) return true;
 				i = i->_parent;
 			}
 		}
@@ -58,20 +53,17 @@ struct User {
 		if (!_groups.empty())
 			for (const auto g: _groups) {
 				hasPerm = g->_hasPermission(hashes, i);
-				if (hasPerm != Access::NotFound)
-					return hasPerm;
+				if (hasPerm != Access::NotFound) return hasPerm;
 			}
 		return Access::NotFound;
 	}
 
-	explicit User(int immunity = 0, const plg::vector<Group*>* groups = nullptr, const plg::vector<plg::string>* perms = nullptr) {
+	void sortGroups() { std::sort(this->_groups.begin(), this->_groups.end(), sortF); }
+
+	User(int immunity, plg::vector<Group*>&& groups, const plg::vector<plg::string>& perms) {
 		this->_immunity = immunity;
-		if (groups) {
-			this->_groups = *groups;
-			std::sort(this->_groups.begin(), this->_groups.end(), sortF);
-		} else
-			this->_groups = plg::vector<Group*>();
-		if (perms)
-			this->nodes = loadNode(*perms);
+		this->_groups = std::move(groups);
+		sortGroups();
+		this->nodes = loadNode(perms);
 	}
 };
