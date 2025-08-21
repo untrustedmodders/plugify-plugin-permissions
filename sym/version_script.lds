@@ -5,14 +5,16 @@
         HasGroup;
         GetImmunity;
         AddPermission;
+        AddPermissions;
         RemovePermission;
+        RemovePermissions;
         AddGroup;
         RemoveGroup;
         GetCookie;
         SetCookie;
         CreateUser;
         DeleteUser;
-        GetGroup;
+        SetParent;
         HasPermissionGroup;
         HasParentGroup;
         GetPriorityGroup;

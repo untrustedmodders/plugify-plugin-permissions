@@ -11,7 +11,7 @@ struct Group {
 	int _priority;	 // priority of group
 	Node _nodes;		 // nodes of group
 
-	Group(const plg::vector<plg::string>& perms, const plg::string& name, int priority, Group* parent = nullptr) {
+	Group(const plg::vector<plg::string>& perms, const plg::string& name, const int priority, Group* parent = nullptr) {
 		this->_name = name;
 		this->_nodes = loadNode(perms);
 		this->_parent = parent;

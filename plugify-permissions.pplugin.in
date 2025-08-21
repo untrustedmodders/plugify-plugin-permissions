@@ -17,21 +17,365 @@
 	"dependencies": [],
 	"exportedMethods": [
         {
-            "name": "GetGroup",
-            "group": "GroupManager",
-            "description": "Get a pointer to a group by name.",
-            "funcName": "GetGroup",
+            "name": "HasPermission",
+            "group": "UserManager",
+            "description": "Check if a user has a specific permission.",
+            "funcName": "HasPermission",
             "paramTypes": [
                 {
-                    "name": "name",
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "perm",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Permission line."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Access",
+                    "values": [
+                        {
+                            "name": "NotFound",
+                            "value": 0,
+                            "description": "User not found."
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 1,
+                            "description": "Permission denied."
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 2,
+                            "description": "Permission allowed."
+                        }
+                    ]
+                },
+                "description": "Return value indicating access status."
+            }
+        },
+        {
+            "name": "HasGroup",
+            "group": "UserManager",
+            "description": "Check if a user belongs to a specific group (directly or via parent groups).",
+            "funcName": "HasGroup",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "group",
                     "type": "string",
                     "ref": false,
                     "description": "Group name."
                 }
             ],
             "retType": {
-                "type": "ptr64",
-                "description": "Pointer to the group, or nullptr if not found."
+                "type": "bool",
+                "description": "True if user belongs to the group, false if user or group does not exist or user is not a member."
+            }
+        },
+        {
+            "name": "GetImmunity",
+            "group": "UserManager",
+            "description": "Get the immunity level of a user.",
+            "funcName": "GetImmunity",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Immunity value, or 0 if user does not exist."
+            }
+        },
+        {
+            "name": "AddPermission",
+            "group": "UserManager",
+            "description": "Add a permission to a user.",
+            "funcName": "AddPermission",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "perm",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Permission line."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if user does not exist."
+            }
+        },
+        {
+            "name": "AddPermissions",
+            "group": "UserManager",
+            "description": "Add a permissions to a user.",
+            "funcName": "AddPermissions",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Permissions array"
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if user does not exist"
+            }
+        },
+        {
+            "name": "RemovePermission",
+            "group": "UserManager",
+            "description": "Remove a permission from a user.",
+            "funcName": "RemovePermission",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "perm",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Permission line."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if user does not exist."
+            }
+        },
+        {
+            "name": "RemovePermissions",
+            "group": "UserManager",
+            "description": "Remove a permissions to a user.",
+            "funcName": "RemovePermissions",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Permissions array"
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if user does not exist"
+            }
+        },
+        {
+            "name": "AddGroup",
+            "group": "UserManager",
+            "description": "Add a group to a user.",
+            "funcName": "AddGroup",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "group",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if group added, false if user/group does not exist or user is already a member."
+            }
+        },
+        {
+            "name": "RemoveGroup",
+            "group": "UserManager",
+            "description": "Remove a group from a user.",
+            "funcName": "RemoveGroup",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "group",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if group removed, false if user/group does not exist."
+            }
+        },
+        {
+            "name": "GetCookie",
+            "group": "UserManager",
+            "description": "Get a cookie value for a user.",
+            "funcName": "GetCookie",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Cookie name."
+                }
+            ],
+            "retType": {
+                "type": "any",
+                "description": "Cookie value, or invalid if user/cookie does not exist."
+            }
+        },
+        {
+            "name": "SetCookie",
+            "group": "UserManager",
+            "description": "Set a cookie value for a user.",
+            "funcName": "SetCookie",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Cookie name."
+                },
+                {
+                    "name": "cookie",
+                    "type": "any",
+                    "ref": false,
+                    "description": "Cookie value."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if user does not exist."
+            }
+        },
+        {
+            "name": "CreateUser",
+            "group": "UserManager",
+            "description": "Create a new user.",
+            "funcName": "CreateUser",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "immunity",
+                    "type": "int32",
+                    "ref": false,
+                    "description": "User immunity."
+                },
+                {
+                    "name": "lgroups",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Array of groups to inherit."
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Array of permissions."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if created, false if user already exists|parent groups does not exist."
+            }
+        },
+        {
+            "name": "DeleteUser",
+            "group": "UserManager",
+            "description": "Delete a user.",
+            "funcName": "DeleteUser",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if deleted, false if user does not exist."
+            }
+        },
+        {
+            "name": "SetParent",
+            "group": "GroupManager",
+            "description": "Set parent group for child group",
+            "funcName": "SetParent",
+            "paramTypes": [
+                {
+                    "name": "child_name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Child group name"
+                },
+                {
+                    "name": "parent_name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Parent group name to set"
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if both groups exist, otherwise false"
             }
         },
         {
@@ -220,296 +564,6 @@
             "retType": {
                 "type": "bool",
                 "description": "True if deleted; false if group not found."
-            }
-        },
-        {
-            "name": "HasPermission",
-            "group": "UserManager",
-            "description": "Check if a user has a specific permission.",
-            "funcName": "HasPermission",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "perm",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Permission line."
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Access",
-                    "values": [
-                        {
-                            "name": "NotFound",
-                            "value": 0,
-                            "description": "User not found."
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 1,
-                            "description": "Permission denied."
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 2,
-                            "description": "Permission allowed."
-                        }
-                    ]
-                },
-                "description": "Return value indicating access status."
-            }
-        },
-        {
-            "name": "HasGroup",
-            "group": "UserManager",
-            "description": "Check if a user belongs to a specific group (directly or via parent groups).",
-            "funcName": "HasGroup",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "group",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Group name."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if user belongs to the group, false if user or group does not exist or user is not a member."
-            }
-        },
-        {
-            "name": "GetImmunity",
-            "group": "UserManager",
-            "description": "Get the immunity level of a user.",
-            "funcName": "GetImmunity",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "description": "Immunity value, or 0 if user does not exist."
-            }
-        },
-        {
-            "name": "AddPermission",
-            "group": "UserManager",
-            "description": "Add a permission to a user.",
-            "funcName": "AddPermission",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "perm",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Permission line."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if successful, false if user does not exist."
-            }
-        },
-        {
-            "name": "RemovePermission",
-            "group": "UserManager",
-            "description": "Remove a permission from a user.",
-            "funcName": "RemovePermission",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "perm",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Permission line."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if successful, false if user does not exist."
-            }
-        },
-        {
-            "name": "AddGroup",
-            "group": "UserManager",
-            "description": "Add a group to a user.",
-            "funcName": "AddGroup",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "group",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Group name."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if group added, false if user/group does not exist or user is already a member."
-            }
-        },
-        {
-            "name": "RemoveGroup",
-            "group": "UserManager",
-            "description": "Remove a group from a user.",
-            "funcName": "RemoveGroup",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "group",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Group name."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if group removed, false if user/group does not exist."
-            }
-        },
-        {
-            "name": "GetCookie",
-            "group": "UserManager",
-            "description": "Get a cookie value for a user.",
-            "funcName": "GetCookie",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "name",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Cookie name."
-                }
-            ],
-            "retType": {
-                "type": "any",
-                "description": "Cookie value, or invalid if user/cookie does not exist."
-            }
-        },
-        {
-            "name": "SetCookie",
-            "group": "UserManager",
-            "description": "Set a cookie value for a user.",
-            "funcName": "SetCookie",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "name",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Cookie name."
-                },
-                {
-                    "name": "cookie",
-                    "type": "any",
-                    "ref": true,
-                    "description": "Cookie value."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if successful, false if user does not exist."
-            }
-        },
-        {
-            "name": "CreateUser",
-            "group": "UserManager",
-            "description": "Create a new user.",
-            "funcName": "CreateUser",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "immunity",
-                    "type": "int32",
-                    "ref": false,
-                    "description": "User immunity."
-                },
-                {
-                    "name": "lgroups",
-                    "type": "ptr64",
-                    "ref": false,
-                    "description": "Array of groups to inherit."
-                },
-                {
-                    "name": "perms",
-                    "type": "ptr64",
-                    "ref": false,
-                    "description": "Array of permissions."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if created, false if user already exists."
-            }
-        },
-        {
-            "name": "DeleteUser",
-            "group": "UserManager",
-            "description": "Delete a user.",
-            "funcName": "DeleteUser",
-            "paramTypes": [
-                {
-                    "name": "id",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                }
-            ],
-            "retType": {
-                "type": "bool",
-                "description": "True if deleted, false if user does not exist."
             }
         }
     ]

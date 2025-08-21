@@ -9,4 +9,11 @@
 
 static std::unordered_map<uint64_t, Group*> groups;
 
-extern "C" Group* GetGroup(const plg::string& name);
+inline Group* GetGroup(const plg::string& name) {
+	const uint64_t hash = XXH3_64bits(name.data(), name.size());
+	std::shared_lock lock(groups_mtx);
+	const auto it = groups.find(hash);
+	if (it == groups.end())
+		return nullptr;
+	return it->second;
+}

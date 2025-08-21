@@ -10,7 +10,7 @@
  */
 extern "C" PLUGIN_API Access HasPermission(const uint64_t id, const plg::string& perm) {
 	std::shared_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v != users.end())
 		return v->second.hasPermission(perm);
 	return Access::NotFound;
@@ -25,13 +25,13 @@ extern "C" PLUGIN_API Access HasPermission(const uint64_t id, const plg::string&
  */
 extern "C" PLUGIN_API bool HasGroup(const uint64_t id, const plg::string& group) {
 	std::shared_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return false;
 
 	const Group* g = GetGroup(group);
 
-	for (auto gg: v->second._groups) {
+	for (const auto gg: v->second._groups) {
 		auto ggg = gg;
 		while (ggg) {
 			if (ggg == g)
@@ -65,10 +65,28 @@ extern "C" PLUGIN_API int GetImmunity(const uint64_t id) {
  */
 extern "C" PLUGIN_API bool AddPermission(const uint64_t id, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return false;
 	v->second.nodes.addPerm(perm);
+	return true;
+}
+
+/**
+ * @brief Add a permissions to a user.
+ *
+ * @param id Player ID
+ * @param perms Permissions array
+ * @return True if successful, false if user does not exist
+ */
+extern "C" PLUGIN_API bool AddPermissions(const uint64_t id, const plg::vector<plg::string>& perms) {
+	std::unique_lock lock(users_mtx);
+	const auto v = users.find(id);
+	if (v == users.end())
+		return false;
+
+	for (const auto& perm: perms)
+		v->second.nodes.addPerm(perm);
 	return true;
 }
 
@@ -81,10 +99,28 @@ extern "C" PLUGIN_API bool AddPermission(const uint64_t id, const plg::string& p
  */
 extern "C" PLUGIN_API bool RemovePermission(const uint64_t id, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return false;
 	v->second.nodes.deletePerm(perm);
+	return true;
+}
+
+/**
+ * @brief Remove a permissions to a user.
+ *
+ * @param id Player ID
+ * @param perms Permissions array
+ * @return True if successful, false if user does not exist
+ */
+extern "C" PLUGIN_API bool RemovePermissions(const uint64_t id, const plg::vector<plg::string>& perms) {
+	std::unique_lock lock(users_mtx);
+	const auto v = users.find(id);
+	if (v == users.end())
+		return false;
+
+	for (const auto& perm: perms)
+		v->second.nodes.deletePerm(perm);
 	return true;
 }
 
@@ -97,13 +133,12 @@ extern "C" PLUGIN_API bool RemovePermission(const uint64_t id, const plg::string
  */
 extern "C" PLUGIN_API bool AddGroup(const uint64_t id, const plg::string& group) {
 	std::unique_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return false;
 
 	Group* g = GetGroup(group);
-	for (auto gg: v->second._groups) {
-		Group* ggg = gg;
+	for (const auto gg: v->second._groups) { const Group* ggg = gg;
 		while (ggg) {
 			if (ggg == g)
 				return false;
@@ -122,15 +157,15 @@ extern "C" PLUGIN_API bool AddGroup(const uint64_t id, const plg::string& group)
  * @return True if group removed, false if user/group does not exist.
  */
 extern "C" PLUGIN_API bool RemoveGroup(const uint64_t id, const plg::string& group) {
-	std::shared_lock lock(users_mtx);
-	auto v = users.find(id);
+	std::unique_lock lock(users_mtx);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return false;
 
 	Group* g = GetGroup(group);
 	if (g == nullptr)
 		return false;
-	auto it = v->second._groups.find(g);
+	const auto it = v->second._groups.find(g);
 	if (it == v->second._groups.end())
 		return true;
 	v->second._groups.erase(it);
@@ -146,11 +181,11 @@ extern "C" PLUGIN_API bool RemoveGroup(const uint64_t id, const plg::string& gro
  */
 extern "C" PLUGIN_API plg::any GetCookie(uint64_t id, const plg::string& name) {
 	std::shared_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return plg::any(plg::invalid{});
 
-	auto val = v->second.cookies.find(name);
+	const auto val = v->second.cookies.find(name);
 	if (val == v->second.cookies.end())
 		return plg::any(plg::invalid{});
 	return val->second;
@@ -164,9 +199,9 @@ extern "C" PLUGIN_API plg::any GetCookie(uint64_t id, const plg::string& name) {
  * @param cookie Cookie value.
  * @return True if successful, false if user does not exist.
  */
-extern "C" PLUGIN_API bool SetCookie(uint64_t id, const plg::string& name, plg::any& cookie) {
+extern "C" PLUGIN_API bool SetCookie(uint64_t id, const plg::string& name, const plg::any& cookie) {
 	std::unique_lock lock(users_mtx);
-	auto v = users.find(id);
+	const auto v = users.find(id);
 	if (v == users.end())
 		return false;
 
@@ -181,14 +216,23 @@ extern "C" PLUGIN_API bool SetCookie(uint64_t id, const plg::string& name, plg::
  * @param immunity User immunity.
  * @param lgroups Array of groups to inherit.
  * @param perms Array of permissions.
- * @return True if created, false if user already exists.
+ * @return True if created, false if user already exists|parent groups does not exist.
  */
-extern "C" PLUGIN_API bool CreateUser(uint64_t id, int immunity, const plg::vector<Group*>* lgroups, const plg::vector<plg::string>* perms) {
+extern "C" PLUGIN_API bool CreateUser(uint64_t id, int immunity, const plg::vector<plg::string>& lgroups, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
 	if (users.contains(id))
 		return false;
 
-	users.try_emplace(id, immunity, lgroups, perms);
+	plg::vector<Group*> llgroups;
+	llgroups.reserve(lgroups.size());
+	for (auto& lgroup: lgroups) {
+		Group* gg = GetGroup(lgroup);
+		if (gg == nullptr)
+			return false;
+		llgroups.push_back(gg);
+	}
+
+	users.try_emplace(id, immunity, std::move(llgroups), perms);
 	return true;
 }
 

@@ -1,18 +1,24 @@
 #include "groupManager.h"
 
 /**
- * @brief Get a pointer to a group by name.
+ * @brief Set parent group for child group
  *
- * @param name Group name.
- * @return Pointer to the group, or nullptr if not found.
+ * @param child_name Child group name
+ * @param parent_name Parent group name to set
+ * @return True if both groups exist, otherwise false
  */
-extern "C" PLUGIN_API Group* GetGroup(const plg::string& name) {
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::shared_lock lock(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end())
-        return nullptr;
-    return it->second;
+extern "C" PLUGIN_API bool SetParent(const plg::string& child_name, const plg::string& parent_name) {
+	const uint64_t hash1 = XXH3_64bits(child_name.data(), child_name.size());
+	const uint64_t hash2 = XXH3_64bits(parent_name.data(), parent_name.size());
+	std::unique_lock lock(groups_mtx);
+	const auto it1 = groups.find(hash1);
+	const auto it2 = groups.find(hash2);
+
+	if (it1 == groups.end() || it2 == groups.end())
+		return false;
+
+	it1->second->_parent = it2->second;
+	return true;
 }
 
 /**

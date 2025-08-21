@@ -64,14 +64,10 @@ struct User {
 		return Access::NotFound;
 	}
 
-	explicit User(int immunity = 0, const plg::vector<Group*>* groups = nullptr, const plg::vector<plg::string>* perms = nullptr) {
+	User(int immunity, plg::vector<Group*>&& groups, const plg::vector<plg::string>& perms) {
 		this->_immunity = immunity;
-		if (groups) {
-			this->_groups = *groups;
-			std::sort(this->_groups.begin(), this->_groups.end(), sortF);
-		} else
-			this->_groups = plg::vector<Group*>();
-		if (perms)
-			this->nodes = loadNode(*perms);
+		this->_groups = std::move(groups);
+		std::sort(this->_groups.begin(), this->_groups.end(), sortF);
+		this->nodes = loadNode(perms);
 	}
 };
