@@ -2,6 +2,7 @@ _Plugify_PluginStart
 _Plugify_PluginUpdate
 _Plugify_PluginEnd
 _Plugify_PluginContext
+_DumpPermissions
 _HasPermission
 _HasGroup
 _GetImmunity
@@ -16,6 +17,7 @@ _SetCookie
 _CreateUser
 _DeleteUser
 _SetParent
+_GetParent
 _HasPermissionGroup
 _HasParentGroup
 _GetPriorityGroup

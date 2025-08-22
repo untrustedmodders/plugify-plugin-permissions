@@ -21,6 +21,21 @@ extern "C" PLUGIN_API bool SetParent(const plg::string& child_name, const plg::s
 }
 
 /**
+ * @brief Get parent of requested group
+ *
+ * @param name Group name
+ * @return Parent group name, or empty string if group/parent not found
+ */
+extern "C" PLUGIN_API plg::string GetParent(const plg::string& name) {
+	const uint64_t hash = XXH3_64bits(name.data(), name.size());
+	std::shared_lock lock(groups_mtx);
+	const auto it = groups.find(hash);
+
+	if (it == groups.end() || !it->second->_parent) return "";
+	return it->second->_parent->_name;
+}
+
+/**
  * @brief Get permissions of group
  *
  * @param name Group name

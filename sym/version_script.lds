@@ -15,6 +15,8 @@
         CreateUser;
         DeleteUser;
         SetParent;
+        GetParent;
+        DumpPermissionsGroup;
         HasPermissionGroup;
         HasParentGroup;
         GetPriorityGroup;

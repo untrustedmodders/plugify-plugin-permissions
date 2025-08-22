@@ -397,6 +397,24 @@
             }
         },
         {
+            "name": "GetParent",
+            "group": "GroupManager",
+            "description": "Get parent of requested group",
+            "funcName": "GetParent",
+            "paramTypes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name"
+                }
+            ],
+            "retType": {
+                "type": "string",
+                "description": "Parent group name, or empty string if group/parent not found"
+            }
+        },
+        {
             "name": "DumpPermissionsGroup",
             "group": "GroupManager",
             "description": "Get permissions of group",
