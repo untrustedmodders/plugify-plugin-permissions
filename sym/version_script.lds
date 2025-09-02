@@ -1,6 +1,7 @@
 {
     global:
         Plugify_*;
+        DumpPermissions;
         HasPermission;
         HasGroup;
         GetImmunity;

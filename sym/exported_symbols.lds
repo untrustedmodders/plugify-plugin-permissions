@@ -17,6 +17,7 @@ _SetCookie
 _CreateUser
 _DeleteUser
 _SetParent
+_DumpPermissionsGroup
 _GetParent
 _HasPermissionGroup
 _HasParentGroup
