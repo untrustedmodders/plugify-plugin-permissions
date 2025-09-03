@@ -55,7 +55,7 @@
             ],
             "retType": {
                 "type": "bool",
-                "description": "True if player_1 priority higher/equal to id2, false otherwise"
+                "description": "True if player_1 priority higher/equal to player_2, false otherwise"
             }
         },
         {

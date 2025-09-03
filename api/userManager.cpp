@@ -21,7 +21,7 @@ extern "C" PLUGIN_API plg::vector<plg::string> DumpPermissions(const uint64_t id
  *
  * @param id1 Player ID
  * @param id2 Player ID
- * @return True if player_1 priority higher/equal to id2, false otherwise
+ * @return True if player_1 priority higher/equal to player_2, false otherwise
  */
 extern "C" PLUGIN_API bool CanAffectUser(const uint64_t id1, const uint64_t id2) {
 	std::shared_lock lock(users_mtx);
