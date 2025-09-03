@@ -7,14 +7,7 @@
 
 inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
 
-struct string_hash {
-	using is_transparent = void;// Enables heterogeneous lookup
 
-	auto operator()(const plg::string& txt) const {
-		if constexpr (sizeof(void*) == 8) return XXH3_64bits(txt.data(), txt.size());
-		else return XXH32(txt.data(), txt.size(), 0);
-	}
-};
 
 struct User {
 	Node nodes;// nodes of user

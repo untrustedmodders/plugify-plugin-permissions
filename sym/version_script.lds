@@ -2,6 +2,7 @@
     global:
         Plugify_*;
         DumpPermissions;
+        CanAffectUser;
         HasPermission;
         HasGroup;
         GetImmunity;
@@ -13,6 +14,7 @@
         RemoveGroup;
         GetCookie;
         SetCookie;
+        GetAllCookies;
         CreateUser;
         DeleteUser;
         SetParent;
@@ -23,6 +25,9 @@
         GetPriorityGroup;
         AddPermissionGroup;
         RemovePermissionGroup;
+        GetCookieGroup;
+        SetCookieGroup;
+        GetAllCookiesGroup;
         CreateGroup;
         DeleteGroup;
 

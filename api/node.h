@@ -15,6 +15,15 @@ enum class Access : int32_t {
 	Allow = 2
 };
 
+struct string_hash {
+	using is_transparent = void;// Enables heterogeneous lookup
+
+	auto operator()(const plg::string& txt) const {
+		if constexpr (sizeof(void*) == 8) return XXH3_64bits(txt.data(), txt.size());
+		else return XXH32(txt.data(), txt.size(), 0);
+	}
+};
+
 struct Node {
 	bool wildcard;// skip all nested nodes
 	bool state;// indicates permission status (Allow/Disallow)
@@ -91,7 +100,7 @@ struct Node {
 			auto ss = std::string_view(s);
 			if (ss.starts_with('-')) ss = ss.substr(1);
 			if (ss == "*") continue;
-			if (uint64_t hash = XXH3_64bits(ss.data(), ss.size()); this->nodes.contains(hash)) node = &this->nodes.at(hash);
+			if (const uint64_t hash = XXH3_64bits(ss.data(), ss.size()); this->nodes.contains(hash)) node = &this->nodes.at(hash);
 			else node = &(node->nodes.at(hash) = Node(false, false, plg::string(ss), std::unordered_map<uint64_t, Node>()));
 		}
 		node->state = lstate;

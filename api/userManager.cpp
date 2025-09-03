@@ -17,11 +17,31 @@ extern "C" PLUGIN_API plg::vector<plg::string> DumpPermissions(const uint64_t id
 }
 
 /**
+ * @brief Check players immunity or groups priority
+ *
+ * @param id1 Player ID
+ * @param id2 Player ID
+ * @return True if player_1 priority higher/equal to id2, false otherwise
+ */
+extern "C" PLUGIN_API bool CanAffectUser(const uint64_t id1, const uint64_t id2) {
+	std::shared_lock lock(users_mtx);
+	const auto v1 = users.find(id1);
+	const auto v2 = users.find(id2);
+	if (v1 == users.end() || v2 == users.end())
+		return false;
+
+	const auto i1 = v1->second._immunity == -1 ? (v1->second._groups.empty() ? -1 : v1->second._groups.front()->_priority) : v1->second._immunity;
+	const auto i2 = v2->second._immunity == -1 ? (v2->second._groups.empty() ? -1 : v2->second._groups.front()->_priority) : v2->second._immunity;
+
+	return i1 >= i2;
+}
+
+/**
  * @brief Check if a user has a specific permission.
  *
  * @param id Player ID.
  * @param perm Permission line.
- * @return Return value indicating access status.
+ * @return Value indicating access status.
  *
  */
 extern "C" PLUGIN_API Access HasPermission(const uint64_t id, const plg::string& perm) {
@@ -187,8 +207,18 @@ extern "C" PLUGIN_API plg::any GetCookie(uint64_t id, const plg::string& name) {
 	const auto v = users.find(id);
 	if (v == users.end()) return plg::any(plg::invalid{});
 
-	const auto val = v->second.cookies.find(name);
-	if (val == v->second.cookies.end()) return plg::any(plg::invalid{});
+	auto val = v->second.cookies.find(name);
+	if (val == v->second.cookies.end()) {
+		for (Group* g: v->second._groups) {
+			Group* gg = g;
+			while (gg) {
+				val = gg->cookies.find(name);
+				if (val != gg->cookies.end())
+					break;
+				gg = gg->_parent;
+			}
+		}
+	}
 	return val->second;
 }
 
@@ -210,10 +240,32 @@ extern "C" PLUGIN_API bool SetCookie(uint64_t id, const plg::string& name, const
 }
 
 /**
+ * @brief Get all cookies from user.
+ *
+ * @param id Player ID.
+ * @param names Array of cookie names
+ * @param values Array of cookie values
+ * @return True if successful, false if user does not exist (cookies may be empty - returns empty arrays).
+ */
+
+extern "C" PLUGIN_API bool GetAllCookies(const uint64_t id, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
+	std::shared_lock lock(users_mtx);
+	const auto v = users.find(id);
+	if (v == users.end()) return false;
+
+	for (const auto& [kv, vv]: v->second.cookies) {
+		names.push_back(kv);
+		values.push_back(vv);
+	}
+
+	return true;
+}
+
+/**
  * @brief Create a new user.
  *
  * @param id Player ID.
- * @param immunity User immunity.
+ * @param immunity User immunity (set -1 to return highest group priotiry).
  * @param lgroups Array of groups to inherit.
  * @param perms Array of permissions.
  * @return True if created, false if user already exists|parent groups does not exist.

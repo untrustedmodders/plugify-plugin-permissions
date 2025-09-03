@@ -117,6 +117,7 @@ extern "C" PLUGIN_API bool AddPermissionGroup(const plg::string& name, const plg
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end()) return false;
+
 	std::unique_lock lock2(users_mtx);
 	it->second->_nodes.addPerm(perm);
 	return true;
@@ -134,8 +135,76 @@ extern "C" PLUGIN_API bool RemovePermissionGroup(const plg::string& name, const 
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end()) return false;
+
 	std::unique_lock lock2(users_mtx);
 	it->second->_nodes.deletePerm(perm);
+	return true;
+}
+
+/**
+ * @brief Get a cookie value for a group.
+ *
+ * @param gname Group name
+ * @param cname Cookie name
+ * @return Cookie value (or value of cookie from parent group, if doesn't exist in child), or invalid if group/cookie does not exist.
+ */
+extern "C" PLUGIN_API plg::any GetCookieGroup(const plg::string& gname, const plg::string& cname) {
+	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
+	std::shared_lock lock(groups_mtx);
+	const auto v = groups.find(hash);
+	if (v == groups.end()) return plg::any(plg::invalid{});
+
+	Group* g = v->second;
+	while (g != nullptr) {
+		const auto val = g->cookies.find(cname);
+		if (val == g->cookies.end()) {
+			g = g->_parent;
+			continue;
+		}
+		return val->second;
+	}
+	return plg::any(plg::invalid{});
+}
+
+/**
+ * @brief Set a cookie value for a group.
+ *
+ * @param gname Group name
+ * @param cname Cookie name
+ * @param cookie Cookie value.
+ * @return True if successful, false if group does not exist.
+ */
+extern "C" PLUGIN_API bool SetCookieGroup(const plg::string& gname, const plg::string& cname, const plg::any& cookie) {
+	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
+	std::unique_lock lock(groups_mtx);
+	const auto v = groups.find(hash);
+	if (v == groups.end()) return false;
+
+	std::unique_lock lock2(users_mtx);
+	v->second->cookies[cname] = cookie;
+	return true;
+}
+
+/**
+ * @brief Get all cookies from group.
+ *
+ * @param gname Group name
+ * @param names Array of cookie names
+ * @param values Array of cookie values
+ * @return True if successful, false if group does not exist (cookies may be empty - returns empty arrays).
+ */
+
+extern "C" PLUGIN_API bool GetAllCookiesGroup(const plg::string& gname, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
+	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
+	std::shared_lock lock(groups_mtx);
+	const auto v = groups.find(hash);
+	if (v == groups.end()) return false;
+
+	for (const auto& [kv, vv]: v->second->cookies) {
+		names.push_back(kv);
+		values.push_back(vv);
+	}
+
 	return true;
 }
 

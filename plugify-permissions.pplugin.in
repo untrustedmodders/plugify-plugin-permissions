@@ -35,6 +35,30 @@
             }
         },
         {
+            "name": "CanAffectUser",
+            "group": "UserManager",
+            "description": "Check players immunity or groups priority",
+            "funcName": "CanAffectUser",
+            "paramTypes": [
+                {
+                    "name": "id1",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "id2",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if player_1 priority higher/equal to id2, false otherwise"
+            }
+        },
+        {
             "name": "HasPermission",
             "group": "UserManager",
             "description": "Check if a user has a specific permission.",
@@ -75,7 +99,7 @@
                         }
                     ]
                 },
-                "description": "Return value indicating access status."
+                "description": "Value indicating access status."
             }
         },
         {
@@ -319,6 +343,36 @@
             }
         },
         {
+            "name": "GetAllCookies",
+            "group": "UserManager",
+            "description": "Get all cookies from user.",
+            "funcName": "GetAllCookies",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "names",
+                    "type": "string[]",
+                    "ref": true,
+                    "description": "Array of cookie names"
+                },
+                {
+                    "name": "values",
+                    "type": "any[]",
+                    "ref": true,
+                    "description": "Array of cookie values"
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if user does not exist (cookies may be empty - returns empty arrays)."
+            }
+        },
+        {
             "name": "CreateUser",
             "group": "UserManager",
             "description": "Create a new user.",
@@ -334,7 +388,7 @@
                     "name": "immunity",
                     "type": "int32",
                     "ref": false,
-                    "description": "User immunity."
+                    "description": "User immunity (set -1 to return highest group priotiry)."
                 },
                 {
                     "name": "lgroups",
@@ -564,6 +618,90 @@
             "retType": {
                 "type": "bool",
                 "description": "True if successful; false if group not found."
+            }
+        },
+        {
+            "name": "GetCookieGroup",
+            "group": "GroupManager",
+            "description": "Get a cookie value for a group.",
+            "funcName": "GetCookieGroup",
+            "paramTypes": [
+                {
+                    "name": "gname",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name"
+                },
+                {
+                    "name": "cname",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Cookie name"
+                }
+            ],
+            "retType": {
+                "type": "any",
+                "description": "Cookie value (or value of cookie from parent group, if doesn't exist in child), or invalid if group/cookie does not exist."
+            }
+        },
+        {
+            "name": "SetCookieGroup",
+            "group": "GroupManager",
+            "description": "Set a cookie value for a group.",
+            "funcName": "SetCookieGroup",
+            "paramTypes": [
+                {
+                    "name": "gname",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name"
+                },
+                {
+                    "name": "cname",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Cookie name"
+                },
+                {
+                    "name": "cookie",
+                    "type": "any",
+                    "ref": false,
+                    "description": "Cookie value."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if group does not exist."
+            }
+        },
+        {
+            "name": "GetAllCookiesGroup",
+            "group": "GroupManager",
+            "description": "Get all cookies from group.",
+            "funcName": "GetAllCookiesGroup",
+            "paramTypes": [
+                {
+                    "name": "gname",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name"
+                },
+                {
+                    "name": "names",
+                    "type": "string[]",
+                    "ref": true,
+                    "description": "Array of cookie names"
+                },
+                {
+                    "name": "values",
+                    "type": "any[]",
+                    "ref": true,
+                    "description": "Array of cookie values"
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if successful, false if group does not exist (cookies may be empty - returns empty arrays)."
             }
         },
         {
