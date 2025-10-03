@@ -1,21 +1,16 @@
 {
 	"$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify/refs/heads/main/schemas/plugin.schema.json",
-	"fileVersion": 1,
 	"version": "${PLUGIN_VERSION}",
-	"friendlyName": "[Plugify] Permissions Core",
+	"name": "permissions_core",
 	"description": "Minimalistic permissions core",
-	"createdBy": "untrustedmodders",
-	"createdByURL": "https://github.com/untrustedmodders/",
-	"docsURL": "https://github.com/untrustedmodders/plugify-permissions",
-	"downloadURL": "https://github.com/untrustedmodders/plugify-permissions/releases/download/v${PLUGIN_VERSION}/${PLUGIN_PACKAGE}.zip",
-	"updateURL": "https://untrustedmodders.github.io/plugify-permissions/plugify-permissions.json",
-	"entryPoint": "bin/plugify-permissions",
-	"supportedPlatforms": [],
-	"languageModule": {
-		"name": "cpp"
-	},
+	"author": "untrustedmodders",
+	"website": "https://github.com/untrustedmodders/",
+	"license": "GPLv3",
+	"entry": "bin/plugify-permissions",
+	"platforms": [],
+	"language": "cpp",
 	"dependencies": [],
-	"exportedMethods": [
+	"methods": [
         {
             "name": "DumpPermissions",
             "group": "UserManager",
