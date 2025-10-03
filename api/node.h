@@ -31,34 +31,24 @@ struct Node {
 	std::unordered_map<uint64_t, Node> nodes;// nested nodes
 
 	__always_inline Access _hasPermission(const uint64_t hashes[], const int sz) const {
-		bool found = true;
-		const Node* start = this;
-		const Node* lwildcard = wildcard ? this : nullptr;// save last wildcard position
+		const Node* current = this;
+		const Node* lastWild = wildcard ? this : nullptr;// save last wildcard position
 
 		for (int i = 0; i < sz; ++i) {
 			size_t hsh = hashes[i];
-			auto it = nodes.find(hsh);
-			if (it == nodes.end()) {
+			auto it = current->nodes.find(hsh);
+			if (it == current->nodes.end()) {
 				// requested node not found - return wildcard status
-				found = false;
-				break;
+				return lastWild ? (lastWild->state ? Access::Allow : Access::Disallow) : Access::NotFound;
 			}
 
-			start = &it->second;
-			if (start->wildcard) {
-				// skip nested nodes - return state of root?
-				if (start->nodes.empty())// empty wildcard - just return state of it
-					return start->state ? Access::Allow : Access::Disallow;
-				// no - save last position
-				lwildcard = start;
-			}
+			// save current position
+			current = &it->second;
+			// save last wildcard position
+			if (current->wildcard) lastWild = current;
 		}
 
-		if (found)// return direct/overriden permission
-			return start->state ? Access::Allow : Access::Disallow;
-		if (lwildcard)// found last wildcard position
-			return lwildcard->state ? Access::Allow : Access::Disallow;
-		return Access::NotFound;
+		return current->state ? Access::Allow : Access::Disallow;
 	}
 
 	__always_inline void deletePerm(const plg::string& perm) {
@@ -66,7 +56,6 @@ struct Node {
 		uint64_t hashes[256];
 		int i = 0;
 		for (auto s: ispl) {
-			// hashes[i] = calcHash(s);
 			hashes[i] = XXH3_64bits(s.data(), s.size());
 			++i;
 		}
@@ -77,34 +66,41 @@ struct Node {
 		if (sz < 1) return;
 		if (hashes[0] == AllAccess) this->nodes.clear();
 
-		bool lwildcard = hashes[sz - 1] == AllAccess;
+		bool hasWildcard = hashes[sz - 1] == AllAccess;
 
 		Node* t_node = this;
-		for (int i = 0; i < sz; ++i) {
-			if (t_node->nodes.contains(hashes[i])) t_node = &t_node->nodes.at(hashes[i]);
-			else return;
+
+		// find pre-last element
+		for (int i = 0; i < sz - 1; ++i) {
+			const auto it = t_node->nodes.find(hashes[i]);
+			if (it == t_node->nodes.end()) return;
+			t_node = &it->second;
 		}
-		if (!lwildcard) {
-			auto it = t_node->nodes.find(hashes[sz - 1]);
+
+		// clear all nested elements
+		if (hasWildcard) t_node->nodes.clear();
+		// clear this with nested elements
+		else {
+			const auto it = t_node->nodes.find(hashes[sz - 1]);
 			if (it != t_node->nodes.end()) t_node->nodes.erase(it);
-		} else t_node->nodes.clear();
+		}
 	}
 
 	__always_inline void addPerm(const plg::string& perm) {
-		bool lstate = !perm.starts_with('-');
-		bool lwildcard = perm.ends_with('*');
+		const bool allow = !perm.starts_with('-');
+		const bool hasWildcard = perm.ends_with('*');
 		auto spl = std::views::split(perm, '.');
 
 		Node* node = this;
 		for (auto s: spl) {
 			auto ss = std::string_view(s);
 			if (ss.starts_with('-')) ss = ss.substr(1);
-			if (ss == "*") continue;
-			if (const uint64_t hash = XXH3_64bits(ss.data(), ss.size()); this->nodes.contains(hash)) node = &this->nodes.at(hash);
-			else node = &(node->nodes.at(hash) = Node(false, false, plg::string(ss), std::unordered_map<uint64_t, Node>()));
+			if (ss == "*") break;
+			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
+			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), std::unordered_map<uint64_t, Node>()).first->second);
 		}
-		node->state = lstate;
-		node->wildcard = lwildcard;
+		node->state = allow;
+		node->wildcard = hasWildcard;
 	}
 };
 
@@ -135,19 +131,18 @@ inline Node loadNode(const plg::vector<plg::string>& perms) {
 	Node result;
 	result.name = "ROOT";
 	for (const auto& perm: perms) {
-		const plg::string* iperm = &perm;
-		if (iperm->empty())// empty lines?
+		if (perm.empty())// empty lines?
 			continue;
-		if (iperm->at(0) == '*') {
+		if (perm.at(0) == '*') {
 			// skip situation with perm "*"
 			result.wildcard = true;
 			continue;
 		}
 
-		auto spl = std::views::split(*iperm, '.');
+		auto spl = std::views::split(perm, '.');
 
-		const bool state = !iperm->starts_with('-');
-		const bool wildcard = iperm->ends_with('*');
+		const bool state = !perm.starts_with('-');
+		const bool wildcard = perm.ends_with('*');
 
 		Node* node = &result;
 
@@ -155,8 +150,8 @@ inline Node loadNode(const plg::vector<plg::string>& perms) {
 			auto ss = std::string_view(s.begin(), s.end());
 			if (ss.starts_with('-')) ss = ss.substr(1);
 			if (ss == "*") break;
-			if (uint64_t hash = XXH3_64bits(ss.data(), ss.size()); node->nodes.contains(hash)) node = &node->nodes.at(hash);
-			else { node = &(node->nodes[hash] = Node(false, false, plg::string(ss), std::unordered_map<uint64_t, Node>())); }
+			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
+			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), std::unordered_map<uint64_t, Node>()).first->second);
 		}
 
 		node->state = state;
