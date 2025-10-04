@@ -1,4 +1,5 @@
 #include "groupManager.h"
+static std::unordered_map<uint64_t, Group*> groups;
 
 /**
  * @brief Set parent group for child group

@@ -7,7 +7,7 @@
 
 #include <plugin_export.h>
 
-static std::unordered_map<uint64_t, Group*> groups;
+extern std::unordered_map<uint64_t, Group*> groups;
 
 inline Group* GetGroup(const plg::string& name) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());

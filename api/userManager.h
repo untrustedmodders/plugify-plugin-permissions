@@ -7,7 +7,8 @@
 #include <mutex>
 #include <plugin_export.h>
 #include <plugify/any.hpp>
-static std::unordered_map<uint64_t, User> users;
+
+extern std::unordered_map<uint64_t, User> users;
 
 PLUGIFY_FORCE_INLINE void GroupManager_Callback(const Group* group) {
 	// Delete group from all users

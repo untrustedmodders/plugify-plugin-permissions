@@ -1,4 +1,5 @@
 #include "userManager.h"
+std::unordered_map<uint64_t, User> users;
 
 /**
  * @brief Get permissions of user
