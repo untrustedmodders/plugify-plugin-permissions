@@ -1,5 +1,6 @@
 #pragma once
 #include "group.h"
+#include "parallel-hashmap/parallel_hashmap/phmap.h"
 
 #include <plugify/any.hpp>
 #include <plugify/string.hpp>
@@ -7,14 +8,12 @@
 
 inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
 
-
-
 struct User {
 	Node nodes;// nodes of user
 	// 1. Load from groups settings
 	// 2. Load from players settings
 
-	std::unordered_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;
+	phmap::flat_hash_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;
 	plg::vector<Group*> _groups;// groups that player belongs to
 	int _immunity;
 

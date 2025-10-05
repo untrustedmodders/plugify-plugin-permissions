@@ -2,9 +2,9 @@
 #include <plugify/string.hpp>
 #include <plugify/vector.hpp>
 #include <string_view>
-#include <unordered_map>
 
 #include "xxhash.h"
+#include "parallel_hashmap/phmap.h"
 
 #include <ranges>
 const uint64_t AllAccess = XXH3_64bits("*", 1);
@@ -28,7 +28,7 @@ struct Node {
 	bool wildcard;// skip all nested nodes
 	bool state;// indicates permission status (Allow/Disallow)
 	plg::string name;// name of node
-	std::unordered_map<uint64_t, Node> nodes;// nested nodes
+	phmap::flat_hash_map<uint64_t, Node> nodes;// nested nodes
 
 	__always_inline Access _hasPermission(const uint64_t hashes[], const int sz) const {
 		const Node* current = this;
@@ -97,7 +97,7 @@ struct Node {
 			if (ss.starts_with('-')) ss = ss.substr(1);
 			if (ss == "*") break;
 			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
-			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), std::unordered_map<uint64_t, Node>()).first->second);
+			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), phmap::flat_hash_map<uint64_t, Node>()).first->second);
 		}
 		node->state = allow;
 		node->wildcard = hasWildcard;
@@ -122,7 +122,7 @@ inline plg::vector<plg::string> dumpNode(const Node& root_node) {
 	return perms;
 }
 
-inline void forceRehash(std::unordered_map<uint64_t, Node>& nodes) {
+inline void forceRehash(phmap::flat_hash_map<uint64_t, Node>& nodes) {
 	nodes.rehash(0);
 	for (std::pair<const uint64_t, Node>& n: nodes) forceRehash(n.second.nodes);
 }
@@ -151,7 +151,7 @@ inline Node loadNode(const plg::vector<plg::string>& perms) {
 			if (ss.starts_with('-')) ss = ss.substr(1);
 			if (ss == "*") break;
 			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
-			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), std::unordered_map<uint64_t, Node>()).first->second);
+			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), phmap::flat_hash_map<uint64_t, Node>()).first->second);
 		}
 
 		node->state = state;

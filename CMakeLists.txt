@@ -47,6 +47,9 @@ set(PLUGIN_SOURCES "plugin.cpp"
 add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_subdirectory("parallel-hashmap")
+include_directories(${PROJECT_SOURCE_DIR}/parallel-hashmap)
+
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
 else()

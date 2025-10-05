@@ -4,13 +4,14 @@
 #include <plugify/string.hpp>
 
 #include "xxhash.h"
+#include "parallel_hashmap/phmap.h"
 #include "plugify/any.hpp"
 
 struct Group {
 	Group* _parent;// root of this group
 	plg::string _name;// name of group
 	int _priority;// priority of group
-	std::unordered_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;// group cookies
+	phmap::flat_hash_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;// group cookies
 	Node _nodes;// nodes of group
 
 	Group(const plg::vector<plg::string>& perms, const plg::string& name, const int priority, Group* parent = nullptr) {

@@ -2,12 +2,11 @@
 #include "basic.h"
 #include "group.h"
 #include "userManager.h"
-
-#include <mutex>
+#include "parallel-hashmap/parallel_hashmap/phmap.h"
 
 #include <plugin_export.h>
 
-extern std::unordered_map<uint64_t, Group*> groups;
+extern phmap::flat_hash_map<uint64_t, Group*> groups;
 
 inline Group* GetGroup(const plg::string& name) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());

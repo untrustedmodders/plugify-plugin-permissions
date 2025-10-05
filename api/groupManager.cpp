@@ -1,5 +1,5 @@
 #include "groupManager.h"
-std::unordered_map<uint64_t, Group*> groups;
+phmap::flat_hash_map<uint64_t, Group*> groups;
 
 std::shared_mutex groups_mtx;
 
@@ -217,15 +217,20 @@ extern "C" PLUGIN_API bool GetAllCookiesGroup(const plg::string& gname, plg::vec
  * @param name Group name.
  * @param perms Array of permission lines.
  * @param priority Group priority.
- * @param parent Parent group pointer.
- * @return True if created; false if group already exists.
+ * @param parent Parent group name.
+ * @return True if created; false if group already exists or parent doesn't exist.
  */
-extern "C" PLUGIN_API bool CreateGroup(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, Group* parent) {
+extern "C" PLUGIN_API bool CreateGroup(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	if (groups.contains(hash)) return false;
+	Group* gparent = nullptr;
+	if (!parent.empty()) {
+		gparent = GetGroup(parent);
+		if (!gparent) return false;
+	}
 
-	auto* group = new Group(perms, name, priority, parent);
+	auto* group = new Group(perms, name, priority, gparent);
 	groups.try_emplace(hash, group);
 	return true;
 }

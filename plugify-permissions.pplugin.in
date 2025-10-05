@@ -725,14 +725,14 @@
                 },
                 {
                     "name": "parent",
-                    "type": "ptr64",
+                    "type": "string",
                     "ref": false,
-                    "description": "Parent group pointer."
+                    "description": "Parent group name."
                 }
             ],
             "retType": {
                 "type": "bool",
-                "description": "True if created; false if group already exists."
+                "description": "True if created; false if group already exists or parent doesn't exist."
             }
         },
         {

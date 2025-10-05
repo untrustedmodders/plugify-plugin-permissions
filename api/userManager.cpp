@@ -1,5 +1,5 @@
 #include "userManager.h"
-std::unordered_map<uint64_t, User> users;
+phmap::flat_hash_map<uint64_t, User> users;
 
 std::shared_mutex users_mtx;
 
