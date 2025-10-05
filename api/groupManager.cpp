@@ -1,6 +1,8 @@
 #include "groupManager.h"
 std::unordered_map<uint64_t, Group*> groups;
 
+std::shared_mutex groups_mtx;
+
 /**
  * @brief Set parent group for child group
  *

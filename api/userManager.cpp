@@ -1,6 +1,8 @@
 #include "userManager.h"
 std::unordered_map<uint64_t, User> users;
 
+std::shared_mutex users_mtx;
+
 /**
  * @brief Get permissions of user
  *
