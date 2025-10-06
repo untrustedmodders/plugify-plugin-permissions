@@ -105,11 +105,11 @@ struct Node {
 };
 
 inline void dumpNodes(const plg::string& base_name, const Node& n, plg::vector<plg::string>& perms) {
-	if (n.wildcard) perms.push_back((n.state ? "-" : "") + base_name + "*");
+	if (n.wildcard) perms.push_back((n.state ? "" : "-") + base_name + "*");
 
 	if (n.nodes.empty() && !n.wildcard) {
 		// final path
-		perms.push_back((n.state ? "-" : "") + base_name);
+		perms.push_back((n.state ? "" : "-") + base_name);
 		return;
 	}
 	for (auto& kv: n.nodes) dumpNodes(base_name + kv.second.name + ".", kv.second, perms);
@@ -128,8 +128,7 @@ inline void forceRehash(phmap::flat_hash_map<uint64_t, Node>& nodes) {
 }
 
 inline Node loadNode(const plg::vector<plg::string>& perms) {
-	Node result;
-	result.name = "ROOT";
+	Node result{false, false, "ROOT", phmap::flat_hash_map<uint64_t, Node>()};
 	for (const auto& perm: perms) {
 		if (perm.empty())// empty lines?
 			continue;
