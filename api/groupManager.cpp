@@ -56,6 +56,22 @@ extern "C" PLUGIN_API plg::vector<plg::string> DumpPermissionsGroup(const plg::s
 }
 
 /**
+ * @brief Get all created groups
+ *
+ * @return Array of groups
+ */
+extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups() {
+	std::shared_lock lock(groups_mtx);
+
+	plg::vector<plg::string> lgroups;
+	lgroups.reserve(groups.size());
+	for (const auto& [kv, vv]: groups)
+		lgroups.push_back(vv->_name);
+
+	return lgroups;
+}
+
+/**
  * @brief Check if a group has a specific permission.
  *
  * @param name Group name.

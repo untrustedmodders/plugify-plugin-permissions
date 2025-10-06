@@ -122,6 +122,24 @@
             }
         },
         {
+            "name": "GetUserGroups",
+            "group": "UserManager",
+            "description": "Get user groups.",
+            "funcName": "GetUserGroups",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                }
+            ],
+            "retType": {
+                "type": "string[]",
+                "description": "Group list that player belongs to."
+            }
+        },
+        {
             "name": "GetImmunity",
             "group": "UserManager",
             "description": "Get the immunity level of a user.",
@@ -479,6 +497,17 @@
             "retType": {
                 "type": "string[]",
                 "description": "Array of group permissions"
+            }
+        },
+        {
+            "name": "GetAllGroups",
+            "group": "GroupManager",
+            "description": "Get all created groups",
+            "funcName": "GetAllGroups",
+            "paramTypes": [],
+            "retType": {
+                "type": "string[]",
+                "description": "Array of groups"
             }
         },
         {

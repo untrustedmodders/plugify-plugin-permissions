@@ -6,6 +6,7 @@ _DumpPermissions
 _CanAffectUser
 _HasPermission
 _HasGroup
+_GetUserGroups
 _GetImmunity
 _AddPermission
 _AddPermissions
@@ -20,6 +21,7 @@ _CreateUser
 _DeleteUser
 _SetParent
 _DumpPermissionsGroup
+_GetAllGroups
 _GetParent
 _HasPermissionGroup
 _HasParentGroup

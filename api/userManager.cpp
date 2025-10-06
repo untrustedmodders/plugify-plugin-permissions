@@ -79,6 +79,25 @@ extern "C" PLUGIN_API bool HasGroup(const uint64_t id, const plg::string& group)
 }
 
 /**
+ * @Brief Get user groups.
+ *
+ * @param id Player ID.
+ * @return Group list that user belongs to.
+ */
+extern "C" PLUGIN_API plg::vector<plg::string> GetUserGroups(const uint64_t id) {
+	std::shared_lock lock(users_mtx);
+	const auto v = users.find(id);
+	if (v == users.end()) return {};
+
+	plg::vector<plg::string> lgroups;
+	lgroups.reserve(v->second._groups.size());
+	for (const auto g: v->second._groups)
+		lgroups.push_back(g->_name);
+
+	return lgroups;
+}
+
+/**
  * @brief Get the immunity level of a user.
  *
  * @param id Player ID.

@@ -5,6 +5,7 @@
         CanAffectUser;
         HasPermission;
         HasGroup;
+        GetUserGroups;
         GetImmunity;
         AddPermission;
         AddPermissions;
@@ -20,6 +21,7 @@
         SetParent;
         GetParent;
         DumpPermissionsGroup;
+        GetAllGroups;
         HasPermissionGroup;
         HasParentGroup;
         GetPriorityGroup;
