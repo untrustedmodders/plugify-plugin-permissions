@@ -55,34 +55,60 @@ struct Node {
 		auto ispl = std::views::split(perm, '.');
 		uint64_t hashes[256];
 		int i = 0;
-		for (auto s: ispl) {
+		for (auto&& s: ispl) {
 			hashes[i] = XXH3_64bits(s.data(), s.size());
 			++i;
+			if (hashes[i - 1] == AllAccess)
+				break;
 		}
 		this->deletePerm(hashes, i);
 	}
 
 	__always_inline void deletePerm(const uint64_t hashes[], const int sz) {
 		if (sz < 1) return;
-		if (hashes[0] == AllAccess) this->nodes.clear();
+		if (hashes[0] == AllAccess) {
+			this->nodes.clear();
+			return;
+		}
 
 		bool hasWildcard = hashes[sz - 1] == AllAccess;
 
-		Node* t_node = this;
+		Node* curNode = this;
+
+		std::pair<Node*, uint64_t> ancestors[256];
+		int count = 0;
 
 		// find pre-last element
 		for (int i = 0; i < sz - 1; ++i) {
-			const auto it = t_node->nodes.find(hashes[i]);
-			if (it == t_node->nodes.end()) return;
-			t_node = &it->second;
+			const auto it = curNode->nodes.find(hashes[i]);
+			if (it == curNode->nodes.end()) return;
+
+			// ancestors[count] = {parent_node, child_key};
+			ancestors[count] = {curNode, hashes[i]};
+			++count;
+			curNode = &it->second;
 		}
 
-		// clear all nested elements
-		if (hasWildcard) t_node->nodes.clear();
-		// clear this with nested elements
-		else {
-			const auto it = t_node->nodes.find(hashes[sz - 1]);
-			if (it != t_node->nodes.end()) t_node->nodes.erase(it);
+		if (hasWildcard) {
+			curNode->nodes.clear();
+			// Do not delete 'root' node
+			return;
+		}
+		// Not wildcard - clear only last
+		const auto it = curNode->nodes.find(hashes[sz - 1]);
+		if (it == curNode->nodes.end()) return;
+		curNode->nodes.erase(it);
+
+		if (curNode->wildcard || !curNode->nodes.empty())
+			return;
+
+		// Delete empty node
+		for (int i = (count - 1); i >= 0; --i) {
+			Node* parent = ancestors[i].first;
+			const uint64_t key = ancestors[i].second;
+			parent->nodes.erase(key);
+			if (curNode->wildcard || !curNode->nodes.empty())
+				return;
 		}
 	}
 
@@ -92,7 +118,7 @@ struct Node {
 		auto spl = std::views::split(perm, '.');
 
 		Node* node = this;
-		for (auto s: spl) {
+		for (auto&& s: spl) {
 			auto ss = std::string_view(s);
 			if (ss.starts_with('-')) ss = ss.substr(1);
 			if (ss == "*") break;
@@ -112,7 +138,7 @@ inline void dumpNodes(const plg::string& base_name, const Node& n, plg::vector<p
 		perms.push_back((n.state ? "" : "-") + base_name);
 		return;
 	}
-	for (auto& kv: n.nodes) dumpNodes(base_name + kv.second.name + ".", kv.second, perms);
+	for (auto& kv: n.nodes) dumpNodes(base_name + "." + kv.second.name, kv.second, perms);
 }
 
 inline plg::vector<plg::string> dumpNode(const Node& root_node) {
@@ -129,7 +155,7 @@ inline void forceRehash(phmap::flat_hash_map<uint64_t, Node>& nodes) {
 
 inline Node loadNode(const plg::vector<plg::string>& perms) {
 	Node result{false, false, "ROOT", phmap::flat_hash_map<uint64_t, Node>()};
-	for (const auto& perm: perms) {
+	for (const plg::string& perm: perms) {
 		if (perm.empty())// empty lines?
 			continue;
 		if (perm.at(0) == '*') {
@@ -141,14 +167,17 @@ inline Node loadNode(const plg::vector<plg::string>& perms) {
 		auto spl = std::views::split(perm, '.');
 
 		const bool state = !perm.starts_with('-');
-		const bool wildcard = perm.ends_with('*');
+		bool wildcard = false;
 
 		Node* node = &result;
 
-		for (auto s: spl) {
+		for (auto&& s: spl) {
 			auto ss = std::string_view(s.begin(), s.end());
 			if (ss.starts_with('-')) ss = ss.substr(1);
-			if (ss == "*") break;
+			if (ss == "*") {
+				wildcard = true;
+				break;
+			};
 			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
 			node = &(node->nodes.try_emplace(hash, false, false, plg::string(ss), phmap::flat_hash_map<uint64_t, Node>()).first->second);
 		}

@@ -32,21 +32,19 @@ struct User {
 		auto ispl = std::views::split(perm, '.');
 		uint64_t hashes[256];
 		int i = 0;
-		for (auto s: ispl) {
+		for (auto&& s: ispl) {
 			// hashes[i] = calcHash(s);
 			hashes[i] = XXH3_64bits(s.data(), s.size());
 			++i;
 		}
-
 		Access hasPerm = nodes._hasPermission(hashes, i);
 		if (hasPerm != Access::NotFound)// Check if user defined this permission
 			return hasPerm;
 
-		if (!_groups.empty())
-			for (const auto g: _groups) {
-				hasPerm = g->_hasPermission(hashes, i);
-				if (hasPerm != Access::NotFound) return hasPerm;
-			}
+		for (const auto g: _groups) {
+			hasPerm = g->_hasPermission(hashes, i);
+			if (hasPerm != Access::NotFound) return hasPerm;
+		}
 		return Access::NotFound;
 	}
 

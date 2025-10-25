@@ -21,12 +21,15 @@ struct Group {
 		this->_priority = priority;
 	}
 
-	Access hasPermission(const plg::string& perm) const {
-		auto ispl = std::views::split(perm, '.');
+	[[nodiscard]] Access hasPermission(const plg::string& perm) const {
+		std::string_view sv(perm);
+		auto ispl = std::views::split(sv, '.');
 		uint64_t hashes[256];
 		int i = 0;
-		for (auto s: ispl) {
-			hashes[i] = XXH3_64bits(s.data(), s.size());
+		for (auto&& s: ispl) {
+			const auto ptr = s.empty() ? nullptr : &*s.begin();
+			const auto len = s.size();
+			hashes[i] = XXH3_64bits(ptr, len);
 			++i;
 		}
 
