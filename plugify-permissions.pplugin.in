@@ -1,7 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify/refs/heads/main/schemas/plugin.schema.json",
 	"version": "${PLUGIN_VERSION}",
-	"name": "permissions_core",
+	"name": "permissions",
 	"description": "Minimalistic permissions core",
 	"author": "untrustedmodders",
 	"website": "https://github.com/untrustedmodders/",
