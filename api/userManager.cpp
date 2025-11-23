@@ -322,3 +322,15 @@ extern "C" PLUGIN_API bool DeleteUser(const uint64_t id) {
 	users.erase(v);
 	return true;
 }
+
+/**
+ * @brief Check if a user exists.
+ *
+ * @param id Player ID.
+ * @return True if user exists, false otherwise.
+ */
+extern "C" PLUGIN_API bool UserExists(const uint64_t id) {
+	std::shared_lock lock(users_mtx);
+	const auto v = users.find(id);
+	return v == users.end();
+}
