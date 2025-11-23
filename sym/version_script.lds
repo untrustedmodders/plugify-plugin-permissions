@@ -18,6 +18,7 @@
         GetAllCookies;
         CreateUser;
         DeleteUser;
+        UserExists;
         SetParent;
         GetParent;
         DumpPermissionsGroup;
@@ -32,6 +33,7 @@
         GetAllCookiesGroup;
         CreateGroup;
         DeleteGroup;
+        GroupExists;
 
     local: *;
 };

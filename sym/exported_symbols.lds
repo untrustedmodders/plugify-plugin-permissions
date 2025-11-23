@@ -19,6 +19,7 @@ _SetCookie
 _GetAllCookies
 _CreateUser
 _DeleteUser
+_UserExists
 _SetParent
 _DumpPermissionsGroup
 _GetAllGroups
@@ -33,3 +34,4 @@ _SetCookieGroup
 _GetAllCookiesGroup
 _CreateGroup
 _DeleteGroup
+_GroupExists

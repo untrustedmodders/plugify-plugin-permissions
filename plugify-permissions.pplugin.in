@@ -440,6 +440,24 @@
             }
         },
         {
+            "name": "UserExists",
+            "group": "UserManager",
+            "description": "Check if a user exists.",
+            "funcName": "UserExists",
+            "paramTypes": [
+                {
+                    "name": "id",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if user exists, false otherwise."
+            }
+        },
+        {
             "name": "SetParent",
             "group": "GroupManager",
             "description": "Set parent group for child group",
@@ -780,6 +798,24 @@
             "retType": {
                 "type": "bool",
                 "description": "True if deleted; false if group not found."
+            }
+        },
+        {
+            "name": "GroupExists",
+            "group": "GroupManager",
+            "description": "Check if a group exists.",
+            "funcName": "GroupExists",
+            "paramTypes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "bool",
+                "description": "True if group exists, false otherwise."
             }
         }
     ]
