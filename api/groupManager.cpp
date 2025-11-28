@@ -293,5 +293,5 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
-	return v == groups.end();
+	return v != groups.end();
 }
