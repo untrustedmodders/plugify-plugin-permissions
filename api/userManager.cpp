@@ -332,5 +332,5 @@ extern "C" PLUGIN_API bool DeleteUser(const uint64_t id) {
 extern "C" PLUGIN_API bool UserExists(const uint64_t id) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	return v == users.end();
+	return v != users.end();
 }
