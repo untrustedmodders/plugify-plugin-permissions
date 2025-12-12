@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(POLICY CMP0092)
     cmake_policy(SET CMP0092 NEW) # Don't add -W3 warning level by default.
@@ -28,44 +28,52 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-#
-# Format
-#
-include(CompatFormat)
+if(NOT CMAKE_BUILD_TYPE MATCHES "Debug|Devel|MinSizeRel|RelWithDebInfo|Release")
+    message(STATUS "CMAKE_BUILD_TYPE not set, defaulting to Release.")
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
 
 #
 # Plugin
 #
 set(PLUGIN_SOURCES "plugin.cpp"
-        api/groupManager.h
-        api/userManager.h
+        api/group_manager.h
+        api/user_manager.h
         api/basic.h
-        api/groupManager.cpp
-        api/userManager.cpp
+        api/group_manager.cpp
+        api/user_manager.cpp
         api/xxhash.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/external/plugify/include")
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/external/parallel-hashmap")
 
-add_subdirectory("parallel-hashmap")
-include_directories(${PROJECT_SOURCE_DIR}/parallel-hashmap)
+add_subdirectory(external/parallel-hashmap)
+include_directories(external/parallel-hashmap)
 
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /Zc:preprocessor $<$<CONFIG:Release>:/Zi>)
+    target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release>:/DEBUG /OPT:REF /OPT:ICF>)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wextra -Wshadow -Wconversion -Wpedantic -Werror)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wextra -Wshadow -Wconversion -Wpedantic -Werror $<$<CONFIG:Release>:-g1>)
 endif()
 
-if(UNIX AND NOT APPLE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE _GLIBCXX_USE_CXX11_ABI=0)
+if(LINUX)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _GLIBCXX_USE_CXX11_ABI=1)
     target_link_libraries(${PROJECT_NAME} PRIVATE -static-libstdc++ -static-libgcc)
+    #target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>: -fsanitize=address -fsanitize=leak -fsanitize=undefined>)
+    #target_link_libraries(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>: -fsanitize=address -fsanitize=leak -fsanitize=undefined>)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         PLUGIFY_FORMAT_SUPPORT=$<BOOL:${COMPILER_SUPPORTS_FORMAT}>
         PLUGIFY_IS_DEBUG=$<STREQUAL:${CMAKE_BUILD_TYPE},Debug>)
 if(NOT COMPILER_SUPPORTS_FORMAT)
-    target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt-header-only)
+    #target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt-header-only)
 endif()
 
 include(GenerateExportHeader)

@@ -1,7 +1,15 @@
-#include "groupManager.h"
+#include "group_manager.h"
 phmap::flat_hash_map<uint64_t, Group*> groups;
 
 std::shared_mutex groups_mtx;
+
+PLUGIFY_WARN_PUSH()
+
+#if defined(__clang__)
+PLUGIFY_WARN_IGNORE ("-Wreturn-type-c-linkage")
+#elif defined(_MSC_VER)
+PLUGIFY_WARN_IGNORE(4190)
+#endif
 
 /**
  * @brief Set parent group for child group
@@ -295,3 +303,5 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name) {
 	const auto v = groups.find(hash);
 	return v != groups.end();
 }
+
+PLUGIFY_WARN_POP()

@@ -1,6 +1,6 @@
 #pragma once
-#include <plugify/string.hpp>
-#include <plugify/vector.hpp>
+#include <plg/string.hpp>
+#include <plg/vector.hpp>
 #include <string_view>
 
 #include "xxhash.h"
@@ -30,7 +30,7 @@ struct Node {
 	plg::string name;// name of node
 	phmap::flat_hash_map<uint64_t, Node> nodes;// nested nodes
 
-	__always_inline Access _hasPermission(const uint64_t hashes[], const int sz) const {
+	PLUGIFY_FORCE_INLINE Access _hasPermission(const uint64_t hashes[], const int sz) const {
 		const Node* current = this;
 		const Node* lastWild = wildcard ? this : nullptr;// save last wildcard position
 
@@ -51,7 +51,7 @@ struct Node {
 		return current->state ? Access::Allow : Access::Disallow;
 	}
 
-	__always_inline void deletePerm(const plg::string& perm) {
+	PLUGIFY_FORCE_INLINE void deletePerm(const plg::string& perm) {
 		auto ispl = std::views::split(perm, '.');
 		uint64_t hashes[256];
 		int i = 0;
@@ -64,7 +64,7 @@ struct Node {
 		this->deletePerm(hashes, i);
 	}
 
-	__always_inline void deletePerm(const uint64_t hashes[], const int sz) {
+	PLUGIFY_FORCE_INLINE void deletePerm(const uint64_t hashes[], const int sz) {
 		if (sz < 1) return;
 		if (hashes[0] == AllAccess) {
 			this->nodes.clear();
@@ -112,7 +112,7 @@ struct Node {
 		}
 	}
 
-	__always_inline void addPerm(const plg::string& perm) {
+	PLUGIFY_FORCE_INLINE void addPerm(const plg::string& perm) {
 		const bool allow = !perm.starts_with('-');
 		const bool hasWildcard = perm.ends_with('*');
 		auto spl = std::views::split(perm, '.');

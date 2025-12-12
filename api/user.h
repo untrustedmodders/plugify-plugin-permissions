@@ -1,10 +1,10 @@
 #pragma once
 #include "group.h"
-#include "parallel-hashmap/parallel_hashmap/phmap.h"
+#include "parallel_hashmap/phmap.h"
 
-#include <plugify/any.hpp>
-#include <plugify/string.hpp>
-#include <plugify/vector.hpp>
+#include <plg/any.hpp>
+#include <plg/string.hpp>
+#include <plg/vector.hpp>
 
 inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
 
@@ -50,9 +50,9 @@ struct User {
 
 	void sortGroups() { std::sort(this->_groups.begin(), this->_groups.end(), sortF); }
 
-	User(int immunity, plg::vector<Group*>&& groups, const plg::vector<plg::string>& perms) {
+	User(int immunity, plg::vector<Group*>&& _groups, const plg::vector<plg::string>& perms) {
 		this->_immunity = immunity;
-		this->_groups = std::move(groups);
+		this->_groups = std::move(_groups);
 		sortGroups();
 		this->nodes = loadNode(perms);
 	}

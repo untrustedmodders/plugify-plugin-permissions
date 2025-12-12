@@ -1,7 +1,15 @@
-#include "userManager.h"
+#include "user_manager.h"
 phmap::flat_hash_map<uint64_t, User> users;
 
 std::shared_mutex users_mtx;
+
+PLUGIFY_WARN_PUSH()
+
+#if defined(__clang__)
+PLUGIFY_WARN_IGNORE ("-Wreturn-type-c-linkage")
+#elif defined(_MSC_VER)
+PLUGIFY_WARN_IGNORE(4190)
+#endif
 
 /**
  * @brief Get permissions of user
@@ -211,9 +219,7 @@ extern "C" PLUGIN_API bool RemoveGroup(const uint64_t id, const plg::string& gro
 
 	Group* g = GetGroup(group);
 	if (g == nullptr) return false;
-	const auto it = v->second._groups.find(g);
-	if (it == v->second._groups.end()) return true;
-	v->second._groups.erase(it);
+	plg::erase(v->second._groups, g);
 	return true;
 }
 
@@ -334,3 +340,5 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t id) {
 	const auto v = users.find(id);
 	return v != users.end();
 }
+
+PLUGIFY_WARN_POP()

@@ -1,8 +1,8 @@
 #pragma once
 #include "basic.h"
 #include "group.h"
-#include "userManager.h"
-#include "parallel-hashmap/parallel_hashmap/phmap.h"
+#include "parallel_hashmap/phmap.h"
+#include "user_manager.h"
 
 #include <plugin_export.h>
 
