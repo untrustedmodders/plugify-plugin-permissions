@@ -1,6 +1,6 @@
 #include <iostream>
-#include <plugify/cpp_plugin.hpp>
-#include <plugify/string.hpp>
+#include <plg/plugin.hpp>
+#include <plg/string.hpp>
 #include <plugin_export.h>
 
 class PlugifyPermissions final : public plg::IPluginEntry {
@@ -13,6 +13,6 @@ public:
 		std::cout << "Permissions core stopped" << std::endl;
 	}
 
-} g_examplePlugin;
+} g_permissionsPlugin;
 
-EXPOSE_PLUGIN(PLUGIN_API, PlugifyPermissions, &g_examplePlugin)
+EXPOSE_PLUGIN(PLUGIN_API, PlugifyPermissions, &g_permissionsPlugin)
