@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 #include <chrono>
+#include <span>
 #include <type_traits>
 
 #include "plg/any.hpp"
@@ -105,10 +106,11 @@ namespace plg {
             GetLocationFn GetLocation{nullptr}; \
             GetDependenciesFn GetDependencies{nullptr}; \
         } \
-        extern "C" plugin_api int Plugify_Init(void** api, int version, void* handle) { \
+        extern "C" plugin_api int Plugify_Init(void** data, size_t len, int version, void* handle) { \
             if (version < kApiVersion) { \
                 return kApiVersion; \
             } \
+            std::span<void*> api(data, len); \
             size_t i = 0; \
             GetBaseDir = reinterpret_cast<GetBaseDirFn>(api[i++]); \
             GetExtensionsDir = reinterpret_cast<GetExtensionsDirFn>(api[i++]); \
