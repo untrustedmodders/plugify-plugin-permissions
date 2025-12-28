@@ -309,3 +309,18 @@ extern "C" PLUGIN_API Status DeleteGroup(const plg::string& name) {
 	delete gg;
 	return Status::SUCCESS;
 }
+
+/**
+ * @brief Check if a group exists.
+ *
+ * @param name Group name.
+ * @return True if group exists, false otherwise.
+ */
+extern "C" PLUGIN_API bool GroupExists(const plg::string& name) {
+	const uint64_t hash = XXH3_64bits(name.data(), name.size());
+	std::unique_lock lock(groups_mtx);
+	const auto v = groups.find(hash);
+	return v != groups.end();
+}
+
+PLUGIFY_WARN_POP()
