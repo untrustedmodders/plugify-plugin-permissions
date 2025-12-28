@@ -21,7 +21,7 @@ struct Group {
 		this->_priority = priority;
 	}
 
-	[[nodiscard]] Access hasPermission(const plg::string& perm) const {
+	[[nodiscard]] Status hasPermission(const plg::string& perm) const {
 		std::string_view sv(perm);
 		auto ispl = std::views::split(sv, '.');
 		uint64_t hashes[256];
@@ -36,14 +36,14 @@ struct Group {
 		return _hasPermission(hashes, i);
 	}
 
-	Access _hasPermission(const uint64_t hashes[], const int sz) const {
+	Status _hasPermission(const uint64_t hashes[], const int sz) const {
 		const Group* i = this;
 
 		while (i) {
-			Access temp = i->_nodes._hasPermission(hashes, sz);
-			if (temp == Access::NotFound) i = i->_parent;
+			Status temp = i->_nodes._hasPermission(hashes, sz);
+			if (temp == Status::PERM_NOT_FOUND) i = i->_parent;
 			else return temp;
 		}
-		return Access::NotFound;
+		return Status::PERM_NOT_FOUND;
 	}
 };

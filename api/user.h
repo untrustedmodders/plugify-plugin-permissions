@@ -28,7 +28,7 @@ struct User {
 		return false;
 	}
 
-	Access hasPermission(const plg::string& perm) const {
+	Status hasPermission(const plg::string& perm) const {
 		auto ispl = std::views::split(perm, '.');
 		uint64_t hashes[256];
 		int i = 0;
@@ -37,15 +37,15 @@ struct User {
 			hashes[i] = XXH3_64bits(s.data(), s.size());
 			++i;
 		}
-		Access hasPerm = nodes._hasPermission(hashes, i);
-		if (hasPerm != Access::NotFound)// Check if user defined this permission
+		Status hasPerm = nodes._hasPermission(hashes, i);
+		if (hasPerm != Status::PERM_NOT_FOUND)// Check if user defined this permission
 			return hasPerm;
 
 		for (const auto g: _groups) {
 			hasPerm = g->_hasPermission(hashes, i);
-			if (hasPerm != Access::NotFound) return hasPerm;
+			if (hasPerm != Status::PERM_NOT_FOUND) return hasPerm;
 		}
-		return Access::NotFound;
+		return Status::PERM_NOT_FOUND;
 	}
 
 	void sortGroups() { std::sort(this->_groups.begin(), this->_groups.end(), sortF); }

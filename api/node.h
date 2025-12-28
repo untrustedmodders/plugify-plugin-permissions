@@ -9,10 +9,19 @@
 #include <ranges>
 const uint64_t AllAccess = XXH3_64bits("*", 1);
 
-enum class Access : int32_t {
-	NotFound = 0,// Disallow
-	Disallow = 1,
-	Allow = 2
+enum class Status : int32_t {
+	SUCCESS = 0,
+	ALLOW = SUCCESS,
+	DISALLOW = 1,
+	GROUP1_NOT_FOUND = 2,
+	GROUP2_NOT_FOUND = 3,
+	USER1_NOT_FOUND = 4,
+	USER2_NOT_FOUND = 5,
+	PERM_NOT_FOUND = 6,
+	COOKIE_NOT_FOUND = PERM_NOT_FOUND,
+	GROUP_ALREADY_EXIST = 7,
+	USER_ALREADY_EXIST = GROUP_ALREADY_EXIST,
+
 };
 
 struct string_hash {
@@ -30,7 +39,7 @@ struct Node {
 	plg::string name;// name of node
 	phmap::flat_hash_map<uint64_t, Node> nodes;// nested nodes
 
-	PLUGIFY_FORCE_INLINE Access _hasPermission(const uint64_t hashes[], const int sz) const {
+	__always_inline Status _hasPermission(const uint64_t hashes[], const int sz) const {
 		const Node* current = this;
 		const Node* lastWild = wildcard ? this : nullptr;// save last wildcard position
 
@@ -39,7 +48,7 @@ struct Node {
 			auto it = current->nodes.find(hsh);
 			if (it == current->nodes.end()) {
 				// requested node not found - return wildcard status
-				return lastWild ? (lastWild->state ? Access::Allow : Access::Disallow) : Access::NotFound;
+				return lastWild ? (lastWild->state ? Status::ALLOW : Status::DISALLOW) : Status::PERM_NOT_FOUND;
 			}
 
 			// save current position
@@ -48,7 +57,7 @@ struct Node {
 			if (current->wildcard) lastWild = current;
 		}
 
-		return current->state ? Access::Allow : Access::Disallow;
+		return current->state ? Status::ALLOW : Status::DISALLOW;
 	}
 
 	PLUGIFY_FORCE_INLINE void deletePerm(const plg::string& perm) {
