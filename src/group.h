@@ -1,11 +1,11 @@
 #pragma once
 #include "node.h"
+
+#include <xxhash.h>
+#include <parallel_hashmap/phmap.h>
+#include <plg/any.hpp>
 #include <plg/string.hpp>
 #include <plg/vector.hpp>
-
-#include "xxhash.h"
-#include "parallel_hashmap/phmap.h"
-#include <plg/any.hpp>
 
 struct Group {
 	Group* _parent;// root of this group

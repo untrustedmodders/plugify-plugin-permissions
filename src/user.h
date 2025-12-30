@@ -1,7 +1,7 @@
 #pragma once
 #include "group.h"
-#include "parallel_hashmap/phmap.h"
 
+#include <parallel_hashmap/phmap.h>
 #include <plg/any.hpp>
 #include <plg/string.hpp>
 #include <plg/vector.hpp>
@@ -56,3 +56,4 @@ struct User {
 		sortGroups();
 		this->nodes = loadNode(perms);
 	}
+};
