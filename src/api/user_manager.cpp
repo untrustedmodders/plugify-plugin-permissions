@@ -21,7 +21,8 @@ PLUGIFY_WARN_IGNORE(4190)
 extern "C" PLUGIN_API Status DumpPermissions(const uint64_t id, plg::vector<plg::string>& perms) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	perms = dumpNode(v->second.nodes);
 
@@ -61,7 +62,8 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t id1, const uint64_t id
 extern "C" PLUGIN_API Status HasPermission(const uint64_t id, const plg::string& perm) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v != users.end()) return v->second.hasPermission(perm);
+	if (v != users.end())
+		return v->second.hasPermission(perm);
 	return Status::USER1_NOT_FOUND;
 }
 
@@ -75,7 +77,8 @@ extern "C" PLUGIN_API Status HasPermission(const uint64_t id, const plg::string&
 extern "C" PLUGIN_API Status HasGroup(const uint64_t id, const plg::string& group) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	const Group* g = GetGroup(group);
 	if (g == nullptr)
@@ -84,7 +87,8 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t id, const plg::string& grou
 	for (const auto gg: v->second._groups) {
 		auto ggg = gg;
 		while (ggg) {
-			if (ggg == g) return Status::ALLOW;
+			if (ggg == g)
+				return Status::ALLOW;
 			ggg = ggg->_parent;
 		}
 	}
@@ -101,7 +105,8 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t id, const plg::string& grou
 extern "C" PLUGIN_API Status GetUserGroups(const uint64_t id, plg::vector<plg::string>& ogroups) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	ogroups.clear();
 	ogroups.reserve(v->second._groups.size());
@@ -121,7 +126,8 @@ extern "C" PLUGIN_API Status GetUserGroups(const uint64_t id, plg::vector<plg::s
 extern "C" PLUGIN_API Status GetImmunity(const uint64_t id, int& immunity) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 	immunity = v->second._immunity;
 	return Status::SUCCESS;
 }
@@ -136,7 +142,8 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t id, int& immunity) {
 extern "C" PLUGIN_API Status AddPermission(const uint64_t id, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 	v->second.nodes.addPerm(perm);
 	return Status::SUCCESS;
 }
@@ -151,9 +158,11 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t id, const plg::string&
 extern "C" PLUGIN_API Status AddPermissions(const uint64_t id, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
-	for (const auto& perm: perms) v->second.nodes.addPerm(perm);
+	for (const auto& perm:
+		perms) v->second.nodes.addPerm(perm);
 	return Status::SUCCESS;
 }
 
@@ -167,7 +176,8 @@ extern "C" PLUGIN_API Status AddPermissions(const uint64_t id, const plg::vector
 extern "C" PLUGIN_API Status RemovePermission(const uint64_t id, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	v->second.nodes.deletePerm(perm);
 	return Status::SUCCESS;
@@ -183,9 +193,11 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t id, const plg::stri
 extern "C" PLUGIN_API Status RemovePermissions(const uint64_t id, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
-	for (const auto& perm: perms) v->second.nodes.deletePerm(perm);
+	for (const auto& perm: perms)
+		v->second.nodes.deletePerm(perm);
 	return Status::SUCCESS;
 }
 
@@ -199,7 +211,8 @@ extern "C" PLUGIN_API Status RemovePermissions(const uint64_t id, const plg::vec
 extern "C" PLUGIN_API Status AddGroup(const uint64_t id, const plg::string& group) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	Group* g = GetGroup(group);
 	if (g == nullptr)
@@ -207,7 +220,8 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t id, const plg::string& grou
 	for (const auto gg: v->second._groups) {
 		const Group* ggg = gg;
 		while (ggg) {
-			if (ggg == g) return Status::GROUP_ALREADY_EXIST;
+			if (ggg == g)
+				return Status::GROUP_ALREADY_EXIST;
 			ggg = ggg->_parent;
 		}
 	}
@@ -226,7 +240,8 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t id, const plg::string& grou
 extern "C" PLUGIN_API Status RemoveGroup(const uint64_t id, const plg::string& group) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	Group* g = GetGroup(group);
 	if (g == nullptr)
@@ -245,7 +260,8 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t id, const plg::string& g
 extern "C" PLUGIN_API Status GetCookie(uint64_t id, const plg::string& name, plg::any& cookie) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	auto val = v->second.cookies.find(name);
 	bool found = val != v->second.cookies.end();
@@ -278,7 +294,8 @@ extern "C" PLUGIN_API Status GetCookie(uint64_t id, const plg::string& name, plg
 extern "C" PLUGIN_API Status SetCookie(uint64_t id, const plg::string& name, const plg::any& cookie) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	v->second.cookies[name] = cookie;
 	return Status::SUCCESS;
@@ -296,7 +313,8 @@ extern "C" PLUGIN_API Status SetCookie(uint64_t id, const plg::string& name, con
 extern "C" PLUGIN_API Status GetAllCookies(const uint64_t id, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	names.clear();
 	values.clear();
@@ -320,13 +338,15 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t id, plg::vector<plg::s
  */
 extern "C" PLUGIN_API Status CreateUser(uint64_t id, int immunity, const plg::vector<plg::string>& lgroups, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
-	if (users.contains(id)) return Status::USER_ALREADY_EXIST;
+	if (users.contains(id))
+		return Status::USER_ALREADY_EXIST;
 
 	plg::vector<Group*> llgroups;
 	llgroups.reserve(lgroups.size());
 	for (auto& lgroup: lgroups) {
 		Group* gg = GetGroup(lgroup);
-		if (gg == nullptr) return Status::GROUP1_NOT_FOUND;
+		if (gg == nullptr)
+			return Status::GROUP1_NOT_FOUND;
 		llgroups.push_back(gg);
 	}
 
@@ -343,7 +363,8 @@ extern "C" PLUGIN_API Status CreateUser(uint64_t id, int immunity, const plg::ve
 extern "C" PLUGIN_API Status DeleteUser(const uint64_t id) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(id);
-	if (v == users.end()) return Status::USER1_NOT_FOUND;
+	if (v == users.end())
+		return Status::USER1_NOT_FOUND;
 
 	users.erase(v);
 	return Status::SUCCESS;

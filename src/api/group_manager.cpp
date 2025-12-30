@@ -65,7 +65,8 @@ extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::shared_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
-	if (v == groups.end()) Status::GROUP1_NOT_FOUND;
+	if (v == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	perms = dumpNode(v->second->_nodes);
 
@@ -99,7 +100,8 @@ extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const p
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::shared_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
-	if (it == groups.end()) return Status::GROUP1_NOT_FOUND;
+	if (it == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 	return it->second->hasPermission(perm);
 }
 
@@ -141,7 +143,8 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& name, int& prio
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::shared_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
-	if (it == groups.end()) Status::GROUP1_NOT_FOUND;
+	if (it == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 	priority = it->second->_priority;
 	return Status::SUCCESS;
 }
@@ -157,7 +160,8 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const p
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
-	if (it == groups.end()) Status::GROUP1_NOT_FOUND;
+	if (it == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	std::unique_lock lock2(users_mtx);
 	it->second->_nodes.addPerm(perm);
@@ -175,7 +179,8 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const plg::string& name, cons
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
-	if (it == groups.end()) return Status::GROUP1_NOT_FOUND;
+	if (it == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	std::unique_lock lock2(users_mtx);
 	it->second->_nodes.deletePerm(perm);
@@ -194,7 +199,8 @@ extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& gname, const plg:
 	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
 	std::shared_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
-	if (v == groups.end()) return Status::GROUP1_NOT_FOUND;
+	if (v == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	Group* g = v->second;
 	while (g != nullptr) {
@@ -221,7 +227,8 @@ extern "C" PLUGIN_API Status SetCookieGroup(const plg::string& gname, const plg:
 	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
 	std::unique_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
-	if (v == groups.end()) return Status::GROUP1_NOT_FOUND;
+	if (v == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	std::unique_lock lock2(users_mtx);
 	v->second->cookies[cname] = cookie;
@@ -241,7 +248,8 @@ extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& gname, plg::v
 	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
 	std::shared_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
-	if (v == groups.end()) return Status::GROUP1_NOT_FOUND;
+	if (v == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	names.clear();
 	values.clear();
@@ -266,7 +274,8 @@ extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& gname, plg::v
 extern "C" PLUGIN_API Status CreateGroup(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
-	if (groups.contains(hash)) return Status::GROUP_ALREADY_EXIST;
+	if (groups.contains(hash))
+		return Status::GROUP_ALREADY_EXIST;
 	Group* gparent = nullptr;
 	if (!parent.empty()) {
 		gparent = GetGroup(parent);
@@ -288,7 +297,8 @@ extern "C" PLUGIN_API Status DeleteGroup(const plg::string& name) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
-	if (it == groups.end()) return Status::GROUP1_NOT_FOUND;
+	if (it == groups.end())
+		return Status::GROUP1_NOT_FOUND;
 
 	const Group* gg = it->second;
 	groups.erase(it);
