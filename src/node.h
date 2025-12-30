@@ -10,17 +10,18 @@
 const uint64_t AllAccess = XXH3_64bits("*", 1);
 
 enum class Status : int32_t {
-	SUCCESS = 0,
-	ALLOW = SUCCESS,
-	DISALLOW = 1,
-	GROUP1_NOT_FOUND = 2,
-	GROUP2_NOT_FOUND = 3,
-	USER1_NOT_FOUND = 4,
-	USER2_NOT_FOUND = 5,
-	PERM_NOT_FOUND = 6,
-	COOKIE_NOT_FOUND = PERM_NOT_FOUND,
-	GROUP_ALREADY_EXIST = 7,
-	USER_ALREADY_EXIST = GROUP_ALREADY_EXIST,
+	Success = 0,
+	Allow = Success,
+	Disallow = 1,
+	GroupNotFound = 2,
+	ChildGroupNotFound = GroupNotFound,
+	ParentGroupNotFound = 3,
+	ActorUserNotFound = 4,
+	TargetUserNotFound = 5,
+	PermNotFound = 6,
+	CookieNotFound = PermNotFound,
+	GroupAlreadyExist = 7,
+	UserAlreadyExist = GroupAlreadyExist,
 
 };
 
@@ -48,7 +49,7 @@ struct Node {
 			auto it = current->nodes.find(hsh);
 			if (it == current->nodes.end()) {
 				// requested node not found - return wildcard status
-				return lastWild ? (lastWild->state ? Status::ALLOW : Status::DISALLOW) : Status::PERM_NOT_FOUND;
+				return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
 			}
 
 			// save current position
@@ -57,7 +58,7 @@ struct Node {
 			if (current->wildcard) lastWild = current;
 		}
 
-		return current->state ? Status::ALLOW : Status::DISALLOW;
+		return current->state ? Status::Allow : Status::Disallow;
 	}
 
 	PLUGIFY_FORCE_INLINE void deletePerm(const plg::string& perm) {

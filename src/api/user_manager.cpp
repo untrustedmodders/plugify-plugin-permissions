@@ -6,7 +6,7 @@ std::shared_mutex users_mtx;
 PLUGIFY_WARN_PUSH()
 
 #if defined(__clang__)
-PLUGIFY_WARN_IGNORE ("-Wreturn-type-c-linkage")
+PLUGIFY_WARN_IGNORE("-Wreturn-type-c-linkage")
 #elif defined(_MSC_VER)
 PLUGIFY_WARN_IGNORE(4190)
 #endif
@@ -14,254 +14,254 @@ PLUGIFY_WARN_IGNORE(4190)
 /**
  * @brief Get permissions of user
  *
- * @param id Player ID
+ * @param targetID Player ID
  * @param perms Permissions
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status DumpPermissions(const uint64_t id, plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status DumpPermissions(const uint64_t targetID, plg::vector<plg::string>& perms) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	perms = dumpNode(v->second.nodes);
 
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Check players immunity or groups priority
  *
- * @param id1 Player ID
- * @param id2 Player ID
- * @return ALLOW | DISALLOW | USER1_NOT_FOUND | USER2_NOT_FOUND
+ * @param actorID Player performing the action
+ * @param targetID Player receiving the action
+ * @return Allow, Disallow, ActorUserNotFound, or TargetUserNotFound
  */
-extern "C" PLUGIN_API Status CanAffectUser(const uint64_t id1, const uint64_t id2) {
+extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_t targetID) {
 	std::shared_lock lock(users_mtx);
-	const auto v1 = users.find(id1);
-	const auto v2 = users.find(id2);
+	const auto v1 = users.find(actorID);
+	const auto v2 = users.find(targetID);
 	if (v1 == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::ActorUserNotFound;
 	if (v2 == users.end())
-		return Status::USER2_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	const auto i1 = v1->second._immunity == -1 ? (v1->second._groups.empty() ? -1 : v1->second._groups.front()->_priority) : v1->second._immunity;
 	const auto i2 = v2->second._immunity == -1 ? (v2->second._groups.empty() ? -1 : v2->second._groups.front()->_priority) : v2->second._immunity;
 
-	return i1 >= i2 ? Status::ALLOW : Status::DISALLOW;
+	return i1 >= i2 ? Status::Allow : Status::Disallow;
 }
 
 /**
  * @brief Check if a user has a specific permission.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param perm Permission line.
- * @return ALLOW | DISALLOW | PERM_NOT_FOUND | USER1_NOT_FOUND
+ * @return Allow, Disallow, PermNotFound, TargetUserNotFound
  *
  */
-extern "C" PLUGIN_API Status HasPermission(const uint64_t id, const plg::string& perm) {
+extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::string& perm) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v != users.end())
 		return v->second.hasPermission(perm);
-	return Status::USER1_NOT_FOUND;
+	return Status::TargetUserNotFound;
 }
 
 /**
  * @brief Check if a user belongs to a specific group (directly or via parent groups).
  *
- * @param id Player ID.
- * @param group Group name.
- * @return ALLOW | DISALLOW | USER1_NOT_FOUND | GROUP1_NOT_FOUND
+ * @param targetID Player ID.
+ * @param groupName Group name.
+ * @return Allow, Disallow, TargetUserNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status HasGroup(const uint64_t id, const plg::string& group) {
+extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string& groupName) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
-	const Group* g = GetGroup(group);
+	const Group* g = GetGroup(groupName);
 	if (g == nullptr)
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
 	for (const auto gg: v->second._groups) {
 		auto ggg = gg;
 		while (ggg) {
 			if (ggg == g)
-				return Status::ALLOW;
+				return Status::Allow;
 			ggg = ggg->_parent;
 		}
 	}
-	return Status::DISALLOW;
+	return Status::Disallow;
 }
 
 /**
  * @Brief Get user groups.
  *
- * @param id Player ID.
- * @param ogroups Groups
- * @return SUCCESS | USER1_NOT_FOUND
+ * @param targetID Player ID.
+ * @param outGroups Groups
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status GetUserGroups(const uint64_t id, plg::vector<plg::string>& ogroups) {
+extern "C" PLUGIN_API Status GetUserGroups(const uint64_t targetID, plg::vector<plg::string>& outGroups) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
-	ogroups.clear();
-	ogroups.reserve(v->second._groups.size());
+	outGroups.clear();
+	outGroups.reserve(v->second._groups.size());
 	for (const auto g: v->second._groups)
-		ogroups.push_back(g->_name);
+		outGroups.push_back(g->_name);
 
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Get the immunity level of a user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param immunity Immunity
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status GetImmunity(const uint64_t id, int& immunity) {
+extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 	immunity = v->second._immunity;
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Add a permission to a user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param perm Permission line.
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status AddPermission(const uint64_t id, const plg::string& perm) {
+extern "C" PLUGIN_API Status AddPermission(const uint64_t targetID, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 	v->second.nodes.addPerm(perm);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Add a permissions to a user.
  *
- * @param id Player ID
+ * @param targetID Player ID
  * @param perms Permissions array
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status AddPermissions(const uint64_t id, const plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status AddPermissions(const uint64_t targetID, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	for (const auto& perm:
-		perms) v->second.nodes.addPerm(perm);
-	return Status::SUCCESS;
+		 perms) v->second.nodes.addPerm(perm);
+	return Status::Success;
 }
 
 /**
  * @brief Remove a permission from a user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param perm Permission line.
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status RemovePermission(const uint64_t id, const plg::string& perm) {
+extern "C" PLUGIN_API Status RemovePermission(const uint64_t targetID, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	v->second.nodes.deletePerm(perm);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Remove a permissions to a user.
  *
- * @param id Player ID
+ * @param targetID Player ID
  * @param perms Permissions array
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status RemovePermissions(const uint64_t id, const plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status RemovePermissions(const uint64_t targetID, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	for (const auto& perm: perms)
 		v->second.nodes.deletePerm(perm);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Add a group to a user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param group Group name.
- * @return SUCCESS | USER1_NOT_FOUND | GROUP1_NOT_FOUND | GROUP_ALREADY_EXIST
+ * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
-extern "C" PLUGIN_API Status AddGroup(const uint64_t id, const plg::string& group) {
+extern "C" PLUGIN_API Status AddGroup(const uint64_t targetID, const plg::string& group) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	Group* g = GetGroup(group);
 	if (g == nullptr)
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 	for (const auto gg: v->second._groups) {
 		const Group* ggg = gg;
 		while (ggg) {
 			if (ggg == g)
-				return Status::GROUP_ALREADY_EXIST;
+				return Status::GroupAlreadyExist;
 			ggg = ggg->_parent;
 		}
 	}
 	v->second._groups.push_back(g);
 	v->second.sortGroups();
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Remove a group from a user.
  *
- * @param id Player ID.
- * @param group Group name.
- * @return SUCCESS | USER1_NOT_FOUND | GROUP1_NOT_FOUND | GROUP2_NOT_FOUND
+ * @param targetID Player ID.
+ * @param groupName Group name.
+ * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status RemoveGroup(const uint64_t id, const plg::string& group) {
+extern "C" PLUGIN_API Status RemoveGroup(const uint64_t targetID, const plg::string& groupName) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
-	Group* g = GetGroup(group);
+	Group* g = GetGroup(groupName);
 	if (g == nullptr)
-		return Status::GROUP1_NOT_FOUND;
-	return plg::erase(v->second._groups, g) > 0 ? Status::SUCCESS : Status::GROUP2_NOT_FOUND;
+		return Status::ChildGroupNotFound;
+	return plg::erase(v->second._groups, g) > 0 ? Status::Success : Status::ParentGroupNotFound;
 }
 
 /**
  * @brief Get a cookie value for a user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param name Cookie name.
- * @param cookie Cookie value.
- * @return SUCCESS | USER1_NOT_FOUND | COOKIE_NOT_FOUND
+ * @param value Cookie value.
+ * @return Success, TargetUserNotFound, CookieNotFound
  */
-extern "C" PLUGIN_API Status GetCookie(uint64_t id, const plg::string& name, plg::any& cookie) {
+extern "C" PLUGIN_API Status GetCookie(uint64_t targetID, const plg::string& name, plg::any& value) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	auto val = v->second.cookies.find(name);
 	bool found = val != v->second.cookies.end();
@@ -279,42 +279,42 @@ extern "C" PLUGIN_API Status GetCookie(uint64_t id, const plg::string& name, plg
 		}
 	}
 	if (found)
-		cookie = val->second;
-	return found ? Status::SUCCESS : Status::COOKIE_NOT_FOUND;
+		value = val->second;
+	return found ? Status::Success : Status::CookieNotFound;
 }
 
 /**
  * @brief Set a cookie value for a user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param name Cookie name.
  * @param cookie Cookie value.
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status SetCookie(uint64_t id, const plg::string& name, const plg::any& cookie) {
+extern "C" PLUGIN_API Status SetCookie(uint64_t targetID, const plg::string& name, const plg::any& cookie) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	v->second.cookies[name] = cookie;
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Get all cookies from user.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @param names Array of cookie names
  * @param values Array of cookie values
- * @return SUCCESS | USER1_NOT_FOUND
+ * @return Success, TargetUserNotFound
  */
 
-extern "C" PLUGIN_API Status GetAllCookies(const uint64_t id, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
+extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	names.clear();
 	values.clear();
@@ -324,61 +324,61 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t id, plg::vector<plg::s
 		values.push_back(vv);
 	}
 
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Create a new user.
  *
- * @param id Player ID.
- * @param immunity User immunity (set -1 to return highest group priotiry).
- * @param lgroups Array of groups to inherit.
+ * @param targetID Player ID.
+ * @param immunity User immunity (set -1 to return highest group priority).
+ * @param groupNames Array of groups to inherit.
  * @param perms Array of permissions.
- * @return SUCCESS | USER_ALREADY_EXIST | GROUP1_NOT_FOUND
+ * @return Success, UserAlreadyExist, GroupNotFound
  */
-extern "C" PLUGIN_API Status CreateUser(uint64_t id, int immunity, const plg::vector<plg::string>& lgroups, const plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status CreateUser(uint64_t targetID, int immunity, const plg::vector<plg::string>& groupNames, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
-	if (users.contains(id))
-		return Status::USER_ALREADY_EXIST;
+	if (users.contains(targetID))
+		return Status::UserAlreadyExist;
 
-	plg::vector<Group*> llgroups;
-	llgroups.reserve(lgroups.size());
-	for (auto& lgroup: lgroups) {
-		Group* gg = GetGroup(lgroup);
-		if (gg == nullptr)
-			return Status::GROUP1_NOT_FOUND;
-		llgroups.push_back(gg);
+	plg::vector<Group*> groupPointers;
+	groupPointers.reserve(groupNames.size());
+	for (auto& name: groupNames) {
+		Group* group = GetGroup(name);
+		if (group == nullptr)
+			return Status::GroupNotFound;
+		groupPointers.push_back(group);
 	}
 
-	users.try_emplace(id, immunity, std::move(llgroups), perms);
-	return Status::SUCCESS;
+	users.try_emplace(targetID, immunity, std::move(groupPointers), perms);
+	return Status::Success;
 }
 
 /**
  * @brief Delete a user.
  *
- * @param id Player ID.
- * @return SUCCESS | USER1_NOT_FOUND
+ * @param targetID Player ID.
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status DeleteUser(const uint64_t id) {
+extern "C" PLUGIN_API Status DeleteUser(const uint64_t targetID) {
 	std::unique_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	if (v == users.end())
-		return Status::USER1_NOT_FOUND;
+		return Status::TargetUserNotFound;
 
 	users.erase(v);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Check if a user exists.
  *
- * @param id Player ID.
+ * @param targetID Player ID.
  * @return True if user exists, false otherwise.
  */
-extern "C" PLUGIN_API bool UserExists(const uint64_t id) {
+extern "C" PLUGIN_API bool UserExists(const uint64_t targetID) {
 	std::shared_lock lock(users_mtx);
-	const auto v = users.find(id);
+	const auto v = users.find(targetID);
 	return v != users.end();
 }
 

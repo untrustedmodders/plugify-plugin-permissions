@@ -41,9 +41,9 @@ struct Group {
 
 		while (i) {
 			Status temp = i->_nodes._hasPermission(hashes, sz);
-			if (temp == Status::PERM_NOT_FOUND) i = i->_parent;
+			if (temp == Status::PermNotFound) i = i->_parent;
 			else return temp;
 		}
-		return Status::PERM_NOT_FOUND;
+		return Status::PermNotFound;
 	}
 };

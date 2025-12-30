@@ -38,14 +38,14 @@ struct User {
 			++i;
 		}
 		Status hasPerm = nodes._hasPermission(hashes, i);
-		if (hasPerm != Status::PERM_NOT_FOUND)// Check if user defined this permission
+		if (hasPerm != Status::PermNotFound)// Check if user defined this permission
 			return hasPerm;
 
 		for (const auto g: _groups) {
 			hasPerm = g->_hasPermission(hashes, i);
-			if (hasPerm != Status::PERM_NOT_FOUND) return hasPerm;
+			if (hasPerm != Status::PermNotFound) return hasPerm;
 		}
-		return Status::PERM_NOT_FOUND;
+		return Status::PermNotFound;
 	}
 
 	void sortGroups() { std::sort(this->_groups.begin(), this->_groups.end(), sortF); }

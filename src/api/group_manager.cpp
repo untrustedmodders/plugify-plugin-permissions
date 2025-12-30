@@ -6,7 +6,7 @@ std::shared_mutex groups_mtx;
 PLUGIFY_WARN_PUSH()
 
 #if defined(__clang__)
-PLUGIFY_WARN_IGNORE ("-Wreturn-type-c-linkage")
+PLUGIFY_WARN_IGNORE("-Wreturn-type-c-linkage")
 #elif defined(_MSC_VER)
 PLUGIFY_WARN_IGNORE(4190)
 #endif
@@ -14,44 +14,44 @@ PLUGIFY_WARN_IGNORE(4190)
 /**
  * @brief Set parent group for child group
  *
- * @param child_name Child group name
- * @param parent_name Parent group name to set
- * @return SUCCESS | GROUP1_NOT_FOUND | GROUP2_NOT_FOUND
+ * @param childName Child group name
+ * @param parentName Parent group name to set
+ * @return Success, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status SetParent(const plg::string& child_name, const plg::string& parent_name) {
-	const uint64_t hash1 = XXH3_64bits(child_name.data(), child_name.size());
-	const uint64_t hash2 = XXH3_64bits(parent_name.data(), parent_name.size());
+extern "C" PLUGIN_API Status SetParent(const plg::string& childName, const plg::string& parentName) {
+	const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
+	const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
 	std::unique_lock lock(groups_mtx);
 	const auto it1 = groups.find(hash1);
 	const auto it2 = groups.find(hash2);
 
 	if (it1 == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::ChildGroupNotFound;
 	if (it2 == groups.end())
-		return Status::GROUP2_NOT_FOUND;
+		return Status::ParentGroupNotFound;
 
 	it1->second->_parent = it2->second;
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Get parent of requested group
  *
- * @param name Group name
- * @param output Parent name
- * @return SUCCESS | GROUP1_NOT_FOUND | GROUP2_NOT_FOUND
+ * @param groupName Group name
+ * @param parentName Parent name
+ * @return Success, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status GetParent(const plg::string& name, plg::string& output) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
+extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string& parentName) {
+	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
 	std::shared_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
 
 	if (it == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::ChildGroupNotFound;
 	if (!it->second->_parent)
-		return Status::GROUP2_NOT_FOUND;
-	output = it->second->_parent->_name;
-	return Status::SUCCESS;
+		return Status::ParentGroupNotFound;
+	parentName = it->second->_parent->_name;
+	return Status::Success;
 }
 
 /**
@@ -59,18 +59,18 @@ extern "C" PLUGIN_API Status GetParent(const plg::string& name, plg::string& out
  *
  * @param name Group name
  * @param perms Permissions
- * @return SUCCESS | GROUP1_NOT_FOUND
+ * @return Success, GroupNotFound
  */
 extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::vector<plg::string>& perms) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::shared_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
 	if (v == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::ChildGroupNotFound;
 
 	perms = dumpNode(v->second->_nodes);
 
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
@@ -94,59 +94,59 @@ extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups() {
  *
  * @param name Group name.
  * @param perm Permission line.
- * @return ALLOW | DISALLOW | PERM_NOT_FOUND | GROUP1_NOT_FOUND
+ * @return Allow, Disallow, PermNotFound, GroupNotFound
  */
 extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const plg::string& perm) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::shared_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 	return it->second->hasPermission(perm);
 }
 
 /**
  * @brief Check if parent_name is a parent group for child_name.
  *
- * @param child_name Child group name.
- * @param parent_name Parent group name to check.
- * @return ALLOW | DISALLOW | GROUP1_NOT_FOUND | GROUP2_NOT_FOUND
+ * @param childName Child group name.
+ * @param parentName Parent group name to check.
+ * @return Allow, Disallow, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status HasParentGroup(const plg::string& child_name, const plg::string& parent_name) {
-	const uint64_t hash1 = XXH3_64bits(child_name.data(), child_name.size());
-	const uint64_t hash2 = XXH3_64bits(parent_name.data(), parent_name.size());
+extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const plg::string& parentName) {
+	const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
+	const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
 	std::shared_lock lock(groups_mtx);
 	const auto it1 = groups.find(hash1);
 	const auto it2 = groups.find(hash2);
 	if (it1 == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::ChildGroupNotFound;
 	if (it2 == groups.end())
-		return Status::GROUP2_NOT_FOUND;
+		return Status::ParentGroupNotFound;
 
 	const Group* g1 = it1->second;
 	const Group* g2 = it2->second;
 	while (g1) {
-		if (g1->_parent == g2) return Status::ALLOW;
+		if (g1->_parent == g2) return Status::Allow;
 		g1 = g1->_parent;
 	}
-	return Status::DISALLOW;
+	return Status::Disallow;
 }
 
 /**
  * @brief Get the priority of a group.
  *
- * @param name Group name.
+ * @param groupName Group name.
  * @param priority Priority
- * @return SUCCESS | GROUP1_NOT_FOUND
+ * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& name, int& priority) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
+extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int& priority) {
+	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
 	std::shared_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 	priority = it->second->_priority;
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
@@ -154,18 +154,18 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& name, int& prio
  *
  * @param name Group name.
  * @param perm Permission line.
- * @return SUCCESS | GROUP1_NOT_FOUND
+ * @return Success, GroupNotFound
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const plg::string& perm) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
 	std::unique_lock lock2(users_mtx);
 	it->second->_nodes.addPerm(perm);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
@@ -173,93 +173,93 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const p
  *
  * @param name Group name.
  * @param perm Permission line.
- * @return SUCCESS | GROUP1_NOT_FOUND
+ * @return Success, GroupNotFound
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const plg::string& name, const plg::string& perm) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
 	std::unique_lock lock2(users_mtx);
 	it->second->_nodes.deletePerm(perm);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Get a cookie value for a group.
  *
- * @param gname Group name
- * @param cname Cookie name
- * @param cookie Cookie value
- * @return SUCCESS | COOKIE_NOT_FOUND | GROUP1_NOT_FOUND
+ * @param groupName Group name
+ * @param cookieName Cookie name
+ * @param value Cookie value
+ * @return Success, CookieNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& gname, const plg::string& cname, plg::any& cookie) {
-	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
+extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const plg::string& cookieName, plg::any& value) {
+	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
 	std::shared_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
 	if (v == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
 	Group* g = v->second;
 	while (g != nullptr) {
-		const auto val = g->cookies.find(cname);
+		const auto val = g->cookies.find(cookieName);
 		if (val == g->cookies.end()) {
 			g = g->_parent;
 			continue;
 		}
-		cookie = val->second;
-		return Status::SUCCESS;
+		value = val->second;
+		return Status::Success;
 	}
-	return Status::COOKIE_NOT_FOUND;
+	return Status::CookieNotFound;
 }
 
 /**
  * @brief Set a cookie value for a group.
  *
- * @param gname Group name
- * @param cname Cookie name
- * @param cookie Cookie value.
- * @return SUCCESS | GROUP1_NOT_FOUND
+ * @param groupName Group name
+ * @param cookieName Cookie name
+ * @param value Cookie value.
+ * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status SetCookieGroup(const plg::string& gname, const plg::string& cname, const plg::any& cookie) {
-	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
+extern "C" PLUGIN_API Status SetCookieGroup(const plg::string& groupName, const plg::string& cookieName, const plg::any& value) {
+	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
 	std::unique_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
 	if (v == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
 	std::unique_lock lock2(users_mtx);
-	v->second->cookies[cname] = cookie;
-	return Status::SUCCESS;
+	v->second->cookies[cookieName] = value;
+	return Status::Success;
 }
 
 /**
  * @brief Get all cookies from group.
  *
- * @param gname Group name
- * @param names Array of cookie names
+ * @param groupName Group name
+ * @param cookieNames Array of cookie names
  * @param values Array of cookie values
- * @return SUCCESS | GROUP1_NOT_FOUND
+ * @return Success, GroupNotFound
  */
 
-extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& gname, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
-	const uint64_t hash = XXH3_64bits(gname.data(), gname.size());
+extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, plg::vector<plg::string>& cookieNames, plg::vector<plg::any>& values) {
+	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
 	std::shared_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
 	if (v == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
-	names.clear();
+	cookieNames.clear();
 	values.clear();
 
 	for (const auto& [kv, vv]: v->second->cookies) {
-		names.push_back(kv);
+		cookieNames.push_back(kv);
 		values.push_back(vv);
 	}
 
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
@@ -269,36 +269,36 @@ extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& gname, plg::v
  * @param perms Array of permission lines.
  * @param priority Group priority.
  * @param parent Parent group name.
- * @return SUCCESS | GROUP_ALREADY_EXIST | GROUP1_NOT_FOUND
+ * @return Success, GroupAlreadyExist, ParentGroupNotFound
  */
 extern "C" PLUGIN_API Status CreateGroup(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	if (groups.contains(hash))
-		return Status::GROUP_ALREADY_EXIST;
-	Group* gparent = nullptr;
+		return Status::GroupAlreadyExist;
+	Group* parentGroup = nullptr;
 	if (!parent.empty()) {
-		gparent = GetGroup(parent);
-		if (!gparent) return Status::GROUP1_NOT_FOUND;
+		parentGroup = GetGroup(parent);
+		if (!parentGroup) return Status::ParentGroupNotFound;
 	}
 
-	auto* group = new Group(perms, name, priority, gparent);
+	auto* group = new Group(perms, name, priority, parentGroup);
 	groups.try_emplace(hash, group);
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
  * @brief Delete a group.
  *
  * @param name Group name.
- * @return True if deleted; false if group not found.
+ * @return Success if deleted; GroupNotFound if group not found.
  */
 extern "C" PLUGIN_API Status DeleteGroup(const plg::string& name) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
 	if (it == groups.end())
-		return Status::GROUP1_NOT_FOUND;
+		return Status::GroupNotFound;
 
 	const Group* gg = it->second;
 	groups.erase(it);
@@ -315,9 +315,9 @@ extern "C" PLUGIN_API Status DeleteGroup(const plg::string& name) {
 		}
 	}
 
-	GroupManager_Callback(gg); // Delete group in users
+	GroupManager_Callback(gg);// Delete group in users
 	delete gg;
-	return Status::SUCCESS;
+	return Status::Success;
 }
 
 /**
