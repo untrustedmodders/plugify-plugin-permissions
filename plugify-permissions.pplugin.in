@@ -85,7 +85,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Get permissions of user"
         },
         {
@@ -162,7 +162,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Set parent group for child group"
         },
         {
@@ -239,7 +239,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Check players immunity or groups priority"
         },
         {
@@ -316,7 +316,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Get parent of requested group"
         },
         {
@@ -393,7 +393,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Check if a user has a specific permission."
         },
         {
@@ -470,7 +470,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Get permissions of group"
         },
         {
@@ -547,7 +547,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Check if a user belongs to a specific group (directly or via parent groups)."
         },
         {
@@ -558,7 +558,7 @@
                 "type": "string[]",
                 "description": "Array of groups"
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Get all created groups"
         },
         {
@@ -635,7 +635,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Check if a group has a specific permission."
         },
         {
@@ -712,7 +712,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Get user groups."
         },
         {
@@ -789,7 +789,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Check if parent_name is a parent group for child_name."
         },
         {
@@ -866,7 +866,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Get the immunity level of a user."
         },
         {
@@ -943,7 +943,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Add a permission to a user."
         },
         {
@@ -1020,7 +1020,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Get the priority of a group."
         },
         {
@@ -1097,7 +1097,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Add a permissions to a user."
         },
         {
@@ -1174,7 +1174,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Add a permission to a group."
         },
         {
@@ -1251,7 +1251,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Remove a permission from a user."
         },
         {
@@ -1328,7 +1328,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Remove a permission from a group."
         },
         {
@@ -1405,7 +1405,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Remove a permissions to a user."
         },
         {
@@ -1488,7 +1488,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Get a cookie value for a group."
         },
         {
@@ -1565,7 +1565,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Add a group to a user."
         },
         {
@@ -1648,7 +1648,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Set a cookie value for a group."
         },
         {
@@ -1725,7 +1725,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Remove a group from a user."
         },
         {
@@ -1808,7 +1808,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Get all cookies from group."
         },
         {
@@ -1891,7 +1891,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Get a cookie value for a user."
         },
         {
@@ -1980,7 +1980,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Create a new group."
         },
         {
@@ -2063,7 +2063,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Set a cookie value for a user."
         },
         {
@@ -2134,7 +2134,7 @@
                     ]
                 }
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Delete a group."
         },
         {
@@ -2217,7 +2217,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Get all cookies from user."
         },
         {
@@ -2235,7 +2235,7 @@
                 "type": "bool",
                 "description": "True if group exists, false otherwise."
             },
-            "group": "Group_manager",
+            "group": "GroupManager",
             "description": "Check if a group exists."
         },
         {
@@ -2324,7 +2324,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Create a new user."
         },
         {
@@ -2395,7 +2395,7 @@
                     ]
                 }
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Delete a user."
         },
         {
@@ -2413,7 +2413,7 @@
                 "type": "bool",
                 "description": "True if user exists, false otherwise."
             },
-            "group": "User_manager",
+            "group": "UserManager",
             "description": "Check if a user exists."
         }
     ]
