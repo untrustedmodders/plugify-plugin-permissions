@@ -11,17 +11,17 @@ const uint64_t AllAccess = XXH3_64bits("*", 1);
 
 enum class Status : int32_t {
 	Success = 0,
-	Allow = Success,
-	Disallow = 1,
-	PermNotFound = 2,
-	CookieNotFound = PermNotFound,
-	GroupNotFound = 3,
-	ChildGroupNotFound = GroupNotFound,
-	ParentGroupNotFound = 4,
-	ActorUserNotFound = 5,
-	TargetUserNotFound = 6,
-	GroupAlreadyExist = 7,
-	UserAlreadyExist = GroupAlreadyExist,
+	Allow = 1,
+	Disallow = 2,
+	PermNotFound = 3,
+	CookieNotFound = 4,
+	GroupNotFound = 5,
+	ChildGroupNotFound = 6,
+	ParentGroupNotFound = 7,
+	ActorUserNotFound = 8,
+	TargetUserNotFound = 9,
+	GroupAlreadyExist = 10,
+	UserAlreadyExist = 11,
 
 };
 
