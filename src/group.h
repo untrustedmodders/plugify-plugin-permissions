@@ -1,7 +1,7 @@
 #pragma once
 #include "node.h"
-#include <plg/vector.hpp>
 #include <plg/string.hpp>
+#include <plg/vector.hpp>
 
 #include "xxhash.h"
 #include "parallel_hashmap/phmap.h"

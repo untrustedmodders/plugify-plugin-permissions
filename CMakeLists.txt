@@ -21,12 +21,13 @@ project(plugify-permissions
         VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}"
         DESCRIPTION "Minimalistic permissions core"
         HOMEPAGE_URL "https://github.com/untrustedmodders/plugify-permissions"
-        LANGUAGES CXX
+        LANGUAGES CXX C
 )
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "Debug|Devel|MinSizeRel|RelWithDebInfo|Release")
     message(STATUS "CMAKE_BUILD_TYPE not set, defaulting to Release.")
@@ -40,17 +41,12 @@ endif()
 #
 # Plugin
 #
-set(PLUGIN_SOURCES "plugin.cpp"
-        api/group_manager.h
-        api/user_manager.h
-        api/basic.h
-        api/group_manager.cpp
-        api/user_manager.cpp
-        api/xxhash.cpp)
+file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 
-add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/external/plugify/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/external/parallel-hashmap")
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 add_subdirectory(external/parallel-hashmap)
 include_directories(external/parallel-hashmap)
@@ -90,3 +86,18 @@ configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/plugify-permissions.pplugin.in
         ${CMAKE_CURRENT_BINARY_DIR}/plugify-permissions.pplugin
 )
+
+find_program(CLANG_DOC clang-doc)
+if(CLANG_DOC)
+    add_custom_target(docs
+            COMMAND ${CLANG_DOC}
+            --executor=all-TUs
+            -p ${CMAKE_CURRENT_BINARY_DIR}
+            --output=${CMAKE_CURRENT_SOURCE_DIR}/docs
+            --extra-arg=-Wno-error
+            --format=yaml
+            ${CMAKE_SOURCE_DIR}/src/*.cpp
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            COMMENT "Generating documentation with clang-doc"
+    )
+endif()

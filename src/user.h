@@ -50,10 +50,9 @@ struct User {
 
 	void sortGroups() { std::sort(this->_groups.begin(), this->_groups.end(), sortF); }
 
-	User(int immunity, plg::vector<Group*>&& _groups, const plg::vector<plg::string>& perms) {
+	User(int immunity, plg::vector<Group*>&& __groups, const plg::vector<plg::string>& perms) {
 		this->_immunity = immunity;
-		this->_groups = std::move(_groups);
+		this->_groups = std::move(__groups);
 		sortGroups();
 		this->nodes = loadNode(perms);
 	}
-};

@@ -1,7 +1,7 @@
 #pragma once
+#include "group_manager.h"
 #include "basic.h"
 #include "group.h"
-#include "group_manager.h"
 #include "user.h"
 
 #include <mutex>

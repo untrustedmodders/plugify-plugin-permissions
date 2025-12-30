@@ -231,10 +231,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t id, const plg::string& g
 	Group* g = GetGroup(group);
 	if (g == nullptr)
 		return Status::GROUP1_NOT_FOUND;
-	const auto it = v->second._groups.find(g);
-	if (it == v->second._groups.end()) return Status::GROUP2_NOT_FOUND;
-	v->second._groups.erase(it);
-	return Status::SUCCESS;
+	return plg::erase(v->second._groups, g) > 0 ? Status::SUCCESS : Status::GROUP2_NOT_FOUND;
 }
 
 /**
@@ -349,7 +346,7 @@ extern "C" PLUGIN_API Status DeleteUser(const uint64_t id) {
 	if (v == users.end()) return Status::USER1_NOT_FOUND;
 
 	users.erase(v);
-	return true;
+	return Status::SUCCESS;
 }
 
 /**
