@@ -48,6 +48,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/external/parallel-hashmap")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/external/xxhash")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_compile_definitions(${PROJECT_NAME} PRIVATE XXH_INLINE_ALL)
 
 add_subdirectory(external/parallel-hashmap)
 include_directories(external/parallel-hashmap)

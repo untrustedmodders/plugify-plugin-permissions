@@ -40,7 +40,7 @@ struct Node {
 	plg::string name;// name of node
 	phmap::flat_hash_map<uint64_t, Node> nodes;// nested nodes
 
-	__always_inline Status _hasPermission(const uint64_t hashes[], const int sz) const {
+	PLUGIFY_FORCE_INLINE Status _hasPermission(const uint64_t hashes[], const int sz) const {
 		const Node* current = this;
 		const Node* lastWild = wildcard ? this : nullptr;// save last wildcard position
 
