@@ -145,19 +145,22 @@ struct Node {
 };
 
 inline void dumpNodes(const plg::string& base_name, const Node& n, plg::vector<plg::string>& perms) {
-	if (n.wildcard) perms.push_back((n.state ? "" : "-") + base_name + "*");
-
-	if (n.nodes.empty() && !n.wildcard) {
-		// final path
-		perms.push_back((n.state ? "" : "-") + base_name);
-		return;
+	if (n.end_node)
+	{
+		plg::string s = n.state ? "" : "-";
+		s += base_name;
+		if (n.wildcard)
+			s += ".*";
+		perms.push_back(s);
 	}
-	for (auto& kv: n.nodes) dumpNodes(base_name + "." + kv.second.name, kv.second, perms);
+	for (const auto& val : n.nodes | std::views::values) dumpNodes(base_name + "." + val.name, val, perms);
 }
 
 inline plg::vector<plg::string> dumpNode(const Node& root_node) {
 	plg::vector<plg::string> perms;
-	for (auto& kv: root_node.nodes) dumpNodes(kv.second.name, kv.second, perms);
+	if (root_node.wildcard)
+		perms.push_back(root_node.state ? "*" : "-*");
+	for (const auto& val : root_node.nodes | std::views::values) dumpNodes(val.name, val, perms);
 
 	return perms;
 }
