@@ -19,6 +19,16 @@
         CreateUser;
         DeleteUser;
         UserExists;
+        RegisterUserPermissionCallback;
+        UnregisterUserPermissionCallback;
+        RegisterUserPermissionsCallback;
+        UnregisterUserPermissionsCallback;
+        RegisterUserSetCookieCallback;
+        UnregisterUserSetCookieCallback;
+        RegisterUserGroupCallback;
+        UnregisterUserGroupCallback;
+        RegisterUserCallback;
+        UnregisterUserCallback;
         SetParent;
         GetParent;
         DumpPermissionsGroup;
@@ -34,6 +44,14 @@
         CreateGroup;
         DeleteGroup;
         GroupExists;
+        RegisterSetParentCallback;
+        UnregisterSetParentCallback;
+        RegisterSetCookieGroupCallback;
+        UnregisterSetCookieGroupCallback;
+        RegisterGroupPermissionCallback;
+        UnregisterGroupPermissionCallback;
+        RegisterGroupCallback;
+        UnregisterGroupCallback;
 
     local: *;
 };

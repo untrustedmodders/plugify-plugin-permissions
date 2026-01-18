@@ -12,83 +12,6 @@
 	"dependencies": [],
 	"methods": [
         {
-            "name": "DumpPermissions",
-            "funcName": "DumpPermissions",
-            "paramTypes": [
-                {
-                    "name": "targetID",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID"
-                },
-                {
-                    "name": "perms",
-                    "type": "string[]",
-                    "ref": true,
-                    "description": "Permissions"
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "description": "Success, TargetUserNotFound",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        }
-                    ]
-                }
-            },
-            "group": "UserManager",
-            "description": "Get permissions of user"
-        },
-        {
             "name": "SetParent",
             "funcName": "SetParent",
             "paramTypes": [
@@ -158,12 +81,105 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "GroupManager",
             "description": "Set parent group for child group"
+        },
+        {
+            "name": "DumpPermissions",
+            "funcName": "DumpPermissions",
+            "paramTypes": [
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": true,
+                    "description": "Permissions"
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Get permissions of user"
         },
         {
             "name": "CanAffectUser",
@@ -235,6 +251,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -312,6 +336,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -389,6 +421,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -466,6 +506,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -543,6 +591,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -631,6 +687,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -708,6 +772,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -785,6 +857,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -862,6 +942,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -939,6 +1027,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1016,89 +1112,20 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "GroupManager",
             "description": "Get the priority of a group."
-        },
-        {
-            "name": "AddPermissions",
-            "funcName": "AddPermissions",
-            "paramTypes": [
-                {
-                    "name": "targetID",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID"
-                },
-                {
-                    "name": "perms",
-                    "type": "string[]",
-                    "ref": false,
-                    "description": "Permissions array"
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "description": "Success, TargetUserNotFound",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        }
-                    ]
-                }
-            },
-            "group": "UserManager",
-            "description": "Add a permissions to a user."
         },
         {
             "name": "AddPermissionGroup",
@@ -1170,12 +1197,105 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "GroupManager",
             "description": "Add a permission to a group."
+        },
+        {
+            "name": "AddPermissions",
+            "funcName": "AddPermissions",
+            "paramTypes": [
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Permissions array"
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Add a permissions to a user."
         },
         {
             "name": "RemovePermission",
@@ -1247,6 +1367,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1324,6 +1452,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1401,6 +1537,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1484,6 +1628,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1502,7 +1654,7 @@
                     "description": "Player ID."
                 },
                 {
-                    "name": "group",
+                    "name": "groupName",
                     "type": "string",
                     "ref": false,
                     "description": "Group name."
@@ -1561,6 +1713,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1644,89 +1804,20 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "GroupManager",
             "description": "Set a cookie value for a group."
-        },
-        {
-            "name": "RemoveGroup",
-            "funcName": "RemoveGroup",
-            "paramTypes": [
-                {
-                    "name": "targetID",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "groupName",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Group name."
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "description": "Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        }
-                    ]
-                }
-            },
-            "group": "UserManager",
-            "description": "Remove a group from a user."
         },
         {
             "name": "GetAllCookiesGroup",
@@ -1804,12 +1895,105 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "GroupManager",
             "description": "Get all cookies from group."
+        },
+        {
+            "name": "RemoveGroup",
+            "funcName": "RemoveGroup",
+            "paramTypes": [
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "groupName",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Remove a group from a user."
         },
         {
             "name": "GetCookie",
@@ -1887,6 +2071,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -1976,12 +2168,99 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "GroupManager",
             "description": "Create a new group."
+        },
+        {
+            "name": "DeleteGroup",
+            "funcName": "DeleteGroup",
+            "paramTypes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success if deleted; GroupNotFound if group not found.",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Delete a group."
         },
         {
             "name": "SetCookie",
@@ -2059,83 +2338,20 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "UserManager",
             "description": "Set a cookie value for a user."
-        },
-        {
-            "name": "DeleteGroup",
-            "funcName": "DeleteGroup",
-            "paramTypes": [
-                {
-                    "name": "name",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Group name."
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "description": "Success if deleted; GroupNotFound if group not found.",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        }
-                    ]
-                }
-            },
-            "group": "GroupManager",
-            "description": "Delete a group."
         },
         {
             "name": "GetAllCookies",
@@ -2213,6 +2429,14 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
@@ -2237,6 +2461,103 @@
             },
             "group": "GroupManager",
             "description": "Check if a group exists."
+        },
+        {
+            "name": "RegisterSetParentCallback",
+            "funcName": "RegisterSetParentCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "SetParentCallback",
+                        "funcName": "SetParentCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Register listener on group parent changing"
         },
         {
             "name": "CreateUser",
@@ -2320,12 +2641,219 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "UserManager",
             "description": "Create a new user."
+        },
+        {
+            "name": "UnregisterSetParentCallback",
+            "funcName": "UnregisterSetParentCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "SetParentCallback",
+                        "funcName": "SetParentCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Unregister listener on group parent changing"
+        },
+        {
+            "name": "RegisterSetCookieGroupCallback",
+            "funcName": "RegisterSetCookieGroupCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "SetCookieGroupCallback",
+                        "funcName": "SetCookieGroupCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "any",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Register listener on group cookie sets"
         },
         {
             "name": "DeleteUser",
@@ -2391,12 +2919,224 @@
                         {
                             "name": "UserAlreadyExist",
                             "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
                         }
                     ]
                 }
             },
             "group": "UserManager",
             "description": "Delete a user."
+        },
+        {
+            "name": "UnregisterSetCookieGroupCallback",
+            "funcName": "UnregisterSetCookieGroupCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "SetCookieGroupCallback",
+                        "funcName": "SetCookieGroupCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "any",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Unregister listener on group cookie sets"
+        },
+        {
+            "name": "RegisterGroupPermissionCallback",
+            "funcName": "RegisterGroupPermissionCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "GroupPermissionCallback",
+                        "funcName": "GroupPermissionCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Register listener on group permissions add/remove"
         },
         {
             "name": "UserExists",
@@ -2415,6 +3155,1372 @@
             },
             "group": "UserManager",
             "description": "Check if a user exists."
+        },
+        {
+            "name": "UnregisterGroupPermissionCallback",
+            "funcName": "UnregisterGroupPermissionCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "GroupPermissionCallback",
+                        "funcName": "GroupPermissionCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Unregister listener on group permissions add/remove"
+        },
+        {
+            "name": "RegisterUserPermissionCallback",
+            "funcName": "RegisterUserPermissionCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserPermissionCallback",
+                        "funcName": "UserPermissionCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user permission add/remove"
+        },
+        {
+            "name": "RegisterGroupCallback",
+            "funcName": "RegisterGroupCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "GroupCallback",
+                        "funcName": "GroupCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string[]",
+                                "ref": false
+                            },
+                            {
+                                "name": "param4",
+                                "type": "int32",
+                                "ref": false
+                            },
+                            {
+                                "name": "param5",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Register listener on group permissions add/remove"
+        },
+        {
+            "name": "UnregisterUserPermissionCallback",
+            "funcName": "UnregisterUserPermissionCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserPermissionCallback",
+                        "funcName": "UserPermissionCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Unregister listener on user permission add/remove"
+        },
+        {
+            "name": "UnregisterGroupCallback",
+            "funcName": "UnregisterGroupCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "GroupCallback",
+                        "funcName": "GroupCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string[]",
+                                "ref": false
+                            },
+                            {
+                                "name": "param4",
+                                "type": "int32",
+                                "ref": false
+                            },
+                            {
+                                "name": "param5",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Unregister listener on group permissions add/remove"
+        },
+        {
+            "name": "RegisterUserPermissionsCallback",
+            "funcName": "RegisterUserPermissionsCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserPermissionsCallback",
+                        "funcName": "UserPermissionsCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string[]",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user permissions add/remove"
+        },
+        {
+            "name": "UnregisterUserPermissionsCallback",
+            "funcName": "UnregisterUserPermissionsCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserPermissionsCallback",
+                        "funcName": "UserPermissionsCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string[]",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Unregister listener on user permissions add/remove"
+        },
+        {
+            "name": "RegisterUserSetCookieCallback",
+            "funcName": "RegisterUserSetCookieCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserSetCookieCallback",
+                        "funcName": "UserSetCookieCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "any",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user cookie sets"
+        },
+        {
+            "name": "UnregisterUserSetCookieCallback",
+            "funcName": "UnregisterUserSetCookieCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserSetCookieCallback",
+                        "funcName": "UserSetCookieCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "string",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "any",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user cookie sets"
+        },
+        {
+            "name": "RegisterUserGroupCallback",
+            "funcName": "RegisterUserGroupCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserGroupCallback",
+                        "funcName": "UserGroupCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user groups changing"
+        },
+        {
+            "name": "UnregisterUserGroupCallback",
+            "funcName": "UnregisterUserGroupCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserGroupCallback",
+                        "funcName": "UserGroupCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "string",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Unregister listener on user groups changing"
+        },
+        {
+            "name": "RegisterUserCallback",
+            "funcName": "RegisterUserCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserCallback",
+                        "funcName": "UserCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "int32",
+                                "ref": false
+                            },
+                            {
+                                "name": "param4",
+                                "type": "string[]",
+                                "ref": false
+                            },
+                            {
+                                "name": "param5",
+                                "type": "string[]",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user creation/deletion"
+        },
+        {
+            "name": "UnregisterUserCallback",
+            "funcName": "UnregisterUserCallback",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Listener",
+                    "prototype": {
+                        "name": "UserCallback",
+                        "funcName": "UserCallback",
+                        "paramTypes": [
+                            {
+                                "name": "param1",
+                                "type": "bool",
+                                "ref": false
+                            },
+                            {
+                                "name": "param2",
+                                "type": "uint64",
+                                "ref": false
+                            },
+                            {
+                                "name": "param3",
+                                "type": "int32",
+                                "ref": false
+                            },
+                            {
+                                "name": "param4",
+                                "type": "string[]",
+                                "ref": false
+                            },
+                            {
+                                "name": "param5",
+                                "type": "string[]",
+                                "ref": false
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Unregister listener on user creation/deletion"
         }
     ]
 }
