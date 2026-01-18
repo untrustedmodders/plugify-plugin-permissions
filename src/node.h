@@ -22,7 +22,8 @@ enum class Status : int32_t {
 	TargetUserNotFound = 9,
 	GroupAlreadyExist = 10,
 	UserAlreadyExist = 11,
-
+	CallbackAlreadyExist = 12,
+	CallbackNotFound = 13
 };
 
 struct string_hash {
@@ -38,7 +39,7 @@ struct Node {
 	bool wildcard;// skip all nested nodes
 	bool state;// indicates permission status (Allow/Disallow)
 	bool end_node; // indicates non-intermediate node
-	const plg::string name;// name of node
+	plg::string name;// name of node
 	phmap::flat_hash_map<uint64_t, Node> nodes;// nested nodes
 
 	PLUGIFY_FORCE_INLINE Status _hasPermission(const uint64_t hashes[], const int sz) const {
