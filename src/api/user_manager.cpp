@@ -9,7 +9,9 @@ UserPermissionsCallbacks user_permissions_callbacks;
 UserSetCookieCallbacks user_set_cookie_callbacks;
 
 UserGroupCallbacks user_group_callbacks;
-UserCallbacks user_callbacks;
+
+UserCreateCallbacks user_create_callbacks;
+UserDeleteCallbacks user_delete_callbacks;
 
 PLUGIFY_WARN_PUSH()
 
@@ -156,7 +158,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t targetID, const plg::s
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-			cb(true, targetID, perm);
+			cb(Action::Add, targetID, perm);
 	}
 	return Status::Success;
 }
@@ -177,7 +179,7 @@ extern "C" PLUGIN_API Status AddPermissions(const uint64_t targetID, const plg::
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionsCallback cb : user_permissions_callbacks._callbacks)
-			cb(true, targetID, perms);
+			cb(Action::Add, targetID, perms);
 	}
 	return Status::Success;
 }
@@ -198,7 +200,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t targetID, const plg
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-			cb(false, targetID, perm);
+			cb(Action::Remove, targetID, perm);
 	}
 	v->second.nodes.deletePerm(perm);
 	return Status::Success;
@@ -220,7 +222,7 @@ extern "C" PLUGIN_API Status RemovePermissions(const uint64_t targetID, const pl
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionsCallback cb : user_permissions_callbacks._callbacks)
-			cb(false, targetID, perms);
+			cb(Action::Remove, targetID, perms);
 	}
 	for (const auto& perm: perms)
 		v->second.nodes.deletePerm(perm);
@@ -257,7 +259,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t targetID, const plg::string
 	{
 		std::shared_lock lock2(user_group_callbacks._lock);
 		for (const UserGroupCallback cb: user_group_callbacks._callbacks)
-			cb(true, targetID, groupName);
+			cb(Action::Add, targetID, groupName);
 	}
 
 	return Status::Success;
@@ -282,7 +284,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t targetID, const plg::str
 	{
 		std::shared_lock lock2(user_group_callbacks._lock);
 		for (const UserGroupCallback cb: user_group_callbacks._callbacks)
-			cb(false, targetID, groupName);
+			cb(Action::Remove, targetID, groupName);
 	}
 	return plg::erase(v->second._groups, g) > 0 ? Status::Success : Status::ParentGroupNotFound;
 }
@@ -352,7 +354,6 @@ extern "C" PLUGIN_API Status SetCookie(const uint64_t targetID, const plg::strin
  * @param values Array of cookie values
  * @return Success, TargetUserNotFound
  */
-
 extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<plg::string>& names, plg::vector<plg::any>& values) {
 	std::shared_lock lock(users_mtx);
 	const auto v = users.find(targetID);
@@ -395,9 +396,9 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t targetID, int immunity, c
 
 	users.try_emplace(targetID, immunity, std::move(groupPointers), perms);
 	{
-		std::shared_lock lock2(user_callbacks._lock);
-		for (const UserCallback cb : user_callbacks._callbacks)
-			cb(true, targetID, immunity, groupNames, perms);
+		std::shared_lock lock2(user_create_callbacks._lock);
+		for (const UserCreateCallback cb : user_create_callbacks._callbacks)
+			cb(targetID, immunity, groupNames, perms);
 	}
 	return Status::Success;
 }
@@ -415,9 +416,9 @@ extern "C" PLUGIN_API Status DeleteUser(const uint64_t targetID) {
 		return Status::TargetUserNotFound;
 
 	{
-		std::shared_lock lock2(user_callbacks._lock);
-		for (const UserCallback cb : user_callbacks._callbacks)
-			cb(false, targetID, 0, {}, {});
+		std::shared_lock lock2(user_delete_callbacks._lock);
+		for (const UserDeleteCallback cb : user_delete_callbacks._callbacks)
+			cb(targetID);
 	}
 	users.erase(v);
 	return Status::Success;
@@ -438,10 +439,10 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID) {
 /**
  * @brief Register listener on user permission add/remove
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status RegisterUserPermissionCallback(UserPermissionCallback callback) {
+extern "C" PLUGIN_API Status OnUserPermissionChange_Register(UserPermissionCallback callback) {
 	std::unique_lock lock(user_permission_callbacks._lock);
 	auto ret = user_permission_callbacks._callbacks.insert(callback);
 	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
@@ -450,10 +451,10 @@ extern "C" PLUGIN_API Status RegisterUserPermissionCallback(UserPermissionCallba
 /**
  * @brief Unregister listener on user permission add/remove
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status UnregisterUserPermissionCallback(UserPermissionCallback callback) {
+extern "C" PLUGIN_API Status OnUserPermissionChange_Unregister(UserPermissionCallback callback) {
 	std::unique_lock lock(user_permission_callbacks._lock);
 	const size_t ret = user_permission_callbacks._callbacks.erase(callback);
 	return ret > 0 ? Status::Success : Status::CallbackNotFound;
@@ -462,10 +463,10 @@ extern "C" PLUGIN_API Status UnregisterUserPermissionCallback(UserPermissionCall
 /**
  * @brief Register listener on user permissions add/remove
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status RegisterUserPermissionsCallback(UserPermissionsCallback callback) {
+extern "C" PLUGIN_API Status OnUserPermissionsChange_Register(UserPermissionsCallback callback) {
 	std::unique_lock lock(user_permissions_callbacks._lock);
 	auto ret = user_permissions_callbacks._callbacks.insert(callback);
 	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
@@ -474,10 +475,10 @@ extern "C" PLUGIN_API Status RegisterUserPermissionsCallback(UserPermissionsCall
 /**
  * @brief Unregister listener on user permissions add/remove
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status UnregisterUserPermissionsCallback(UserPermissionsCallback callback) {
+extern "C" PLUGIN_API Status OnUserPermissionsChange_Unregister(UserPermissionsCallback callback) {
 	std::unique_lock lock(user_permissions_callbacks._lock);
 	const size_t ret = user_permissions_callbacks._callbacks.erase(callback);
 	return ret > 0 ? Status::Success : Status::CallbackNotFound;
@@ -486,10 +487,10 @@ extern "C" PLUGIN_API Status UnregisterUserPermissionsCallback(UserPermissionsCa
 /**
  * @brief Register listener on user cookie sets
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status RegisterUserSetCookieCallback(UserSetCookieCallback callback) {
+extern "C" PLUGIN_API Status OnUserSetCookie_Register(UserSetCookieCallback callback) {
 	std::unique_lock lock(user_set_cookie_callbacks._lock);
 	auto ret = user_set_cookie_callbacks._callbacks.insert(callback);
 	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
@@ -498,10 +499,10 @@ extern "C" PLUGIN_API Status RegisterUserSetCookieCallback(UserSetCookieCallback
 /**
  * @brief Register listener on user cookie sets
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status UnregisterUserSetCookieCallback(UserSetCookieCallback callback) {
+extern "C" PLUGIN_API Status OnUserSetCookie_Unregister(UserSetCookieCallback callback) {
 	std::unique_lock lock(user_set_cookie_callbacks._lock);
 	const size_t ret = user_set_cookie_callbacks._callbacks.erase(callback);
 	return ret > 0 ? Status::Success : Status::CallbackNotFound;
@@ -510,10 +511,10 @@ extern "C" PLUGIN_API Status UnregisterUserSetCookieCallback(UserSetCookieCallba
 /**
  * @brief Register listener on user groups changing
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status RegisterUserGroupCallback(UserGroupCallback callback) {
+extern "C" PLUGIN_API Status OnUserGroupChange_Register(UserGroupCallback callback) {
 	std::unique_lock lock(user_group_callbacks._lock);
 	auto ret = user_group_callbacks._callbacks.insert(callback);
 	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
@@ -522,36 +523,60 @@ extern "C" PLUGIN_API Status RegisterUserGroupCallback(UserGroupCallback callbac
 /**
  * @brief Unregister listener on user groups changing
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status UnregisterUserGroupCallback(UserGroupCallback callback) {
+extern "C" PLUGIN_API Status OnUserGroupChange_Unregister(UserGroupCallback callback) {
 	std::unique_lock lock(user_group_callbacks._lock);
 	const size_t ret = user_group_callbacks._callbacks.erase(callback);
 	return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
- * @brief Register listener on user creation/deletion
+ * @brief Register listener on user creation
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status RegisterUserCallback(UserCallback callback) {
-	std::unique_lock lock(user_callbacks._lock);
-	auto ret = user_callbacks._callbacks.insert(callback);
+extern "C" PLUGIN_API Status OnUserCreate_Register(UserCreateCallback callback) {
+	std::unique_lock lock(user_create_callbacks._lock);
+	auto ret = user_create_callbacks._callbacks.insert(callback);
 	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
- * @brief Unregister listener on user creation/deletion
+ * @brief Unregister listener on user creation
  *
- * @param callback Listener
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status UnregisterUserCallback(UserCallback callback) {
-	std::unique_lock lock(user_callbacks._lock);
-	const size_t ret = user_callbacks._callbacks.erase(callback);
+extern "C" PLUGIN_API Status OnUserCreate_Unregister(UserCreateCallback callback) {
+	std::unique_lock lock(user_create_callbacks._lock);
+	const size_t ret = user_create_callbacks._callbacks.erase(callback);
+	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
+ * @brief Register listener on user deletion
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserDelete_Register(UserDeleteCallback callback) {
+	std::unique_lock lock(user_delete_callbacks._lock);
+	auto ret = user_delete_callbacks._callbacks.insert(callback);
+	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on user deletion
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserDelete_Unregister(UserDeleteCallback callback) {
+	std::unique_lock lock(user_delete_callbacks._lock);
+	const size_t ret = user_delete_callbacks._callbacks.erase(callback);
 	return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 

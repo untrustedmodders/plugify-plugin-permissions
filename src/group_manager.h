@@ -16,11 +16,48 @@ inline Group* GetGroup(const plg::string& name) {
 	return it->second;
 }
 
+/**
+ * @brief Callback invoked when a parent group is set for a child group.
+ *
+ * @param childName  Name of the child group.
+ * @param parentName Name of the parent group being assigned.
+ */
 using SetParentCallback = void (*)(const plg::string& childName, const plg::string& parentName);
+
+/**
+ * @brief Callback invoked when a cookie value is set for a group.
+ *
+ * @param groupName  Name of the group.
+ * @param cookieName Name of the cookie being set.
+ * @param value      Value of the cookie.
+ */
 using SetCookieGroupCallback = void (*)(const plg::string& groupName, const plg::string& cookieName, const plg::any& value);
 
-using GroupPermissionCallback = void (*)(const bool action, const plg::string& name, const plg::string& groupName);
-using GroupCallback = void (*)(const bool action, const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent);
+/**
+ * @brief Callback invoked when a permission is added or removed from a group.
+ *
+ * @param action    Action performed (Add or Remove).
+ * @param name      Name of the group.
+ * @param groupName Permission affected or related group name (depending on context).
+ */
+using GroupPermissionCallback = void (*)(const Action action, const plg::string& name, const plg::string& groupName);
+
+/**
+ * @brief Callback invoked after a group is successfully created.
+ *
+ * @param name     Name of the created group.
+ * @param perms    Array of permissions assigned to the group.
+ * @param priority Priority of the group.
+ * @param parent   Name of the parent group (empty if none).
+ */
+using GroupCreateCallback = void (*)(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent);
+
+/**
+ * @brief Callback invoked before a group is deleted.
+ *
+ * @param name Name of the group being deleted.
+ */
+using GroupDeleteCallback = void (*)(const plg::string& name);
 
 struct SetParentCallbacks
 {
@@ -41,9 +78,15 @@ struct GroupPermissionCallbacks
 	phmap::flat_hash_set<GroupPermissionCallback> _callbacks;
 	std::atomic_int _counter;
 };
-struct GroupCallbacks
+struct GroupCreateCallbacks
 {
 	std::shared_mutex _lock;
-	phmap::flat_hash_set<GroupCallback> _callbacks;
+	phmap::flat_hash_set<GroupCreateCallback> _callbacks;
+	std::atomic_int _counter;
+};
+struct GroupDeleteCallbacks
+{
+	std::shared_mutex _lock;
+	phmap::flat_hash_set<GroupDeleteCallback> _callbacks;
 	std::atomic_int _counter;
 };
