@@ -174,12 +174,12 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const p
 	if (it == groups.end())
 		return Status::GroupNotFound;
 
-	std::unique_lock lock2(users_mtx); // Need to eliminate race in user-group permissions check
+	std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
 	it->second->_nodes.addPerm(perm);
 	{
 		std::shared_lock lock3(group_permission_callbacks._lock);
 		for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-			cb(Action::Remove, name, perm);
+			cb(Action::Add, name, perm);
 	}
 	return Status::Success;
 }
@@ -198,7 +198,7 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const plg::string& name, cons
 	if (it == groups.end())
 		return Status::GroupNotFound;
 
-	std::unique_lock lock2(users_mtx);
+	std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
 	{
 		std::shared_lock lock3(group_permission_callbacks._lock);
 		for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
@@ -251,7 +251,7 @@ extern "C" PLUGIN_API Status SetCookieGroup(const plg::string& groupName, const 
 	if (v == groups.end())
 		return Status::GroupNotFound;
 
-	std::unique_lock lock2(users_mtx);
+	std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
 	{
 		std::shared_lock lock3(set_cookie_group_callbacks._lock);
 		for (const SetCookieGroupCallback cb : set_cookie_group_callbacks._callbacks)
