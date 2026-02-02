@@ -2559,7 +2559,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Register listener on group parent changing"
         },
         {
@@ -2756,7 +2756,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Unregister listener on group parent changing"
         },
         {
@@ -2862,7 +2862,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Register listener on group cookie sets"
         },
         {
@@ -3047,7 +3047,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Unregister listener on group cookie sets"
         },
         {
@@ -3166,7 +3166,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Register listener on group permissions add/remove"
         },
         {
@@ -3303,7 +3303,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Unregister listener on group permissions add/remove"
         },
         {
@@ -3422,7 +3422,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user permission add/remove"
         },
         {
@@ -3534,7 +3534,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Register listener on group creation"
         },
         {
@@ -3653,7 +3653,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Unregister listener on user permission add/remove"
         },
         {
@@ -3765,7 +3765,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Unregister listener on group creation"
         },
         {
@@ -3884,7 +3884,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user permissions add/remove"
         },
         {
@@ -3978,7 +3978,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Register listener on group deletion"
         },
         {
@@ -4097,7 +4097,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Unregister listener on user permissions add/remove"
         },
         {
@@ -4191,7 +4191,7 @@
                     ]
                 }
             },
-            "group": "GroupManager",
+            "group": "GroupListeners",
             "description": "Unregister listener on group deletion"
         },
         {
@@ -4297,7 +4297,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user cookie sets"
         },
         {
@@ -4403,7 +4403,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user cookie sets"
         },
         {
@@ -4522,7 +4522,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user groups changing"
         },
         {
@@ -4641,7 +4641,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Unregister listener on user groups changing"
         },
         {
@@ -4753,7 +4753,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user creation"
         },
         {
@@ -4865,7 +4865,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Unregister listener on user creation"
         },
         {
@@ -4959,7 +4959,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Register listener on user deletion"
         },
         {
@@ -5053,7 +5053,7 @@
                     ]
                 }
             },
-            "group": "UserManager",
+            "group": "UserListeners",
             "description": "Unregister listener on user deletion"
         }
     ]
