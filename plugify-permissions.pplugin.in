@@ -1996,97 +1996,6 @@
             "description": "Remove a group from a user."
         },
         {
-            "name": "GetCookie",
-            "funcName": "GetCookie",
-            "paramTypes": [
-                {
-                    "name": "targetID",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Player ID."
-                },
-                {
-                    "name": "name",
-                    "type": "string",
-                    "ref": false,
-                    "description": "Cookie name."
-                },
-                {
-                    "name": "value",
-                    "type": "any",
-                    "ref": true,
-                    "description": "Cookie value."
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "description": "Success, TargetUserNotFound, CookieNotFound",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        }
-                    ]
-                }
-            },
-            "group": "UserManager",
-            "description": "Get a cookie value for a user."
-        },
-        {
             "name": "CreateGroup",
             "funcName": "CreateGroup",
             "paramTypes": [
@@ -2182,6 +2091,97 @@
             },
             "group": "GroupManager",
             "description": "Create a new group."
+        },
+        {
+            "name": "GetCookie",
+            "funcName": "GetCookie",
+            "paramTypes": [
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Cookie name."
+                },
+                {
+                    "name": "value",
+                    "type": "any",
+                    "ref": true,
+                    "description": "Cookie value."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound, CookieNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Get a cookie value for a user."
         },
         {
             "name": "DeleteGroup",
@@ -2463,27 +2463,30 @@
             "description": "Check if a group exists."
         },
         {
-            "name": "RegisterSetParentCallback",
-            "funcName": "RegisterSetParentCallback",
+            "name": "OnGroupSetParent_Register",
+            "funcName": "OnGroupSetParent_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "SetParentCallback",
                         "funcName": "SetParentCallback",
+                        "description": "Callback invoked when a parent group is set for a child group.",
                         "paramTypes": [
                             {
-                                "name": "param1",
+                                "name": "childName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the child group."
                             },
                             {
-                                "name": "param2",
+                                "name": "parentName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the parent group being assigned."
                             }
                         ],
                         "retType": {
@@ -2657,27 +2660,30 @@
             "description": "Create a new user."
         },
         {
-            "name": "UnregisterSetParentCallback",
-            "funcName": "UnregisterSetParentCallback",
+            "name": "OnGroupSetParent_Unregister",
+            "funcName": "OnGroupSetParent_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "SetParentCallback",
                         "funcName": "SetParentCallback",
+                        "description": "Callback invoked when a parent group is set for a child group.",
                         "paramTypes": [
                             {
-                                "name": "param1",
+                                "name": "childName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the child group."
                             },
                             {
-                                "name": "param2",
+                                "name": "parentName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the parent group being assigned."
                             }
                         ],
                         "retType": {
@@ -2754,32 +2760,36 @@
             "description": "Unregister listener on group parent changing"
         },
         {
-            "name": "RegisterSetCookieGroupCallback",
-            "funcName": "RegisterSetCookieGroupCallback",
+            "name": "OnGroupSetCookie_Register",
+            "funcName": "OnGroupSetCookie_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "SetCookieGroupCallback",
                         "funcName": "SetCookieGroupCallback",
+                        "description": "Callback invoked when a cookie value is set for a group.",
                         "paramTypes": [
                             {
-                                "name": "param1",
+                                "name": "groupName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group."
                             },
                             {
-                                "name": "param2",
+                                "name": "cookieName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the cookie being set."
                             },
                             {
-                                "name": "param3",
+                                "name": "value",
                                 "type": "any",
-                                "ref": false
+                                "ref": false,
+                                "description": "Value of the cookie."
                             }
                         ],
                         "retType": {
@@ -2935,32 +2945,36 @@
             "description": "Delete a user."
         },
         {
-            "name": "UnregisterSetCookieGroupCallback",
-            "funcName": "UnregisterSetCookieGroupCallback",
+            "name": "OnGroupSetCookie_Unregister",
+            "funcName": "OnGroupSetCookie_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "SetCookieGroupCallback",
                         "funcName": "SetCookieGroupCallback",
+                        "description": "Callback invoked when a cookie value is set for a group.",
                         "paramTypes": [
                             {
-                                "name": "param1",
+                                "name": "groupName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group."
                             },
                             {
-                                "name": "param2",
+                                "name": "cookieName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the cookie being set."
                             },
                             {
-                                "name": "param3",
+                                "name": "value",
                                 "type": "any",
-                                "ref": false
+                                "ref": false,
+                                "description": "Value of the cookie."
                             }
                         ],
                         "retType": {
@@ -3037,32 +3051,49 @@
             "description": "Unregister listener on group cookie sets"
         },
         {
-            "name": "RegisterGroupPermissionCallback",
-            "funcName": "RegisterGroupPermissionCallback",
+            "name": "OnGroupPermissionChange_Register",
+            "funcName": "OnGroupPermissionChange_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "GroupPermissionCallback",
                         "funcName": "GroupPermissionCallback",
+                        "description": "Callback invoked when a permission is added or removed from a group.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "name",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group."
                             },
                             {
-                                "name": "param3",
+                                "name": "groupName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Permission affected or related group name (depending on context)."
                             }
                         ],
                         "retType": {
@@ -3157,32 +3188,49 @@
             "description": "Check if a user exists."
         },
         {
-            "name": "UnregisterGroupPermissionCallback",
-            "funcName": "UnregisterGroupPermissionCallback",
+            "name": "OnGroupPermissionChange_Unregister",
+            "funcName": "OnGroupPermissionChange_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "GroupPermissionCallback",
                         "funcName": "GroupPermissionCallback",
+                        "description": "Callback invoked when a permission is added or removed from a group.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "name",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group."
                             },
                             {
-                                "name": "param3",
+                                "name": "groupName",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Permission affected or related group name (depending on context)."
                             }
                         ],
                         "retType": {
@@ -3259,32 +3307,49 @@
             "description": "Unregister listener on group permissions add/remove"
         },
         {
-            "name": "RegisterUserPermissionCallback",
-            "funcName": "RegisterUserPermissionCallback",
+            "name": "OnUserPermissionChange_Register",
+            "funcName": "OnUserPermissionChange_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "UserPermissionCallback",
                         "funcName": "UserPermissionCallback",
+                        "description": "Callback invoked when a permission is added or removed for a user.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the affected user."
                             },
                             {
-                                "name": "param3",
+                                "name": "perm",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Permission line affected."
                             }
                         ],
                         "retType": {
@@ -3361,42 +3426,42 @@
             "description": "Register listener on user permission add/remove"
         },
         {
-            "name": "RegisterGroupCallback",
-            "funcName": "RegisterGroupCallback",
+            "name": "OnGroupCreate_Register",
+            "funcName": "OnGroupCreate_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
-                        "name": "GroupCallback",
-                        "funcName": "GroupCallback",
+                        "name": "GroupCreateCallback",
+                        "funcName": "GroupCreateCallback",
+                        "description": "Callback invoked after a group is successfully created.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
-                            },
-                            {
-                                "name": "param2",
+                                "name": "name",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the created group."
                             },
                             {
-                                "name": "param3",
+                                "name": "perms",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of permissions assigned to the group."
                             },
                             {
-                                "name": "param4",
+                                "name": "priority",
                                 "type": "int32",
-                                "ref": false
+                                "ref": false,
+                                "description": "Priority of the group."
                             },
                             {
-                                "name": "param5",
+                                "name": "parent",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the parent group (empty if none)."
                             }
                         ],
                         "retType": {
@@ -3470,35 +3535,52 @@
                 }
             },
             "group": "GroupManager",
-            "description": "Register listener on group permissions add/remove"
+            "description": "Register listener on group creation"
         },
         {
-            "name": "UnregisterUserPermissionCallback",
-            "funcName": "UnregisterUserPermissionCallback",
+            "name": "OnUserPermissionChange_Unregister",
+            "funcName": "OnUserPermissionChange_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "UserPermissionCallback",
                         "funcName": "UserPermissionCallback",
+                        "description": "Callback invoked when a permission is added or removed for a user.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the affected user."
                             },
                             {
-                                "name": "param3",
+                                "name": "perm",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Permission line affected."
                             }
                         ],
                         "retType": {
@@ -3575,8 +3657,8 @@
             "description": "Unregister listener on user permission add/remove"
         },
         {
-            "name": "UnregisterGroupCallback",
-            "funcName": "UnregisterGroupCallback",
+            "name": "OnGroupCreate_Unregister",
+            "funcName": "OnGroupCreate_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -3584,33 +3666,33 @@
                     "ref": false,
                     "description": "Listener",
                     "prototype": {
-                        "name": "GroupCallback",
-                        "funcName": "GroupCallback",
+                        "name": "GroupCreateCallback",
+                        "funcName": "GroupCreateCallback",
+                        "description": "Callback invoked after a group is successfully created.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
-                            },
-                            {
-                                "name": "param2",
+                                "name": "name",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the created group."
                             },
                             {
-                                "name": "param3",
+                                "name": "perms",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of permissions assigned to the group."
                             },
                             {
-                                "name": "param4",
+                                "name": "priority",
                                 "type": "int32",
-                                "ref": false
+                                "ref": false,
+                                "description": "Priority of the group."
                             },
                             {
-                                "name": "param5",
+                                "name": "parent",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the parent group (empty if none)."
                             }
                         ],
                         "retType": {
@@ -3684,35 +3766,52 @@
                 }
             },
             "group": "GroupManager",
-            "description": "Unregister listener on group permissions add/remove"
+            "description": "Unregister listener on group creation"
         },
         {
-            "name": "RegisterUserPermissionsCallback",
-            "funcName": "RegisterUserPermissionsCallback",
+            "name": "OnUserPermissionsChange_Register",
+            "funcName": "OnUserPermissionsChange_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "UserPermissionsCallback",
                         "funcName": "UserPermissionsCallback",
+                        "description": "Callback invoked when multiple permissions are added or removed for a user.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the affected user."
                             },
                             {
-                                "name": "param3",
+                                "name": "perms",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of permissions affected."
                             }
                         ],
                         "retType": {
@@ -3789,8 +3888,8 @@
             "description": "Register listener on user permissions add/remove"
         },
         {
-            "name": "UnregisterUserPermissionsCallback",
-            "funcName": "UnregisterUserPermissionsCallback",
+            "name": "OnGroupDelete_Register",
+            "funcName": "OnGroupDelete_Register",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -3798,23 +3897,134 @@
                     "ref": false,
                     "description": "Listener",
                     "prototype": {
-                        "name": "UserPermissionsCallback",
-                        "funcName": "UserPermissionsCallback",
+                        "name": "GroupDeleteCallback",
+                        "funcName": "GroupDeleteCallback",
+                        "description": "Callback invoked before a group is deleted.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "name",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Name of the group being deleted."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Register listener on group deletion"
+        },
+        {
+            "name": "OnUserPermissionsChange_Unregister",
+            "funcName": "OnUserPermissionsChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserPermissionsCallback",
+                        "funcName": "UserPermissionsCallback",
+                        "description": "Callback invoked when multiple permissions are added or removed for a user.",
+                        "paramTypes": [
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the affected user."
                             },
                             {
-                                "name": "param3",
+                                "name": "perms",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of permissions affected."
                             }
                         ],
                         "retType": {
@@ -3891,8 +4101,8 @@
             "description": "Unregister listener on user permissions add/remove"
         },
         {
-            "name": "RegisterUserSetCookieCallback",
-            "funcName": "RegisterUserSetCookieCallback",
+            "name": "OnGroupDelete_Unregister",
+            "funcName": "OnGroupDelete_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -3900,23 +4110,121 @@
                     "ref": false,
                     "description": "Listener",
                     "prototype": {
-                        "name": "UserSetCookieCallback",
-                        "funcName": "UserSetCookieCallback",
+                        "name": "GroupDeleteCallback",
+                        "funcName": "GroupDeleteCallback",
+                        "description": "Callback invoked before a group is deleted.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "uint64",
-                                "ref": false
-                            },
-                            {
-                                "name": "param2",
+                                "name": "name",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group being deleted."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "GroupManager",
+            "description": "Unregister listener on group deletion"
+        },
+        {
+            "name": "OnUserSetCookie_Register",
+            "funcName": "OnUserSetCookie_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserSetCookieCallback",
+                        "funcName": "UserSetCookieCallback",
+                        "description": "Callback invoked when a cookie is set for a user.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the user."
                             },
                             {
-                                "name": "param3",
+                                "name": "name",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Name of the cookie."
+                            },
+                            {
+                                "name": "cookie",
                                 "type": "any",
-                                "ref": false
+                                "ref": false,
+                                "description": "Value of the cookie."
                             }
                         ],
                         "retType": {
@@ -3993,32 +4301,36 @@
             "description": "Register listener on user cookie sets"
         },
         {
-            "name": "UnregisterUserSetCookieCallback",
-            "funcName": "UnregisterUserSetCookieCallback",
+            "name": "OnUserSetCookie_Unregister",
+            "funcName": "OnUserSetCookie_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "UserSetCookieCallback",
                         "funcName": "UserSetCookieCallback",
+                        "description": "Callback invoked when a cookie is set for a user.",
                         "paramTypes": [
                             {
-                                "name": "param1",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the user."
                             },
                             {
-                                "name": "param2",
+                                "name": "name",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the cookie."
                             },
                             {
-                                "name": "param3",
+                                "name": "cookie",
                                 "type": "any",
-                                "ref": false
+                                "ref": false,
+                                "description": "Value of the cookie."
                             }
                         ],
                         "retType": {
@@ -4095,32 +4407,49 @@
             "description": "Register listener on user cookie sets"
         },
         {
-            "name": "RegisterUserGroupCallback",
-            "funcName": "RegisterUserGroupCallback",
+            "name": "OnUserGroupChange_Register",
+            "funcName": "OnUserGroupChange_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "UserGroupCallback",
                         "funcName": "UserGroupCallback",
+                        "description": "Callback invoked when a group is added or removed from a user.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the affected user."
                             },
                             {
-                                "name": "param3",
+                                "name": "group",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group added or removed."
                             }
                         ],
                         "retType": {
@@ -4197,32 +4526,49 @@
             "description": "Register listener on user groups changing"
         },
         {
-            "name": "UnregisterUserGroupCallback",
-            "funcName": "UnregisterUserGroupCallback",
+            "name": "OnUserGroupChange_Unregister",
+            "funcName": "OnUserGroupChange_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
                         "name": "UserGroupCallback",
                         "funcName": "UserGroupCallback",
+                        "description": "Callback invoked when a group is added or removed from a user.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the affected user."
                             },
                             {
-                                "name": "param3",
+                                "name": "group",
                                 "type": "string",
-                                "ref": false
+                                "ref": false,
+                                "description": "Name of the group added or removed."
                             }
                         ],
                         "retType": {
@@ -4299,42 +4645,42 @@
             "description": "Unregister listener on user groups changing"
         },
         {
-            "name": "RegisterUserCallback",
-            "funcName": "RegisterUserCallback",
+            "name": "OnUserCreate_Register",
+            "funcName": "OnUserCreate_Register",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
-                        "name": "UserCallback",
-                        "funcName": "UserCallback",
+                        "name": "UserCreateCallback",
+                        "funcName": "UserCreateCallback",
+                        "description": "Callback invoked after a user is successfully created.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
-                            },
-                            {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the created user."
                             },
                             {
-                                "name": "param3",
+                                "name": "immunity",
                                 "type": "int32",
-                                "ref": false
+                                "ref": false,
+                                "description": "User immunity value passed to CreateUser (may be -1 if highest group priority was requested)."
                             },
                             {
-                                "name": "param4",
+                                "name": "groupNames",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of groups inherited by the user."
                             },
                             {
-                                "name": "param5",
+                                "name": "perms",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of permissions assigned to the user."
                             }
                         ],
                         "retType": {
@@ -4408,45 +4754,45 @@
                 }
             },
             "group": "UserManager",
-            "description": "Register listener on user creation/deletion"
+            "description": "Register listener on user creation"
         },
         {
-            "name": "UnregisterUserCallback",
-            "funcName": "UnregisterUserCallback",
+            "name": "OnUserCreate_Unregister",
+            "funcName": "OnUserCreate_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
-                    "description": "Listener",
+                    "description": "Function callback.",
                     "prototype": {
-                        "name": "UserCallback",
-                        "funcName": "UserCallback",
+                        "name": "UserCreateCallback",
+                        "funcName": "UserCreateCallback",
+                        "description": "Callback invoked after a user is successfully created.",
                         "paramTypes": [
                             {
-                                "name": "param1",
-                                "type": "bool",
-                                "ref": false
-                            },
-                            {
-                                "name": "param2",
+                                "name": "targetID",
                                 "type": "uint64",
-                                "ref": false
+                                "ref": false,
+                                "description": "Player ID of the created user."
                             },
                             {
-                                "name": "param3",
+                                "name": "immunity",
                                 "type": "int32",
-                                "ref": false
+                                "ref": false,
+                                "description": "User immunity value passed to CreateUser (may be -1 if highest group priority was requested)."
                             },
                             {
-                                "name": "param4",
+                                "name": "groupNames",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of groups inherited by the user."
                             },
                             {
-                                "name": "param5",
+                                "name": "perms",
                                 "type": "string[]",
-                                "ref": false
+                                "ref": false,
+                                "description": "Array of permissions assigned to the user."
                             }
                         ],
                         "retType": {
@@ -4520,7 +4866,195 @@
                 }
             },
             "group": "UserManager",
-            "description": "Unregister listener on user creation/deletion"
+            "description": "Unregister listener on user creation"
+        },
+        {
+            "name": "OnUserDelete_Register",
+            "funcName": "OnUserDelete_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserDeleteCallback",
+                        "funcName": "UserDeleteCallback",
+                        "description": "Callback invoked before a user is deleted.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the user being deleted."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Register listener on user deletion"
+        },
+        {
+            "name": "OnUserDelete_Unregister",
+            "funcName": "OnUserDelete_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserDeleteCallback",
+                        "funcName": "UserDeleteCallback",
+                        "description": "Callback invoked before a user is deleted.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the user being deleted."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Unregister listener on user deletion"
         }
     ]
 }
