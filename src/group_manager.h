@@ -19,45 +19,50 @@ inline Group* GetGroup(const plg::string& name) {
 /**
  * @brief Callback invoked when a parent group is set for a child group.
  *
- * @param childName  Name of the child group.
- * @param parentName Name of the parent group being assigned.
+ * @param pluginID		Identifier of the plugin that initiated the call.
+ * @param childName		Name of the child group.
+ * @param parentName	Name of the parent group being assigned.
  */
-using SetParentCallback = void (*)(const plg::string& childName, const plg::string& parentName);
+using SetParentCallback = void (*)(const uint64_t pluginID, const plg::string& childName, const plg::string& parentName);
 
 /**
  * @brief Callback invoked when a cookie value is set for a group.
  *
- * @param groupName  Name of the group.
- * @param cookieName Name of the cookie being set.
- * @param value      Value of the cookie.
+ * @param pluginID		Identifier of the plugin that initiated the call.
+ * @param groupName		Name of the group.
+ * @param cookieName	Name of the cookie being set.
+ * @param value			Value of the cookie.
  */
-using SetCookieGroupCallback = void (*)(const plg::string& groupName, const plg::string& cookieName, const plg::any& value);
+using SetCookieGroupCallback = void (*)(const uint64_t pluginID, const plg::string& groupName, const plg::string& cookieName, const plg::any& value);
 
 /**
  * @brief Callback invoked when a permission is added or removed from a group.
  *
- * @param action    Action performed (Add or Remove).
- * @param name      Name of the group.
- * @param groupName Permission affected or related group name (depending on context).
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param action	Action performed (Add or Remove).
+ * @param name		Name of the group.
+ * @param groupName	Permission affected or related group name (depending on context).
  */
-using GroupPermissionCallback = void (*)(const Action action, const plg::string& name, const plg::string& groupName);
+using GroupPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const plg::string& name, const plg::string& groupName);
 
 /**
  * @brief Callback invoked after a group is successfully created.
  *
- * @param name     Name of the created group.
- * @param perms    Array of permissions assigned to the group.
- * @param priority Priority of the group.
- * @param parent   Name of the parent group (empty if none).
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param name		Name of the created group.
+ * @param perms		Array of permissions assigned to the group.
+ * @param priority	Priority of the group.
+ * @param parent	Name of the parent group (empty if none).
  */
-using GroupCreateCallback = void (*)(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent);
+using GroupCreateCallback = void (*)(const uint64_t pluginID, const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent);
 
 /**
  * @brief Callback invoked before a group is deleted.
  *
- * @param name Name of the group being deleted.
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param name		Name of the group being deleted.
  */
-using GroupDeleteCallback = void (*)(const plg::string& name);
+using GroupDeleteCallback = void (*)(const uint64_t pluginID, const plg::string& name);
 
 struct SetParentCallbacks
 {

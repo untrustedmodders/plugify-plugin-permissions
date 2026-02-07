@@ -20,11 +20,12 @@ PLUGIFY_WARN_IGNORE(4190)
 /**
  * @brief Set parent group for child group
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param childName Child group name
  * @param parentName Parent group name to set
  * @return Success, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status SetParent(const plg::string& childName, const plg::string& parentName) {
+extern "C" PLUGIN_API Status SetParent(const uint64_t pluginID, const plg::string& childName, const plg::string& parentName) {
 	const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
 	const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
 	std::unique_lock lock(groups_mtx);
@@ -40,7 +41,7 @@ extern "C" PLUGIN_API Status SetParent(const plg::string& childName, const plg::
 	{
 		std::shared_lock lock2(set_parent_callbacks._lock);
 		for (const SetParentCallback cb : set_parent_callbacks._callbacks)
-			cb(childName, parentName);
+			cb(pluginID, childName, parentName);
 	}
 	return Status::Success;
 }
@@ -163,11 +164,12 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
 /**
  * @brief Add a permission to a group.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perm Permission line.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const plg::string& perm) {
+extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const plg::string& name, const plg::string& perm) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
@@ -179,7 +181,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const p
 	{
 		std::shared_lock lock3(group_permission_callbacks._lock);
 		for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-			cb(Action::Add, name, perm);
+			cb(pluginID, Action::Add, name, perm);
 	}
 	return Status::Success;
 }
@@ -187,11 +189,12 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const plg::string& name, const p
 /**
  * @brief Remove a permission from a group.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perm Permission line.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status RemovePermissionGroup(const plg::string& name, const plg::string& perm) {
+extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, const plg::string& name, const plg::string& perm) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
@@ -202,7 +205,7 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const plg::string& name, cons
 	{
 		std::shared_lock lock3(group_permission_callbacks._lock);
 		for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-			cb(Action::Remove, name, perm);
+			cb(pluginID, Action::Remove, name, perm);
 	}
 	it->second->_nodes.deletePerm(perm);
 	return Status::Success;
@@ -239,12 +242,13 @@ extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const 
 /**
  * @brief Set a cookie value for a group.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param groupName Group name
  * @param cookieName Cookie name
  * @param value Cookie value.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status SetCookieGroup(const plg::string& groupName, const plg::string& cookieName, const plg::any& value) {
+extern "C" PLUGIN_API Status SetCookieGroup(const uint64_t pluginID, const plg::string& groupName, const plg::string& cookieName, const plg::any& value) {
 	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
 	std::unique_lock lock(groups_mtx);
 	const auto v = groups.find(hash);
@@ -255,7 +259,7 @@ extern "C" PLUGIN_API Status SetCookieGroup(const plg::string& groupName, const 
 	{
 		std::shared_lock lock3(set_cookie_group_callbacks._lock);
 		for (const SetCookieGroupCallback cb : set_cookie_group_callbacks._callbacks)
-			cb(groupName, cookieName, value);
+			cb(pluginID, groupName, cookieName, value);
 	}
 	v->second->cookies[cookieName] = value;
 	return Status::Success;
@@ -291,13 +295,14 @@ extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, pl
 /**
  * @brief Create a new group.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perms Array of permission lines.
  * @param priority Group priority.
  * @param parent Parent group name.
  * @return Success, GroupAlreadyExist, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status CreateGroup(const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent) {
+extern "C" PLUGIN_API Status CreateGroup(const uint64_t pluginID, const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	if (groups.contains(hash))
@@ -312,8 +317,8 @@ extern "C" PLUGIN_API Status CreateGroup(const plg::string& name, const plg::vec
 	groups.try_emplace(hash, group);
 	{
 		std::shared_lock lock2(group_create_callbacks._lock);
-		for (GroupCreateCallback cb : group_create_callbacks._callbacks)
-			cb(name, perms, priority, parent);
+		for (const GroupCreateCallback cb : group_create_callbacks._callbacks)
+			cb(pluginID, name, perms, priority, parent);
 	}
 	return Status::Success;
 }
@@ -321,10 +326,11 @@ extern "C" PLUGIN_API Status CreateGroup(const plg::string& name, const plg::vec
 /**
  * @brief Delete a group.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @return Success if deleted; GroupNotFound if group not found.
  */
-extern "C" PLUGIN_API Status DeleteGroup(const plg::string& name) {
+extern "C" PLUGIN_API Status DeleteGroup(const uint64_t pluginID, const plg::string& name) {
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock(groups_mtx);
 	const auto it = groups.find(hash);
@@ -333,8 +339,8 @@ extern "C" PLUGIN_API Status DeleteGroup(const plg::string& name) {
 
 	{
 		std::shared_lock lock2(group_delete_callbacks._lock);
-		for (GroupDeleteCallback cb : group_delete_callbacks._callbacks)
-			cb(name);
+		for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks)
+			cb(pluginID, name);
 	}
 	const Group* gg = it->second;
 	groups.erase(it);

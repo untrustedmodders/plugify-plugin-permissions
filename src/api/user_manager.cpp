@@ -145,11 +145,12 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
 /**
  * @brief Add a permission to a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param perm Permission line.
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status AddPermission(const uint64_t targetID, const plg::string& perm) {
+extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -158,7 +159,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t targetID, const plg::s
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-			cb(Action::Add, targetID, perm);
+			cb(pluginID, Action::Add, targetID, perm);
 	}
 	return Status::Success;
 }
@@ -166,11 +167,12 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t targetID, const plg::s
 /**
  * @brief Add a permissions to a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID
  * @param perms Permissions array
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status AddPermissions(const uint64_t targetID, const plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status AddPermissions(const uint64_t pluginID, const uint64_t targetID, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -179,7 +181,7 @@ extern "C" PLUGIN_API Status AddPermissions(const uint64_t targetID, const plg::
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionsCallback cb : user_permissions_callbacks._callbacks)
-			cb(Action::Add, targetID, perms);
+			cb(pluginID, Action::Add, targetID, perms);
 	}
 	return Status::Success;
 }
@@ -187,11 +189,12 @@ extern "C" PLUGIN_API Status AddPermissions(const uint64_t targetID, const plg::
 /**
  * @brief Remove a permission from a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param perm Permission line.
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status RemovePermission(const uint64_t targetID, const plg::string& perm) {
+extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -200,7 +203,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t targetID, const plg
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-			cb(Action::Remove, targetID, perm);
+			cb(pluginID, Action::Remove, targetID, perm);
 	}
 	v->second.nodes.deletePerm(perm);
 	return Status::Success;
@@ -209,11 +212,12 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t targetID, const plg
 /**
  * @brief Remove a permissions to a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID
  * @param perms Permissions array
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status RemovePermissions(const uint64_t targetID, const plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status RemovePermissions(const uint64_t pluginID, const uint64_t targetID, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -222,7 +226,7 @@ extern "C" PLUGIN_API Status RemovePermissions(const uint64_t targetID, const pl
 	{
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const UserPermissionsCallback cb : user_permissions_callbacks._callbacks)
-			cb(Action::Remove, targetID, perms);
+			cb(pluginID, Action::Remove, targetID, perms);
 	}
 	for (const auto& perm: perms)
 		v->second.nodes.deletePerm(perm);
@@ -232,11 +236,12 @@ extern "C" PLUGIN_API Status RemovePermissions(const uint64_t targetID, const pl
 /**
  * @brief Add a group to a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
  * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
-extern "C" PLUGIN_API Status AddGroup(const uint64_t targetID, const plg::string& groupName) {
+extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -259,7 +264,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t targetID, const plg::string
 	{
 		std::shared_lock lock2(user_group_callbacks._lock);
 		for (const UserGroupCallback cb: user_group_callbacks._callbacks)
-			cb(Action::Add, targetID, groupName);
+			cb(pluginID, Action::Add, targetID, groupName);
 	}
 
 	return Status::Success;
@@ -268,11 +273,12 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t targetID, const plg::string
 /**
  * @brief Remove a group from a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
  * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status RemoveGroup(const uint64_t targetID, const plg::string& groupName) {
+extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -284,7 +290,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t targetID, const plg::str
 	{
 		std::shared_lock lock2(user_group_callbacks._lock);
 		for (const UserGroupCallback cb: user_group_callbacks._callbacks)
-			cb(Action::Remove, targetID, groupName);
+			cb(pluginID, Action::Remove, targetID, groupName);
 	}
 	return plg::erase(v->second._groups, g) > 0 ? Status::Success : Status::ParentGroupNotFound;
 }
@@ -326,12 +332,13 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
 /**
  * @brief Set a cookie value for a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param name Cookie name.
  * @param cookie Cookie value.
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status SetCookie(const uint64_t targetID, const plg::string& name, const plg::any& cookie) {
+extern "C" PLUGIN_API Status SetCookie(const uint64_t pluginID, const uint64_t targetID, const plg::string& name, const plg::any& cookie) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -341,7 +348,7 @@ extern "C" PLUGIN_API Status SetCookie(const uint64_t targetID, const plg::strin
 	{
 		std::shared_lock lock2(user_set_cookie_callbacks._lock);
 		for (const UserSetCookieCallback cb : user_set_cookie_callbacks._callbacks)
-			cb(targetID, name, cookie);
+			cb(pluginID, targetID, name, cookie);
 	}
 	return Status::Success;
 }
@@ -374,13 +381,14 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
 /**
  * @brief Create a new user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param immunity User immunity (set -1 to return highest group priority).
  * @param groupNames Array of groups to inherit.
  * @param perms Array of permissions.
  * @return Success, UserAlreadyExist, GroupNotFound
  */
-extern "C" PLUGIN_API Status CreateUser(const uint64_t targetID, int immunity, const plg::vector<plg::string>& groupNames, const plg::vector<plg::string>& perms) {
+extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t targetID, int immunity, const plg::vector<plg::string>& groupNames, const plg::vector<plg::string>& perms) {
 	std::unique_lock lock(users_mtx);
 	if (users.contains(targetID))
 		return Status::UserAlreadyExist;
@@ -398,7 +406,7 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t targetID, int immunity, c
 	{
 		std::shared_lock lock2(user_create_callbacks._lock);
 		for (const UserCreateCallback cb : user_create_callbacks._callbacks)
-			cb(targetID, immunity, groupNames, perms);
+			cb(pluginID, targetID, immunity, groupNames, perms);
 	}
 	return Status::Success;
 }
@@ -406,10 +414,11 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t targetID, int immunity, c
 /**
  * @brief Delete a user.
  *
+ * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status DeleteUser(const uint64_t targetID) {
+extern "C" PLUGIN_API Status DeleteUser(const uint64_t pluginID, const uint64_t targetID) {
 	std::unique_lock lock(users_mtx);
 	const auto v = users.find(targetID);
 	if (v == users.end())
@@ -418,7 +427,7 @@ extern "C" PLUGIN_API Status DeleteUser(const uint64_t targetID) {
 	{
 		std::shared_lock lock2(user_delete_callbacks._lock);
 		for (const UserDeleteCallback cb : user_delete_callbacks._callbacks)
-			cb(targetID);
+			cb(pluginID, targetID);
 	}
 	users.erase(v);
 	return Status::Success;
