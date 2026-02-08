@@ -28,21 +28,23 @@ struct User {
 		return false;
 	}
 
-	Status hasPermission(const plg::string& perm) const {
+	[[nodiscard]] Status hasPermission(const plg::string& perm) const {
 		auto ispl = std::views::split(perm, '.');
 		uint64_t hashes[256];
+		std::string_view names[256];
 		int i = 0;
 		for (auto&& s: ispl) {
 			// hashes[i] = calcHash(s);
 			hashes[i] = XXH3_64bits(s.data(), s.size());
+			names[i] = std::string_view(s);
 			++i;
 		}
-		Status hasPerm = nodes._hasPermission(hashes, i);
+		Status hasPerm = nodes._hasPermission(names, hashes, i);
 		if (hasPerm != Status::PermNotFound)// Check if user defined this permission
 			return hasPerm;
 
 		for (const auto g: _groups) {
-			hasPerm = g->_hasPermission(hashes, i);
+			hasPerm = g->_hasPermission(names, hashes, i);
 			if (hasPerm != Status::PermNotFound) return hasPerm;
 		}
 		return Status::PermNotFound;

@@ -33,22 +33,26 @@ struct string_hash {
 		if constexpr (sizeof(void*) == 8) return XXH3_64bits(txt.data(), txt.size());
 		else return XXH32(txt.data(), txt.size(), 0);
 	}
+	auto operator()(const std::string_view& txt) const
+	{
+		if constexpr (sizeof(void*) == 8) return XXH3_64bits(txt.data(), txt.size());
+		else return XXH32(txt.data(), txt.size(), 0);
+	}
 };
 
 struct Node {
+	phmap::flat_hash_map<plg::string, Node> nodes;// nested nodes
+	time_t timestamp; // indicator for temporal perms
 	bool wildcard;// skip all nested nodes
 	bool state;// indicates permission status (Allow/Disallow)
 	bool end_node; // indicates non-intermediate node
-	plg::string name;// name of node
-	phmap::flat_hash_map<uint64_t, Node> nodes;// nested nodes
 
-	PLUGIFY_FORCE_INLINE Status _hasPermission(const uint64_t hashes[], const int sz) const {
+	PLUGIFY_FORCE_INLINE Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz) const {
 		const Node* current = this;
 		const Node* lastWild = wildcard ? this : nullptr;// save last wildcard position
 
 		for (int i = 0; i < sz; ++i) {
-			size_t hsh = hashes[i];
-			auto it = current->nodes.find(hsh);
+			auto it = current->nodes.find(names[i], hashes[i]);
 			if (it == current->nodes.end()) {
 				// requested node not found - return wildcard status
 				return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
@@ -66,17 +70,19 @@ struct Node {
 	PLUGIFY_FORCE_INLINE void deletePerm(const plg::string& perm) {
 		auto ispl = std::views::split(perm, '.');
 		uint64_t hashes[256];
+		std::string_view names[256];
 		int i = 0;
 		for (const auto&& s: ispl) {
 			hashes[i] = XXH3_64bits(s.data(), s.size());
+			names[i] = std::string_view(s);
 			++i;
 			if (hashes[i - 1] == AllAccess)
 				break;
 		}
-		this->deletePerm(hashes, i);
+		this->deletePerm(names, hashes, i);
 	}
 
-	PLUGIFY_FORCE_INLINE void deletePerm(const uint64_t hashes[], const int sz) {
+	PLUGIFY_FORCE_INLINE void deletePerm(const std::string_view names[], const uint64_t hashes[], const int sz) {
 		if (sz < 1) return;
 		if (hashes[0] == AllAccess) {
 			// Reset ROOT node to initial state
@@ -89,16 +95,16 @@ struct Node {
 
 		Node* curNode = this;
 
-		std::pair<Node*, uint64_t> ancestors[256];
+		std::pair<Node*, int> ancestors[256];
 		int count = 0;
 
 		// find pre-last element
 		for (int i = 0; i < sz - 1; ++i) {
-			const auto it = curNode->nodes.find(hashes[i]);
+			const auto it = curNode->nodes.find(names[i], hashes[i]);
 			if (it == curNode->nodes.end()) return;
 
 			// ancestors[count] = {parent_node, child_key};
-			ancestors[count] = {curNode, hashes[i]};
+			ancestors[count] = {curNode, i};
 			++count;
 			curNode = &it->second;
 		}
@@ -108,7 +114,7 @@ struct Node {
 		}
 		// Not wildcard - clear only last
 		else {
-			const auto it = curNode->nodes.find(hashes[sz - 1]);
+			const auto it = curNode->nodes.find(names[sz - 1], hashes[sz - 1]);
 			if (it == curNode->nodes.end()) return;
 			curNode->nodes.erase(it);
 		}
@@ -119,8 +125,9 @@ struct Node {
 		// Delete empty nodes
 		for (int i = (count - 1); i >= 0; --i) {
 			Node* parent = ancestors[i].first;
-			const uint64_t key = ancestors[i].second;
-			parent->nodes.erase(key);
+			const auto it = parent->nodes.find(names[ancestors[i].second], hashes[ancestors[i].second]);
+			if (it != parent->nodes.end())
+				parent->nodes.erase(it);
 			if (parent->end_node || !parent->nodes.empty()) // This node have state - stop
 				return;
 		}
@@ -136,8 +143,7 @@ struct Node {
 			auto ss = std::string_view(s);
 			if (ss.starts_with('-')) ss = ss.substr(1);
 			if (ss == "*") break;
-			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
-			node = &(node->nodes.try_emplace(hash, false, false, false, plg::string(ss), phmap::flat_hash_map<uint64_t, Node>()).first->second);
+			node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node>(), -1, false, false, false).first->second);
 		}
 		node->state = allow;
 		node->wildcard = hasWildcard;
@@ -154,25 +160,25 @@ inline void dumpNodes(const plg::string& base_name, const Node& n, plg::vector<p
 			s += ".*";
 		perms.push_back(s);
 	}
-	for (const auto& val : n.nodes | std::views::values) dumpNodes(base_name + "." + val.name, val, perms);
+	for (const auto& [key, val] : n.nodes) dumpNodes(base_name + "." + key, val, perms);
 }
 
 inline plg::vector<plg::string> dumpNode(const Node& root_node) {
 	plg::vector<plg::string> perms;
 	if (root_node.wildcard)
 		perms.push_back(root_node.state ? "*" : "-*");
-	for (const auto& val : root_node.nodes | std::views::values) dumpNodes(val.name, val, perms);
+	for (const auto& [key, val] : root_node.nodes) dumpNodes(key, val, perms);
 
 	return perms;
 }
 
-inline void forceRehash(phmap::flat_hash_map<uint64_t, Node>& nodes) {
+inline void forceRehash(phmap::flat_hash_map<plg::string, Node>& nodes) {
 	nodes.rehash(0);
-	for (std::pair<const uint64_t, Node>& n: nodes) forceRehash(n.second.nodes);
+	for (std::pair<const plg::string, Node>& n: nodes) forceRehash(n.second.nodes);
 }
 
 inline Node loadNode(const plg::vector<plg::string>& perms) {
-	Node result{false, false, true, "ROOT", phmap::flat_hash_map<uint64_t, Node>()};
+	Node result{phmap::flat_hash_map<plg::string, Node>(), -1, false, false, true};
 	for (const plg::string& perm: perms) {
 		if (perm.empty())// empty lines?
 			continue;
@@ -196,8 +202,7 @@ inline Node loadNode(const plg::vector<plg::string>& perms) {
 				wildcard = true;
 				break;
 			};
-			const uint64_t hash = XXH3_64bits(ss.data(), ss.size());
-			node = &(node->nodes.try_emplace(hash, false, false, false, plg::string(ss), phmap::flat_hash_map<uint64_t, Node>()).first->second);
+			node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node>(), -1, false, false, false).first->second);
 		}
 
 		node->state = state;

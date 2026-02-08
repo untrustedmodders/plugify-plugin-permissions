@@ -25,22 +25,24 @@ struct Group {
 		std::string_view sv(perm);
 		auto ispl = std::views::split(sv, '.');
 		uint64_t hashes[256];
+		std::string_view names[256];
 		int i = 0;
 		for (auto&& s: ispl) {
 			const auto ptr = s.empty() ? nullptr : &*s.begin();
 			const auto len = s.size();
 			hashes[i] = XXH3_64bits(ptr, len);
+			names[i] = std::string_view(ptr, len);
 			++i;
 		}
 
-		return _hasPermission(hashes, i);
+		return _hasPermission(names, hashes, i);
 	}
 
-	Status _hasPermission(const uint64_t hashes[], const int sz) const {
+	Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz) const {
 		const Group* i = this;
 
 		while (i) {
-			Status temp = i->_nodes._hasPermission(hashes, sz);
+			Status temp = i->_nodes._hasPermission(names, hashes, sz);
 			if (temp == Status::PermNotFound) i = i->_parent;
 			else return temp;
 		}
