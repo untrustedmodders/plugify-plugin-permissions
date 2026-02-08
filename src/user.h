@@ -17,28 +17,9 @@ inline bool sortFF(const std::pair<uint32_t, Group*> i, const std::pair<uint32_t
     return i.second->_priority > j.second->_priority;
 }
 
-using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::string& perm);
-using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& groupName);
-
 void g_PermExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 void g_GroupExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 
-struct PermExpirationCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_set<PermExpirationCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct GroupExpirationCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_set<GroupExpirationCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-extern PermExpirationCallbacks node_expiration_callbacks;
-extern GroupExpirationCallbacks group_expiration_callbacks;
 extern Group* GetGroup(const plg::string& name);
 
 struct User
@@ -119,10 +100,13 @@ struct User
                                           static_cast<double>(timestamp) - static_cast<double>(time(nullptr)));
     }
 
-    PLUGIFY_FORCE_INLINE void addTempGroup(Group* g, time_t timestamp)
+    PLUGIFY_FORCE_INLINE void addTempGroup(Group* g, time_t timestamp, uint64_t targetID)
     {
         uint32_t timer = g_TimerSystem.CreateTimer(static_cast<double>(timestamp) - static_cast<double>(time(nullptr)),
                                                    g_GroupExpirationCallback, TimerFlag::Default, plg::vector<plg::any>{
+                                                       static_cast<void*>(this),
+                                                       g,
+                                                       targetID
                                                    });
         this->_t_groups.emplace_back(timer, g);
         this->sortGroups();

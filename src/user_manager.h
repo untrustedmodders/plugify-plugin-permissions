@@ -119,6 +119,22 @@ using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targ
  */
 using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targetID);
 
+/**
+ * @brief Callback invoked when a permission in user has been expired
+ *
+ * @param targetID PlayerID
+ * @param Permission line.
+ */
+using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::string& perm);
+
+/**
+ * @brief Callback invoked when a permission in user has been expired
+ *
+ * @param targetID PlayerID
+ * @param Permission line.
+ */
+using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& groupName);
+
 struct UserPermissionCallbacks
 {
     std::shared_mutex _lock;
@@ -179,5 +195,19 @@ struct UserDeleteCallbacks
 {
     std::shared_mutex _lock;
     phmap::flat_hash_set<UserDeleteCallback> _callbacks;
+    std::atomic_int _counter;
+};
+
+struct PermExpirationCallbacks
+{
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<PermExpirationCallback> _callbacks;
+    std::atomic_int _counter;
+};
+
+struct GroupExpirationCallbacks
+{
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<GroupExpirationCallback> _callbacks;
     std::atomic_int _counter;
 };

@@ -29,8 +29,8 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
         u->temp_nodes.deletePerm(*perm);
     }
 
-    std::shared_lock lock(node_expiration_callbacks._lock);
-    for (const auto& callback : node_expiration_callbacks._callbacks)
+    std::shared_lock lock(perm_expiration_callbacks._lock);
+    for (const auto& callback : perm_expiration_callbacks._callbacks)
         callback(targetID, *perm);
 }
 
@@ -496,7 +496,7 @@ extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_
             ggg = ggg->_parent;
         }
     }
-    v->second.addTempGroup(g, timestamp);
+    v->second.addTempGroup(g, timestamp, targetID);
     {
         std::shared_lock lock2(user_temp_group_callbacks._lock);
         for (const UserTempGroupCallback cb : user_temp_group_callbacks._callbacks)
