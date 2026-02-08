@@ -12,9 +12,9 @@ GroupDeleteCallbacks group_delete_callbacks;
 PLUGIFY_WARN_PUSH()
 
 #if defined(__clang__)
-PLUGIFY_WARN_IGNORE("-Wreturn-type-c-linkage")
+PLUGIFY_WARN_IGNORE ("-Wreturn-type-c-linkage")
 #elif defined(_MSC_VER)
-PLUGIFY_WARN_IGNORE(4190)
+PLUGIFY_WARN_IGNORE (4190)
 #endif
 
 /**
@@ -25,25 +25,27 @@ PLUGIFY_WARN_IGNORE(4190)
  * @param parentName Parent group name to set
  * @return Success, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status SetParent(const uint64_t pluginID, const plg::string& childName, const plg::string& parentName) {
-	const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
-	const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
-	std::unique_lock lock(groups_mtx);
-	const auto it1 = groups.find(hash1);
-	const auto it2 = groups.find(hash2);
+extern "C" PLUGIN_API Status SetParent(const uint64_t pluginID, const plg::string& childName,
+                                       const plg::string& parentName)
+{
+    const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
+    const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
+    std::unique_lock lock(groups_mtx);
+    const auto it1 = groups.find(hash1);
+    const auto it2 = groups.find(hash2);
 
-	if (it1 == groups.end())
-		return Status::ChildGroupNotFound;
-	if (it2 == groups.end())
-		return Status::ParentGroupNotFound;
+    if (it1 == groups.end())
+        return Status::ChildGroupNotFound;
+    if (it2 == groups.end())
+        return Status::ParentGroupNotFound;
 
-	it1->second->_parent = it2->second;
-	{
-		std::shared_lock lock2(set_parent_callbacks._lock);
-		for (const SetParentCallback cb : set_parent_callbacks._callbacks)
-			cb(pluginID, childName, parentName);
-	}
-	return Status::Success;
+    it1->second->_parent = it2->second;
+    {
+        std::shared_lock lock2(set_parent_callbacks._lock);
+        for (const SetParentCallback cb : set_parent_callbacks._callbacks)
+            cb(pluginID, childName, parentName);
+    }
+    return Status::Success;
 }
 
 /**
@@ -53,17 +55,18 @@ extern "C" PLUGIN_API Status SetParent(const uint64_t pluginID, const plg::strin
  * @param parentName Parent name
  * @return Success, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string& parentName) {
-	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-	std::shared_lock lock(groups_mtx);
-	const auto it = groups.find(hash);
+extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string& parentName)
+{
+    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+    std::shared_lock lock(groups_mtx);
+    const auto it = groups.find(hash);
 
-	if (it == groups.end())
-		return Status::ChildGroupNotFound;
-	if (!it->second->_parent)
-		return Status::ParentGroupNotFound;
-	parentName = it->second->_parent->_name;
-	return Status::Success;
+    if (it == groups.end())
+        return Status::ChildGroupNotFound;
+    if (!it->second->_parent)
+        return Status::ParentGroupNotFound;
+    parentName = it->second->_parent->_name;
+    return Status::Success;
 }
 
 /**
@@ -73,16 +76,17 @@ extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string
  * @param perms Permissions
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::vector<plg::string>& perms) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::shared_lock lock(groups_mtx);
-	const auto v = groups.find(hash);
-	if (v == groups.end())
-		return Status::ChildGroupNotFound;
+extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::vector<plg::string>& perms)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::shared_lock lock(groups_mtx);
+    const auto v = groups.find(hash);
+    if (v == groups.end())
+        return Status::ChildGroupNotFound;
 
-	perms = dumpNode(v->second->_nodes);
+    perms = dumpNode(v->second->_nodes);
 
-	return Status::Success;
+    return Status::Success;
 }
 
 /**
@@ -90,15 +94,16 @@ extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::
  *
  * @return Array of groups
  */
-extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups() {
-	std::shared_lock lock(groups_mtx);
+extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups()
+{
+    std::shared_lock lock(groups_mtx);
 
-	plg::vector<plg::string> lgroups;
-	lgroups.reserve(groups.size());
-	for (const auto& [kv, vv]: groups)
-		lgroups.push_back(vv->_name);
+    plg::vector<plg::string> lgroups;
+    lgroups.reserve(groups.size());
+    for (const auto& [kv, vv] : groups)
+        lgroups.push_back(vv->_name);
 
-	return lgroups;
+    return lgroups;
 }
 
 /**
@@ -108,13 +113,14 @@ extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups() {
  * @param perm Permission line.
  * @return Allow, Disallow, PermNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const plg::string& perm) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::shared_lock lock(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end())
-		return Status::GroupNotFound;
-	return it->second->hasPermission(perm);
+extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const plg::string& perm)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::shared_lock lock(groups_mtx);
+    const auto it = groups.find(hash);
+    if (it == groups.end())
+        return Status::GroupNotFound;
+    return it->second->hasPermission(perm);
 }
 
 /**
@@ -124,24 +130,26 @@ extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const p
  * @param parentName Parent group name to check.
  * @return Allow, Disallow, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const plg::string& parentName) {
-	const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
-	const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
-	std::shared_lock lock(groups_mtx);
-	const auto it1 = groups.find(hash1);
-	const auto it2 = groups.find(hash2);
-	if (it1 == groups.end())
-		return Status::ChildGroupNotFound;
-	if (it2 == groups.end())
-		return Status::ParentGroupNotFound;
+extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const plg::string& parentName)
+{
+    const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
+    const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
+    std::shared_lock lock(groups_mtx);
+    const auto it1 = groups.find(hash1);
+    const auto it2 = groups.find(hash2);
+    if (it1 == groups.end())
+        return Status::ChildGroupNotFound;
+    if (it2 == groups.end())
+        return Status::ParentGroupNotFound;
 
-	const Group* g1 = it1->second;
-	const Group* g2 = it2->second;
-	while (g1) {
-		if (g1->_parent == g2) return Status::Allow;
-		g1 = g1->_parent;
-	}
-	return Status::Disallow;
+    const Group* g1 = it1->second;
+    const Group* g2 = it2->second;
+    while (g1)
+    {
+        if (g1->_parent == g2) return Status::Allow;
+        g1 = g1->_parent;
+    }
+    return Status::Disallow;
 }
 
 /**
@@ -151,14 +159,15 @@ extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const 
  * @param priority Priority
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int& priority) {
-	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-	std::shared_lock lock(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end())
-		return Status::GroupNotFound;
-	priority = it->second->_priority;
-	return Status::Success;
+extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int& priority)
+{
+    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+    std::shared_lock lock(groups_mtx);
+    const auto it = groups.find(hash);
+    if (it == groups.end())
+        return Status::GroupNotFound;
+    priority = it->second->_priority;
+    return Status::Success;
 }
 
 /**
@@ -169,21 +178,23 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  * @param perm Permission line.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const plg::string& name, const plg::string& perm) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::unique_lock lock1(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end())
-		return Status::GroupNotFound;
+extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const plg::string& name,
+                                                const plg::string& perm)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::unique_lock lock1(groups_mtx);
+    const auto it = groups.find(hash);
+    if (it == groups.end())
+        return Status::GroupNotFound;
 
-	std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-	it->second->_nodes.addPerm(perm);
-	{
-		std::shared_lock lock3(group_permission_callbacks._lock);
-		for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-			cb(pluginID, Action::Add, name, perm);
-	}
-	return Status::Success;
+    std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+    it->second->_nodes.addPerm(perm);
+    {
+        std::shared_lock lock3(group_permission_callbacks._lock);
+        for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
+            cb(pluginID, Action::Add, name, perm);
+    }
+    return Status::Success;
 }
 
 /**
@@ -194,21 +205,23 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const p
  * @param perm Permission line.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, const plg::string& name, const plg::string& perm) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::unique_lock lock1(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end())
-		return Status::GroupNotFound;
+extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, const plg::string& name,
+                                                   const plg::string& perm)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::unique_lock lock1(groups_mtx);
+    const auto it = groups.find(hash);
+    if (it == groups.end())
+        return Status::GroupNotFound;
 
-	std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-	{
-		std::shared_lock lock3(group_permission_callbacks._lock);
-		for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-			cb(pluginID, Action::Remove, name, perm);
-	}
-	it->second->_nodes.deletePerm(perm);
-	return Status::Success;
+    std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+    {
+        std::shared_lock lock3(group_permission_callbacks._lock);
+        for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
+            cb(pluginID, Action::Remove, name, perm);
+    }
+    it->second->_nodes.deletePerm(perm);
+    return Status::Success;
 }
 
 /**
@@ -219,24 +232,28 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, cons
  * @param value Cookie value
  * @return Success, CookieNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const plg::string& cookieName, plg::any& value) {
-	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-	std::shared_lock lock(groups_mtx);
-	const auto v = groups.find(hash);
-	if (v == groups.end())
-		return Status::GroupNotFound;
+extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const plg::string& cookieName,
+                                            plg::any& value)
+{
+    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+    std::shared_lock lock(groups_mtx);
+    const auto v = groups.find(hash);
+    if (v == groups.end())
+        return Status::GroupNotFound;
 
-	Group* g = v->second;
-	while (g != nullptr) {
-		const auto val = g->cookies.find(cookieName);
-		if (val == g->cookies.end()) {
-			g = g->_parent;
-			continue;
-		}
-		value = val->second;
-		return Status::Success;
-	}
-	return Status::CookieNotFound;
+    Group* g = v->second;
+    while (g != nullptr)
+    {
+        const auto val = g->cookies.find(cookieName);
+        if (val == g->cookies.end())
+        {
+            g = g->_parent;
+            continue;
+        }
+        value = val->second;
+        return Status::Success;
+    }
+    return Status::CookieNotFound;
 }
 
 /**
@@ -248,21 +265,23 @@ extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const 
  * @param value Cookie value.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status SetCookieGroup(const uint64_t pluginID, const plg::string& groupName, const plg::string& cookieName, const plg::any& value) {
-	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-	std::unique_lock lock(groups_mtx);
-	const auto v = groups.find(hash);
-	if (v == groups.end())
-		return Status::GroupNotFound;
+extern "C" PLUGIN_API Status SetCookieGroup(const uint64_t pluginID, const plg::string& groupName,
+                                            const plg::string& cookieName, const plg::any& value)
+{
+    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+    std::unique_lock lock(groups_mtx);
+    const auto v = groups.find(hash);
+    if (v == groups.end())
+        return Status::GroupNotFound;
 
-	std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-	{
-		std::shared_lock lock3(set_cookie_group_callbacks._lock);
-		for (const SetCookieGroupCallback cb : set_cookie_group_callbacks._callbacks)
-			cb(pluginID, groupName, cookieName, value);
-	}
-	v->second->cookies[cookieName] = value;
-	return Status::Success;
+    std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+    {
+        std::shared_lock lock3(set_cookie_group_callbacks._lock);
+        for (const SetCookieGroupCallback cb : set_cookie_group_callbacks._callbacks)
+            cb(pluginID, groupName, cookieName, value);
+    }
+    v->second->cookies[cookieName] = value;
+    return Status::Success;
 }
 
 /**
@@ -274,22 +293,25 @@ extern "C" PLUGIN_API Status SetCookieGroup(const uint64_t pluginID, const plg::
  * @return Success, GroupNotFound
  */
 
-extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, plg::vector<plg::string>& cookieNames, plg::vector<plg::any>& values) {
-	const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-	std::shared_lock lock(groups_mtx);
-	const auto v = groups.find(hash);
-	if (v == groups.end())
-		return Status::GroupNotFound;
+extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, plg::vector<plg::string>& cookieNames,
+                                                plg::vector<plg::any>& values)
+{
+    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+    std::shared_lock lock(groups_mtx);
+    const auto v = groups.find(hash);
+    if (v == groups.end())
+        return Status::GroupNotFound;
 
-	cookieNames.clear();
-	values.clear();
+    cookieNames.clear();
+    values.clear();
 
-	for (const auto& [kv, vv]: v->second->cookies) {
-		cookieNames.push_back(kv);
-		values.push_back(vv);
-	}
+    for (const auto& [kv, vv] : v->second->cookies)
+    {
+        cookieNames.push_back(kv);
+        values.push_back(vv);
+    }
 
-	return Status::Success;
+    return Status::Success;
 }
 
 /**
@@ -302,25 +324,29 @@ extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, pl
  * @param parent Parent group name.
  * @return Success, GroupAlreadyExist, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status CreateGroup(const uint64_t pluginID, const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::unique_lock lock(groups_mtx);
-	if (groups.contains(hash))
-		return Status::GroupAlreadyExist;
-	Group* parentGroup = nullptr;
-	if (!parent.empty()) {
-		parentGroup = GetGroup(parent);
-		if (!parentGroup) return Status::ParentGroupNotFound;
-	}
+extern "C" PLUGIN_API Status CreateGroup(const uint64_t pluginID, const plg::string& name,
+                                         const plg::vector<plg::string>& perms, const int priority,
+                                         const plg::string& parent)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::unique_lock lock(groups_mtx);
+    if (groups.contains(hash))
+        return Status::GroupAlreadyExist;
+    Group* parentGroup = nullptr;
+    if (!parent.empty())
+    {
+        parentGroup = GetGroup(parent);
+        if (!parentGroup) return Status::ParentGroupNotFound;
+    }
 
-	auto* group = new Group(perms, name, priority, parentGroup);
-	groups.try_emplace(hash, group);
-	{
-		std::shared_lock lock2(group_create_callbacks._lock);
-		for (const GroupCreateCallback cb : group_create_callbacks._callbacks)
-			cb(pluginID, name, perms, priority, parent);
-	}
-	return Status::Success;
+    auto* group = new Group(perms, name, priority, parentGroup);
+    groups.try_emplace(hash, group);
+    {
+        std::shared_lock lock2(group_create_callbacks._lock);
+        for (const GroupCreateCallback cb : group_create_callbacks._callbacks)
+            cb(pluginID, name, perms, priority, parent);
+    }
+    return Status::Success;
 }
 
 /**
@@ -330,36 +356,40 @@ extern "C" PLUGIN_API Status CreateGroup(const uint64_t pluginID, const plg::str
  * @param name Group name.
  * @return Success if deleted; GroupNotFound if group not found.
  */
-extern "C" PLUGIN_API Status DeleteGroup(const uint64_t pluginID, const plg::string& name) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::unique_lock lock(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end())
-		return Status::GroupNotFound;
+extern "C" PLUGIN_API Status DeleteGroup(const uint64_t pluginID, const plg::string& name)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::unique_lock lock(groups_mtx);
+    const auto it = groups.find(hash);
+    if (it == groups.end())
+        return Status::GroupNotFound;
 
-	{
-		std::shared_lock lock2(group_delete_callbacks._lock);
-		for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks)
-			cb(pluginID, name);
-	}
-	const Group* gg = it->second;
-	groups.erase(it);
+    {
+        std::shared_lock lock2(group_delete_callbacks._lock);
+        for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks)
+            cb(pluginID, name);
+    }
+    const Group* gg = it->second;
+    groups.erase(it);
 
-	// Cleanup parent references in other groups
-	for (Group* value: groups | std::views::values) {
-		Group* g = value;
-		while (g) {
-			if (g->_parent == gg) {
-				g->_parent = nullptr;
-				break;
-			}
-			g = g->_parent;
-		}
-	}
+    // Cleanup parent references in other groups
+    for (Group* value : groups | std::views::values)
+    {
+        Group* g = value;
+        while (g)
+        {
+            if (g->_parent == gg)
+            {
+                g->_parent = nullptr;
+                break;
+            }
+            g = g->_parent;
+        }
+    }
 
-	GroupManager_Callback(gg);// Delete group in users
-	delete gg;
-	return Status::Success;
+    GroupManager_Callback(gg); // Delete group in users
+    delete gg;
+    return Status::Success;
 }
 
 /**
@@ -368,11 +398,12 @@ extern "C" PLUGIN_API Status DeleteGroup(const uint64_t pluginID, const plg::str
  * @param name Group name.
  * @return True if group exists, false otherwise.
  */
-extern "C" PLUGIN_API bool GroupExists(const plg::string& name) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::unique_lock lock(groups_mtx);
-	const auto v = groups.find(hash);
-	return v != groups.end();
+extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::unique_lock lock(groups_mtx);
+    const auto v = groups.find(hash);
+    return v != groups.end();
 }
 
 /**
@@ -381,10 +412,11 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name) {
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetParent_Register(SetParentCallback callback) {
-	std::unique_lock lock(set_parent_callbacks._lock);
-	auto ret = set_parent_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+extern "C" PLUGIN_API Status OnGroupSetParent_Register(SetParentCallback callback)
+{
+    std::unique_lock lock(set_parent_callbacks._lock);
+    auto ret = set_parent_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -393,10 +425,11 @@ extern "C" PLUGIN_API Status OnGroupSetParent_Register(SetParentCallback callbac
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(SetParentCallback callback) {
-	std::unique_lock lock(set_parent_callbacks._lock);
-	const size_t ret = set_parent_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(SetParentCallback callback)
+{
+    std::unique_lock lock(set_parent_callbacks._lock);
+    const size_t ret = set_parent_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
@@ -405,10 +438,11 @@ extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(SetParentCallback callb
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetCookie_Register(SetCookieGroupCallback callback) {
-	std::unique_lock lock(set_cookie_group_callbacks._lock);
-	auto ret = set_cookie_group_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+extern "C" PLUGIN_API Status OnGroupSetCookie_Register(SetCookieGroupCallback callback)
+{
+    std::unique_lock lock(set_cookie_group_callbacks._lock);
+    auto ret = set_cookie_group_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -417,10 +451,11 @@ extern "C" PLUGIN_API Status OnGroupSetCookie_Register(SetCookieGroupCallback ca
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetCookie_Unregister(SetCookieGroupCallback callback) {
-	std::unique_lock lock(set_cookie_group_callbacks._lock);
-	const size_t ret = set_cookie_group_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+extern "C" PLUGIN_API Status OnGroupSetCookie_Unregister(SetCookieGroupCallback callback)
+{
+    std::unique_lock lock(set_cookie_group_callbacks._lock);
+    const size_t ret = set_cookie_group_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
@@ -429,10 +464,11 @@ extern "C" PLUGIN_API Status OnGroupSetCookie_Unregister(SetCookieGroupCallback 
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupPermissionChange_Register(GroupPermissionCallback callback) {
-	std::unique_lock lock(group_permission_callbacks._lock);
-	auto ret = group_permission_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+extern "C" PLUGIN_API Status OnGroupPermissionChange_Register(GroupPermissionCallback callback)
+{
+    std::unique_lock lock(group_permission_callbacks._lock);
+    auto ret = group_permission_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -441,10 +477,11 @@ extern "C" PLUGIN_API Status OnGroupPermissionChange_Register(GroupPermissionCal
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupPermissionChange_Unregister(GroupPermissionCallback callback) {
-	std::unique_lock lock(group_permission_callbacks._lock);
-	const size_t ret = group_permission_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+extern "C" PLUGIN_API Status OnGroupPermissionChange_Unregister(GroupPermissionCallback callback)
+{
+    std::unique_lock lock(group_permission_callbacks._lock);
+    const size_t ret = group_permission_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
@@ -453,10 +490,11 @@ extern "C" PLUGIN_API Status OnGroupPermissionChange_Unregister(GroupPermissionC
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupCreate_Register(GroupCreateCallback callback) {
-	std::unique_lock lock(group_create_callbacks._lock);
-	auto ret = group_create_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+extern "C" PLUGIN_API Status OnGroupCreate_Register(GroupCreateCallback callback)
+{
+    std::unique_lock lock(group_create_callbacks._lock);
+    auto ret = group_create_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -465,10 +503,11 @@ extern "C" PLUGIN_API Status OnGroupCreate_Register(GroupCreateCallback callback
  * @param callback Listener
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupCreate_Unregister(GroupCreateCallback callback) {
-	std::unique_lock lock(group_create_callbacks._lock);
-	const size_t ret = group_create_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+extern "C" PLUGIN_API Status OnGroupCreate_Unregister(GroupCreateCallback callback)
+{
+    std::unique_lock lock(group_create_callbacks._lock);
+    const size_t ret = group_create_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
@@ -477,10 +516,11 @@ extern "C" PLUGIN_API Status OnGroupCreate_Unregister(GroupCreateCallback callba
  * @param callback Listener
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupDelete_Register(GroupDeleteCallback callback) {
-	std::unique_lock lock(group_delete_callbacks._lock);
-	auto ret = group_delete_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+extern "C" PLUGIN_API Status OnGroupDelete_Register(GroupDeleteCallback callback)
+{
+    std::unique_lock lock(group_delete_callbacks._lock);
+    auto ret = group_delete_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -489,10 +529,11 @@ extern "C" PLUGIN_API Status OnGroupDelete_Register(GroupDeleteCallback callback
  * @param callback Listener
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupDelete_Unregister(GroupDeleteCallback callback) {
-	std::unique_lock lock(group_delete_callbacks._lock);
-	const size_t ret = group_delete_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+extern "C" PLUGIN_API Status OnGroupDelete_Unregister(GroupDeleteCallback callback)
+{
+    std::unique_lock lock(group_delete_callbacks._lock);
+    const size_t ret = group_delete_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 PLUGIFY_WARN_POP()

@@ -8,12 +8,13 @@
 
 extern phmap::flat_hash_map<uint64_t, Group*> groups;
 
-inline Group* GetGroup(const plg::string& name) {
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::shared_lock lock(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end()) return nullptr;
-	return it->second;
+PLUGIFY_FORCE_INLINE Group* GetGroup(const plg::string& name)
+{
+    const uint64_t hash = XXH3_64bits(name.data(), name.size());
+    std::shared_lock lock(groups_mtx);
+    const auto it = groups.find(hash);
+    if (it == groups.end()) return nullptr;
+    return it->second;
 }
 
 /**
@@ -23,7 +24,8 @@ inline Group* GetGroup(const plg::string& name) {
  * @param childName		Name of the child group.
  * @param parentName	Name of the parent group being assigned.
  */
-using SetParentCallback = void (*)(const uint64_t pluginID, const plg::string& childName, const plg::string& parentName);
+using SetParentCallback = void (*)(const uint64_t pluginID, const plg::string& childName,
+                                   const plg::string& parentName);
 
 /**
  * @brief Callback invoked when a cookie value is set for a group.
@@ -33,7 +35,8 @@ using SetParentCallback = void (*)(const uint64_t pluginID, const plg::string& c
  * @param cookieName	Name of the cookie being set.
  * @param value			Value of the cookie.
  */
-using SetCookieGroupCallback = void (*)(const uint64_t pluginID, const plg::string& groupName, const plg::string& cookieName, const plg::any& value);
+using SetCookieGroupCallback = void (*)(const uint64_t pluginID, const plg::string& groupName,
+                                        const plg::string& cookieName, const plg::any& value);
 
 /**
  * @brief Callback invoked when a permission is added or removed from a group.
@@ -43,7 +46,8 @@ using SetCookieGroupCallback = void (*)(const uint64_t pluginID, const plg::stri
  * @param name		Name of the group.
  * @param groupName	Permission affected or related group name (depending on context).
  */
-using GroupPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const plg::string& name, const plg::string& groupName);
+using GroupPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const plg::string& name,
+                                         const plg::string& groupName);
 
 /**
  * @brief Callback invoked after a group is successfully created.
@@ -54,7 +58,9 @@ using GroupPermissionCallback = void (*)(const uint64_t pluginID, const Action a
  * @param priority	Priority of the group.
  * @param parent	Name of the parent group (empty if none).
  */
-using GroupCreateCallback = void (*)(const uint64_t pluginID, const plg::string& name, const plg::vector<plg::string>& perms, const int priority, const plg::string& parent);
+using GroupCreateCallback = void (*)(const uint64_t pluginID, const plg::string& name,
+                                     const plg::vector<plg::string>& perms, const int priority,
+                                     const plg::string& parent);
 
 /**
  * @brief Callback invoked before a group is deleted.
@@ -66,32 +72,35 @@ using GroupDeleteCallback = void (*)(const uint64_t pluginID, const plg::string&
 
 struct SetParentCallbacks
 {
-	std::shared_mutex _lock;
-	phmap::flat_hash_set<SetParentCallback> _callbacks;
-	std::atomic_int _counter;
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<SetParentCallback> _callbacks;
+    std::atomic_int _counter;
 };
+
 struct SetCookieGroupCallbacks
 {
-	std::shared_mutex _lock;
-	phmap::flat_hash_set<SetCookieGroupCallback> _callbacks;
-	std::atomic_int _counter;
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<SetCookieGroupCallback> _callbacks;
+    std::atomic_int _counter;
 };
 
 struct GroupPermissionCallbacks
 {
-	std::shared_mutex _lock;
-	phmap::flat_hash_set<GroupPermissionCallback> _callbacks;
-	std::atomic_int _counter;
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<GroupPermissionCallback> _callbacks;
+    std::atomic_int _counter;
 };
+
 struct GroupCreateCallbacks
 {
-	std::shared_mutex _lock;
-	phmap::flat_hash_set<GroupCreateCallback> _callbacks;
-	std::atomic_int _counter;
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<GroupCreateCallback> _callbacks;
+    std::atomic_int _counter;
 };
+
 struct GroupDeleteCallbacks
 {
-	std::shared_mutex _lock;
-	phmap::flat_hash_set<GroupDeleteCallback> _callbacks;
-	std::atomic_int _counter;
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<GroupDeleteCallback> _callbacks;
+    std::atomic_int _counter;
 };
