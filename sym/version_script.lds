@@ -9,10 +9,16 @@
         GetImmunity;
         AddPermission;
         AddPermissions;
+        AddTempPermission;
+        AddTempPermissions;
         RemovePermission;
         RemovePermissions;
+        RemoveTempPermission;
+        RemoveTempPermissions;
         AddGroup;
+        AddTempGroup;
         RemoveGroup;
+        RemoveTempGroup;
         GetCookie;
         SetCookie;
         GetAllCookies;
@@ -56,6 +62,14 @@
         OnUserCreate_Unregister;
         OnUserDelete_Register;
         OnUserDelete_Unregister;
+        OnUserTempPermissionChange_Register;
+        OnUserTempPermissionChange_Unregister;
+        OnUserTempPermissionsChange_Register;
+        OnUserTempPermissionsChange_Unregister;
+        OnPermissionExpirationCallback_Register;
+        OnPermissionExpirationCallback_Unregister;
+        OnGroupExpirationCallback_Register;
+        OnGroupExpirationCallback_Unregister;
 
     local: *;
 };
