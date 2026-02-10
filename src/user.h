@@ -137,6 +137,6 @@ struct User
         this->_groups = std::move(__groups);
         sortGroups();
         this->user_nodes = Node::loadNode(perms);
-        this->temp_nodes = {phmap::flat_hash_map<plg::string, Node>(), 0xFFFFFFFF, false, false, false, 0};
+        this->temp_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, false, 0};
     }
 };

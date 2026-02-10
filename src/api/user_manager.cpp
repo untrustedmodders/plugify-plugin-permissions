@@ -1,4 +1,8 @@
 #include "user_manager.h"
+
+#include <ostream>
+#include <print>
+
 phmap::flat_hash_map<uint64_t, User> users;
 
 std::shared_mutex users_mtx;
@@ -21,8 +25,8 @@ GroupExpirationCallbacks group_expiration_callbacks;
 
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
 {
-    const plg::string* perm = &plg::get<plg::string>(userData[1]);
-    const uint64_t targetID = plg::get<uint64_t>(userData[2]);
+    const plg::string* perm = &plg::get<plg::string>(userData[0]);
+    const uint64_t targetID = plg::get<uint64_t>(userData[1]);
     {
         std::unique_lock lock(users_mtx);
         const auto it = users.find(targetID);
