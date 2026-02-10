@@ -1,8 +1,5 @@
 #include "user_manager.h"
 
-#include <ostream>
-#include <print>
-
 phmap::flat_hash_map<uint64_t, User> users;
 
 std::shared_mutex users_mtx;
@@ -53,7 +50,12 @@ void g_GroupExpirationCallback(uint32_t timer, const plg::vector<plg::any>& user
         if (it == users.end())
             return;
         std::pair p = {timer, g};
-        plg::erase(it->second._t_groups, p);
+        for (const auto& g_it : it->second._t_groups)
+            if (g_it.group == g)
+            {
+                it->second._t_groups.erase(&g_it);
+                break;
+            }
     }
 
     std::shared_lock lock(group_expiration_callbacks._lock);
@@ -182,6 +184,9 @@ extern "C" PLUGIN_API Status GetUserGroups(const uint64_t targetID, plg::vector<
     outGroups.reserve(v->second._groups.size());
     for (const auto g : v->second._groups)
         outGroups.push_back(g->_name);
+
+    for (const auto& g : v->second._t_groups)
+        outGroups.push_back(g.group->_name + "" + plg::to_string(g.timestamp));
 
     return Status::Success;
 }
@@ -471,11 +476,12 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
 }
 
 /**
- * @brief Add a group to a user.
+ * @brief Add a temporal group to a user.
  *
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
+ * @param timestamp Group duration
  * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
 extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName, const time_t timestamp)
@@ -498,9 +504,9 @@ extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_
             ggg = ggg->_parent;
         }
     }
-    for (const auto gg : v->second._t_groups)
+    for (const auto& gg : v->second._t_groups)
     {
-        const Group* ggg = gg.second;
+        const Group* ggg = gg.group;
         while (ggg)
         {
             if (ggg == g)
@@ -519,7 +525,7 @@ extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_
 }
 
 /**
- * @brief Remove a group from a user.
+ * @brief Remove a temporal group from a user.
  *
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.

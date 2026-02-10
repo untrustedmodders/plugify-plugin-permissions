@@ -10,11 +10,17 @@
 #include "timer_system.h"
 
 struct User;
+struct TempGroup
+{
+    time_t timestamp;
+    Group* group;
+    uint32_t timer;
+};
 inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
 
-inline bool sortFF(const std::pair<uint32_t, Group*> i, const std::pair<uint32_t, Group*> j)
+inline bool sortFF(const TempGroup& i, const TempGroup& j)
 {
-    return i.second->_priority > j.second->_priority;
+    return i.group->_priority > j.group->_priority;
 }
 
 void g_PermExpirationCallback(uint32_t, const plg::vector<plg::any>&);
@@ -31,7 +37,7 @@ struct User
 
     phmap::flat_hash_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;
     plg::vector<Group*> _groups; // groups that player belongs to
-    plg::vector<std::pair<uint32_t, Group*>> _t_groups; // temporal groups
+    plg::vector<TempGroup> _t_groups; // temporal groups
     int _immunity;
 
     bool hasGroup(const plg::string& s)
@@ -72,7 +78,7 @@ struct User
 
         for (const auto& p : _t_groups)
         {
-            hasPerm = p.second->_hasPermission(names, hashes, i);
+            hasPerm = p.group->_hasPermission(names, hashes, i);
             if (hasPerm != Status::PermNotFound) return hasPerm;
         }
 
@@ -107,7 +113,7 @@ struct User
                                                        g->_name,
                                                        targetID
                                                    });
-        this->_t_groups.emplace_back(timer, g);
+        this->_t_groups.emplace_back(timestamp, g, timer);
         this->sortGroups();
     }
 
@@ -115,9 +121,9 @@ struct User
     {
         for (auto it = this->_t_groups.begin(); it != this->_t_groups.end(); ++it)
         {
-            if (g == it->second)
+            if (g == it->group)
             {
-                g_TimerSystem.KillTimer(it->first);
+                g_TimerSystem.KillTimer(it->timer);
                 this->_t_groups.erase(it);
                 return true;
             }
