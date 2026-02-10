@@ -16,6 +16,12 @@
             "funcName": "SetParent",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "childName",
                     "type": "string",
                     "ref": false,
@@ -962,6 +968,12 @@
             "funcName": "AddPermission",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -1422,6 +1434,12 @@
             "funcName": "AddPermissionGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "name",
                     "type": "string",
                     "ref": false,
@@ -1507,6 +1525,12 @@
             "funcName": "AddPermissions",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -1591,6 +1615,12 @@
             "name": "RemovePermission",
             "funcName": "RemovePermission",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -1950,6 +1980,12 @@
             "funcName": "RemovePermissionGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "name",
                     "type": "string",
                     "ref": false,
@@ -2034,6 +2070,12 @@
             "name": "RemovePermissions",
             "funcName": "RemovePermissions",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -2211,6 +2253,12 @@
             "funcName": "AddGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -2295,6 +2343,12 @@
             "name": "SetCookieGroup",
             "funcName": "SetCookieGroup",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "groupName",
                     "type": "string",
@@ -2478,6 +2532,12 @@
             "funcName": "RemoveGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -2562,6 +2622,12 @@
             "name": "CreateGroup",
             "funcName": "CreateGroup",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "name",
                     "type": "string",
@@ -2751,6 +2817,12 @@
             "funcName": "DeleteGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "name",
                     "type": "string",
                     "ref": false,
@@ -2829,6 +2901,12 @@
             "name": "SetCookie",
             "funcName": "SetCookie",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -3129,6 +3207,12 @@
             "name": "CreateUser",
             "funcName": "CreateUser",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -3432,6 +3516,12 @@
             "name": "DeleteUser",
             "funcName": "DeleteUser",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
