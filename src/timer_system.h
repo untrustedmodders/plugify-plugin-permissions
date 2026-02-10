@@ -9,8 +9,7 @@
 enum class TimerFlag {
     Default = 0,
 
-    Repeat = (1 << 0),
-    NoMapChange = (1 << 1)
+    Repeat = (1 << 0)
 };
 
 using TimerCallback = void (*)(uint32_t, const plg::vector<plg::any>& userData);
@@ -18,7 +17,6 @@ using TimerCallback = void (*)(uint32_t, const plg::vector<plg::any>& userData);
 struct Timer {
     uint32_t id;
     bool repeat;
-    bool noMapChange;
     mutable bool exec;
     mutable bool kill;
     double createTime;
@@ -44,14 +42,7 @@ public:
         return instance;
     }
 
-    void OnMapEnd();
-    void OnGameFrame(std::chrono::milliseconds deltaTime);
-
     void RunFrame();
-    void RemoveMapChangeTimers();
-    static double CalculateNextThink(double lastThinkTime, double delay);
-    static double GetTickedTime();
-    static double GetTickedInterval();
 
     uint32_t CreateTimer(double delay, TimerCallback callback, TimerFlag flags = TimerFlag::Default, const plg::vector<plg::any>& userData = {});
     void KillTimer(uint32_t id);

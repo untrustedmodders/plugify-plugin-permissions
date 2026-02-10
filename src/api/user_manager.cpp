@@ -21,12 +21,14 @@ GroupExpirationCallbacks group_expiration_callbacks;
 
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
 {
-    User* u = static_cast<User*>(plg::get<void*>(userData[0]));
     const plg::string* perm = &plg::get<plg::string>(userData[1]);
-    uint64_t targetID = plg::get<uint64_t>(userData[2]);
+    const uint64_t targetID = plg::get<uint64_t>(userData[2]);
     {
         std::unique_lock lock(users_mtx);
-        u->temp_nodes.deletePerm(*perm);
+        const auto it = users.find(targetID);
+        if (it == users.end())
+            return;
+        it->second.temp_nodes.deletePerm(*perm);
     }
 
     std::shared_lock lock(perm_expiration_callbacks._lock);
@@ -36,18 +38,23 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
 
 void g_GroupExpirationCallback(uint32_t timer, const plg::vector<plg::any>& userData)
 {
-    User* u = static_cast<User*>(plg::get<void*>(userData[0]));
-    plg::string group_name = plg::get<plg::string>(userData[1]);
-    uint64_t targetID = plg::get<uint64_t>(userData[2]);
+    const plg::string* group_name = &plg::get<plg::string>(userData[0]);
+    uint64_t targetID = plg::get<uint64_t>(userData[1]);
     {
         std::unique_lock lock(users_mtx);
-        std::pair p = {timer, GetGroup(group_name)};
-        plg::erase(u->_t_groups, p);
+        Group* g = GetGroup(*group_name);
+        if (g == nullptr)
+            return;
+        const auto it = users.find(targetID);
+        if (it == users.end())
+            return;
+        std::pair p = {timer, g};
+        plg::erase(it->second._t_groups, p);
     }
 
     std::shared_lock lock(group_expiration_callbacks._lock);
     for (const auto& callback : group_expiration_callbacks._callbacks)
-        callback(targetID, group_name);
+        callback(targetID, *group_name);
 }
 
 PLUGIFY_WARN_PUSH()
@@ -73,6 +80,7 @@ extern "C" PLUGIN_API Status DumpPermissions(const uint64_t targetID, plg::vecto
         return Status::TargetUserNotFound;
 
     perms = dumpNode(v->second.user_nodes);
+    perms.append_range(dumpNode(v->second.temp_nodes));
 
     return Status::Success;
 }

@@ -55,6 +55,7 @@ struct Node
     bool wildcard; // skip all nested nodes
     bool state; // indicates permission status (Allow/Disallow)
     bool end_node; // indicates non-intermediate node
+    time_t timestamp;
 
     PLUGIFY_FORCE_INLINE Status _hasPermission(const std::string_view names[], const uint64_t hashes[],
                                                const int sz) const
@@ -170,8 +171,7 @@ struct Node
             if (ss.starts_with('-')) ss = ss.substr(1);
             if (ss == "*") break;
             node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node>(), 0xFFFFFFFF,
-                                             false,
-                                             false, false).first->second);
+                                             false, false, false, 0).first->second);
         }
         node->state = allow;
         node->wildcard = hasWildcard;
@@ -190,7 +190,7 @@ struct Node
 
     PLUGIFY_FORCE_INLINE static Node loadNode(const plg::vector<plg::string>& perms)
     {
-        Node result{phmap::flat_hash_map<plg::string, Node>(), 0xFFFFFFFF, false, false, true};
+        Node result{phmap::flat_hash_map<plg::string, Node>(), 0xFFFFFFFF, false, false, true, 0};
         for (const plg::string& perm : perms)
         {
             if (perm.empty()) // empty lines?
@@ -219,8 +219,7 @@ struct Node
                     break;
                 };
                 node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node>(), 0xFFFFFFFF,
-                                                 false,
-                                                 false, false).first->second);
+                                                 false, false, false, 0).first->second);
             }
 
             node->state = state;

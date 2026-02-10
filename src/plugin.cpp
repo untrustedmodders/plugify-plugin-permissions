@@ -17,9 +17,9 @@ public:
         std::println("Permissions core stopped");
     }
 
-    void OnPluginUpdate(std::chrono::milliseconds deltaTime) override
+    void OnPluginUpdate(std::chrono::milliseconds) override
     {
-        g_TimerSystem.OnGameFrame(deltaTime);
+        g_TimerSystem.RunFrame();
     }
 } g_permissionsPlugin;
 

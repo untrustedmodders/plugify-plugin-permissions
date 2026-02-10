@@ -1,39 +1,21 @@
 #include "timer_system.h"
 
-double universalTime = 0.0f;
-double timerNextThink = 0.0f;
-const double engineFixedTickInterval = 0.015625;
-
-void TimerSystem::OnGameFrame(std::chrono::milliseconds deltaTime) {
-	universalTime += std::chrono::duration<double>(deltaTime).count();
-
-	// Handle timer tick
-	if (universalTime >= timerNextThink) {
-		RunFrame();
-		timerNextThink = CalculateNextThink(timerNextThink, 0.1);
-	}
-}
-
-double TimerSystem::CalculateNextThink(double lastThinkTime, double delay) {
-	if (universalTime - lastThinkTime - delay <= 0.1)
-		return lastThinkTime + delay;
-	return universalTime + delay;
-}
-
 void TimerSystem::RunFrame() {
 	std::scoped_lock lock(m_mutex);
+
+	const auto timestamp = static_cast<double>(time(nullptr));
 
 	while (!m_timers.empty()) {
 		auto it = m_timers.begin();
 
-		if (universalTime >= it->executeTime) {
+		if (timestamp >= it->executeTime) {
 			it->exec = true;
 			it->callback(it->id, it->userData);
 			it->exec = false;
 
 			if (it->repeat && !it->kill) {
 				auto node = m_timers.extract(it);
-				node.value().executeTime = universalTime + node.value().delay;
+				node.value().executeTime = timestamp + node.value().delay;
 				m_timers.insert(std::move(node));
 				continue;
 			}
@@ -45,23 +27,14 @@ void TimerSystem::RunFrame() {
 	}
 }
 
-void TimerSystem::RemoveMapChangeTimers() {
-    std::scoped_lock lock(m_mutex);
-
-	for (auto it = m_timers.begin(); it != m_timers.end();) {
-		if (it->noMapChange) {
-			it = m_timers.erase(it);
-		} else {
-			++it;
-		}
-	}
-}
-
 uint32_t TimerSystem::CreateTimer(double delay, TimerCallback callback, TimerFlag flags, const plg::vector<plg::any>& userData) {
 	std::scoped_lock lock(m_mutex);
+
+	const auto timestamp = static_cast<double>(time(nullptr));
+
 	// Enforce minimum delay to prevent immediate execution and iterator invalidation
 	uint32_t id = m_nextId++;
-	m_timers.emplace(id, flags & TimerFlag::Repeat, flags & TimerFlag::NoMapChange, false, false, universalTime, universalTime + std::max(delay, engineFixedTickInterval), delay, callback, userData);
+	m_timers.emplace(id, flags & TimerFlag::Repeat, false, false, timestamp, timestamp + delay, delay, callback, userData);
 	return id;
 }
 
@@ -92,17 +65,8 @@ void TimerSystem::RescheduleTimer(uint32_t id, double newDelay) {
 		if (!it->exec) {
 			auto node = m_timers.extract(it);
 			node.value().delay = newDelay;
-			node.value().executeTime = universalTime + newDelay;
+			node.value().executeTime = static_cast<double>(time(nullptr)) + newDelay;
 			m_timers.insert(std::move(node));
 		}
 	}
-}
-
-
-double TimerSystem::GetTickedTime() {
-	return universalTime;
-}
-
-double TimerSystem::GetTickedInterval() {
-	return engineFixedTickInterval;
 }

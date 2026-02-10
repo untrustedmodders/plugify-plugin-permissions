@@ -91,21 +91,20 @@ struct User
             node->timer = g_TimerSystem.CreateTimer(static_cast<double>(timestamp) - static_cast<double>(time(nullptr)),
                                                     g_PermExpirationCallback, TimerFlag::Default,
                                                     plg::vector<plg::any>{
-                                                        static_cast<void*>(this),
                                                         perm,
                                                         user_id
                                                     });
         else
             g_TimerSystem.RescheduleTimer(node->timer,
                                           static_cast<double>(timestamp) - static_cast<double>(time(nullptr)));
+        node->timestamp = timestamp;
     }
 
     PLUGIFY_FORCE_INLINE void addTempGroup(Group* g, time_t timestamp, uint64_t targetID)
     {
         uint32_t timer = g_TimerSystem.CreateTimer(static_cast<double>(timestamp) - static_cast<double>(time(nullptr)),
                                                    g_GroupExpirationCallback, TimerFlag::Default, plg::vector<plg::any>{
-                                                       static_cast<void*>(this),
-                                                       g,
+                                                       g->_name,
                                                        targetID
                                                    });
         this->_t_groups.emplace_back(timer, g);
@@ -138,5 +137,6 @@ struct User
         this->_groups = std::move(__groups);
         sortGroups();
         this->user_nodes = Node::loadNode(perms);
+        this->temp_nodes = {phmap::flat_hash_map<plg::string, Node>(), 0xFFFFFFFF, false, false, false, 0};
     }
 };
