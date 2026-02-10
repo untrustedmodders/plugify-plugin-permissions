@@ -16,6 +16,12 @@
             "funcName": "SetParent",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "childName",
                     "type": "string",
                     "ref": false,
@@ -962,6 +968,12 @@
             "funcName": "AddPermission",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -1041,6 +1053,296 @@
             },
             "group": "UserManager",
             "description": "Add a permission to a user."
+        },
+        {
+            "name": "AddTempPermission",
+            "funcName": "AddTempPermission",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "perm",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Permission line."
+                },
+                {
+                    "name": "timestamp",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Permission duration"
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Add a temporal permission to a user."
+        },
+        {
+            "name": "AddTempPermissions",
+            "funcName": "AddTempPermissions",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Permissions array"
+                },
+                {
+                    "name": "timestamps",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Permissions duration"
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Add a temporal permissions to a user."
+        },
+        {
+            "name": "AddTempGroup",
+            "funcName": "AddTempGroup",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "groupName",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                },
+                {
+                    "name": "timestamp",
+                    "type": "int64",
+                    "ref": false
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Add a group to a user."
         },
         {
             "name": "GetPriorityGroup",
@@ -1132,6 +1434,12 @@
             "funcName": "AddPermissionGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "name",
                     "type": "string",
                     "ref": false,
@@ -1216,6 +1524,12 @@
             "name": "AddPermissions",
             "funcName": "AddPermissions",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -1302,6 +1616,12 @@
             "funcName": "RemovePermission",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -1383,9 +1703,288 @@
             "description": "Remove a permission from a user."
         },
         {
+            "name": "RemoveTempPermission",
+            "funcName": "RemoveTempPermission",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "perm",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Permission line."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Remove a permission from a user."
+        },
+        {
+            "name": "RemoveTempPermissions",
+            "funcName": "RemoveTempPermissions",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID"
+                },
+                {
+                    "name": "perms",
+                    "type": "string[]",
+                    "ref": false,
+                    "description": "Permissions array"
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Remove a permissions to a user."
+        },
+        {
+            "name": "RemoveTempGroup",
+            "funcName": "RemoveTempGroup",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "groupName",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Remove a group from a user."
+        },
+        {
             "name": "RemovePermissionGroup",
             "funcName": "RemovePermissionGroup",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "name",
                     "type": "string",
@@ -1471,6 +2070,12 @@
             "name": "RemovePermissions",
             "funcName": "RemovePermissions",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -1648,6 +2253,12 @@
             "funcName": "AddGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -1732,6 +2343,12 @@
             "name": "SetCookieGroup",
             "funcName": "SetCookieGroup",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "groupName",
                     "type": "string",
@@ -1915,6 +2532,12 @@
             "funcName": "RemoveGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "targetID",
                     "type": "uint64",
                     "ref": false,
@@ -1999,6 +2622,12 @@
             "name": "CreateGroup",
             "funcName": "CreateGroup",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "name",
                     "type": "string",
@@ -2188,6 +2817,12 @@
             "funcName": "DeleteGroup",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
                     "name": "name",
                     "type": "string",
                     "ref": false,
@@ -2266,6 +2901,12 @@
             "name": "SetCookie",
             "funcName": "SetCookie",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -2566,6 +3207,12 @@
             "name": "CreateUser",
             "funcName": "CreateUser",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -2869,6 +3516,12 @@
             "name": "DeleteUser",
             "funcName": "DeleteUser",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
                 {
                     "name": "targetID",
                     "type": "uint64",
@@ -5055,6 +5708,930 @@
             },
             "group": "UserListeners",
             "description": "Unregister listener on user deletion"
+        },
+        {
+            "name": "OnUserTempPermissionChange_Register",
+            "funcName": "OnUserTempPermissionChange_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserTempPermissionCallback",
+                        "funcName": "UserTempPermissionCallback",
+                        "description": "Callback invoked when a permission is added or removed for a user.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the affected user."
+                            },
+                            {
+                                "name": "perm",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Permission line affected."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Permission duration."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user temp permission add/remove"
+        },
+        {
+            "name": "OnUserTempPermissionChange_Unregister",
+            "funcName": "OnUserTempPermissionChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserTempPermissionCallback",
+                        "funcName": "UserTempPermissionCallback",
+                        "description": "Callback invoked when a permission is added or removed for a user.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the affected user."
+                            },
+                            {
+                                "name": "perm",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Permission line affected."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Permission duration."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on user temp permission add/remove"
+        },
+        {
+            "name": "OnUserTempPermissionsChange_Register",
+            "funcName": "OnUserTempPermissionsChange_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserTempPermissionsCallback",
+                        "funcName": "UserTempPermissionsCallback",
+                        "description": "Callback invoked when multiple permissions are added or removed for a user.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the affected user."
+                            },
+                            {
+                                "name": "perms",
+                                "type": "string[]",
+                                "ref": false,
+                                "description": "Array of permissions affected."
+                            },
+                            {
+                                "name": "timestamps",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Array of permission durations."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user temp permissions add/remove"
+        },
+        {
+            "name": "OnUserTempPermissionsChange_Unregister",
+            "funcName": "OnUserTempPermissionsChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserTempPermissionsCallback",
+                        "funcName": "UserTempPermissionsCallback",
+                        "description": "Callback invoked when multiple permissions are added or removed for a user.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the affected user."
+                            },
+                            {
+                                "name": "perms",
+                                "type": "string[]",
+                                "ref": false,
+                                "description": "Array of permissions affected."
+                            },
+                            {
+                                "name": "timestamps",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Array of permission durations."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on user temp permissions add/remove"
+        },
+        {
+            "name": "OnPermissionExpirationCallback_Register",
+            "funcName": "OnPermissionExpirationCallback_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "PermExpirationCallback",
+                        "funcName": "PermExpirationCallback",
+                        "description": "Callback invoked when a permission in user has been expired.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the user whose permission has expired."
+                            },
+                            {
+                                "name": "perm",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Permission line affected."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user permission expiration"
+        },
+        {
+            "name": "OnPermissionExpirationCallback_Unregister",
+            "funcName": "OnPermissionExpirationCallback_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "PermExpirationCallback",
+                        "funcName": "PermExpirationCallback",
+                        "description": "Callback invoked when a permission in user has been expired.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the user whose permission has expired."
+                            },
+                            {
+                                "name": "perm",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Permission line affected."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on user permission expiration"
+        },
+        {
+            "name": "OnGroupExpirationCallback_Register",
+            "funcName": "OnGroupExpirationCallback_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "GroupExpirationCallback",
+                        "funcName": "GroupExpirationCallback",
+                        "description": "Callback invoked when a group in user has been expired.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose group has expired."
+                            },
+                            {
+                                "name": "group",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Name of the group expiration."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user permission expiration"
+        },
+        {
+            "name": "OnGroupExpirationCallback_Unregister",
+            "funcName": "OnGroupExpirationCallback_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "GroupExpirationCallback",
+                        "funcName": "GroupExpirationCallback",
+                        "description": "Callback invoked when a group in user has been expired.",
+                        "paramTypes": [
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose group has expired."
+                            },
+                            {
+                                "name": "group",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Name of the group expiration."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on user group expiration"
         }
     ]
 }

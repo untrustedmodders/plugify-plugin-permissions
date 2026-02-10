@@ -920,7 +920,7 @@ extern "C" PLUGIN_API Status OnUserTempPermissionsChange_Unregister(UserTempPerm
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnPermExpirationCallback_Register(PermExpirationCallback callback)
+extern "C" PLUGIN_API Status OnPermissionExpirationCallback_Register(PermExpirationCallback callback)
 {
     std::unique_lock lock(perm_expiration_callbacks._lock);
     auto ret = perm_expiration_callbacks._callbacks.insert(callback);
@@ -933,7 +933,7 @@ extern "C" PLUGIN_API Status OnPermExpirationCallback_Register(PermExpirationCal
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnPermExpirationCallback_Unregister(PermExpirationCallback callback)
+extern "C" PLUGIN_API Status OnPermissionExpirationCallback_Unregister(PermExpirationCallback callback)
 {
     std::unique_lock lock(perm_expiration_callbacks._lock);
     const size_t ret = perm_expiration_callbacks._callbacks.erase(callback);

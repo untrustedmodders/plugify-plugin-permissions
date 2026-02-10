@@ -49,7 +49,7 @@ using UserPermissionsCallback = void (*)(const uint64_t pluginID, const Action a
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param perm		Permission line affected.
- * @param timestamp Permission duration
+ * @param timestamp Permission duration.
  */
 using UserTempPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
                                             const plg::string& perm, const time_t timestamp);
@@ -61,7 +61,7 @@ using UserTempPermissionCallback = void (*)(const uint64_t pluginID, const Actio
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param perms		Array of permissions affected.
- * @param timestamps Array of permission durations
+ * @param timestamps Array of permission durations.
  */
 using UserTempPermissionsCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
                                              const plg::vector<plg::string>& perms,
@@ -120,20 +120,20 @@ using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targ
 using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targetID);
 
 /**
- * @brief Callback invoked when a permission in user has been expired
+ * @brief Callback invoked when a permission in user has been expired.
  *
- * @param targetID PlayerID
- * @param Permission line.
+ * @param targetID Player ID of the user whose permission has expired.
+ * @param perm Permission line affected.
  */
 using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::string& perm);
 
 /**
- * @brief Callback invoked when a permission in user has been expired
+ * @brief Callback invoked when a group in user has been expired.
  *
- * @param targetID PlayerID
- * @param Permission line.
+ * @param targetID PlayerID of the user whose group has expired.
+ * @param group		Name of the group expiration.
  */
-using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& groupName);
+using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& group);
 
 struct UserPermissionCallbacks
 {
