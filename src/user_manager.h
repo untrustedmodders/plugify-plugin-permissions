@@ -115,6 +115,7 @@ using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targ
 /**
  * @brief Callback invoked before a user is deleted.
  *
+ * @param pluginID		Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
  */
 using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targetID);

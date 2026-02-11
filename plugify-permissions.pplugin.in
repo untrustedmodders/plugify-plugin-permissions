@@ -3118,6 +3118,12 @@
                         "description": "Callback invoked when a parent group is set for a child group.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "childName",
                                 "type": "string",
                                 "ref": false,
@@ -3321,6 +3327,12 @@
                         "description": "Callback invoked when a parent group is set for a child group.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "childName",
                                 "type": "string",
                                 "ref": false,
@@ -3420,6 +3432,12 @@
                         "funcName": "SetCookieGroupCallback",
                         "description": "Callback invoked when a cookie value is set for a group.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "groupName",
                                 "type": "string",
@@ -3612,6 +3630,12 @@
                         "description": "Callback invoked when a cookie value is set for a group.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "groupName",
                                 "type": "string",
                                 "ref": false,
@@ -3717,6 +3741,12 @@
                         "funcName": "GroupPermissionCallback",
                         "description": "Callback invoked when a permission is added or removed from a group.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "action",
                                 "type": "int32",
@@ -3855,6 +3885,12 @@
                         "description": "Callback invoked when a permission is added or removed from a group.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "action",
                                 "type": "int32",
                                 "ref": false,
@@ -3973,6 +4009,12 @@
                         "funcName": "UserPermissionCallback",
                         "description": "Callback invoked when a permission is added or removed for a user.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "action",
                                 "type": "int32",
@@ -4093,6 +4135,12 @@
                         "description": "Callback invoked after a group is successfully created.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "name",
                                 "type": "string",
                                 "ref": false,
@@ -4204,6 +4252,12 @@
                         "funcName": "UserPermissionCallback",
                         "description": "Callback invoked when a permission is added or removed for a user.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "action",
                                 "type": "int32",
@@ -4324,6 +4378,12 @@
                         "description": "Callback invoked after a group is successfully created.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "name",
                                 "type": "string",
                                 "ref": false,
@@ -4435,6 +4495,12 @@
                         "funcName": "UserPermissionsCallback",
                         "description": "Callback invoked when multiple permissions are added or removed for a user.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "action",
                                 "type": "int32",
@@ -4555,6 +4621,12 @@
                         "description": "Callback invoked before a group is deleted.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "name",
                                 "type": "string",
                                 "ref": false,
@@ -4648,6 +4720,12 @@
                         "funcName": "UserPermissionsCallback",
                         "description": "Callback invoked when multiple permissions are added or removed for a user.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "action",
                                 "type": "int32",
@@ -4768,6 +4846,12 @@
                         "description": "Callback invoked before a group is deleted.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "name",
                                 "type": "string",
                                 "ref": false,
@@ -4861,6 +4945,12 @@
                         "funcName": "UserSetCookieCallback",
                         "description": "Callback invoked when a cookie is set for a user.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "targetID",
                                 "type": "uint64",
@@ -4968,6 +5058,12 @@
                         "description": "Callback invoked when a cookie is set for a user.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "targetID",
                                 "type": "uint64",
                                 "ref": false,
@@ -5073,6 +5169,12 @@
                         "funcName": "UserGroupCallback",
                         "description": "Callback invoked when a group is added or removed from a user.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "action",
                                 "type": "int32",
@@ -5193,6 +5295,12 @@
                         "description": "Callback invoked when a group is added or removed from a user.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "action",
                                 "type": "int32",
                                 "ref": false,
@@ -5312,6 +5420,12 @@
                         "description": "Callback invoked after a user is successfully created.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "targetID",
                                 "type": "uint64",
                                 "ref": false,
@@ -5423,6 +5537,12 @@
                         "funcName": "UserCreateCallback",
                         "description": "Callback invoked after a user is successfully created.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "targetID",
                                 "type": "uint64",
@@ -5536,6 +5656,12 @@
                         "description": "Callback invoked before a user is deleted.",
                         "paramTypes": [
                             {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
                                 "name": "targetID",
                                 "type": "uint64",
                                 "ref": false,
@@ -5629,6 +5755,12 @@
                         "funcName": "UserDeleteCallback",
                         "description": "Callback invoked before a user is deleted.",
                         "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
                             {
                                 "name": "targetID",
                                 "type": "uint64",
