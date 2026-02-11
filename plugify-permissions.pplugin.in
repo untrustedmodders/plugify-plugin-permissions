@@ -6375,8 +6375,8 @@
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "UserTempPermissionCallback",
-                        "funcName": "UserTempPermissionCallback",
+                        "name": "UserTempGroupCallback",
+                        "funcName": "UserTempGroupCallback",
                         "description": "Callback invoked when a group is added or removed from a user.",
                         "paramTypes": [
                             {
@@ -6506,8 +6506,8 @@
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "UserTempPermissionCallback",
-                        "funcName": "UserTempPermissionCallback",
+                        "name": "UserTempGroupCallback",
+                        "funcName": "UserTempGroupCallback",
                         "description": "Callback invoked when a group is added or removed from a user.",
                         "paramTypes": [
                             {

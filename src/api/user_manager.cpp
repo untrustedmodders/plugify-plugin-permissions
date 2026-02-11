@@ -930,7 +930,7 @@ extern "C" PLUGIN_API Status OnUserTempPermissionsChange_Unregister(UserTempPerm
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserTempGroupChange_Register(UserTempPermissionCallback callback)
+extern "C" PLUGIN_API Status OnUserTempGroupChange_Register(UserTempGroupCallback callback)
 {
 	std::unique_lock lock(user_temp_group_callbacks._lock);
 	auto ret = user_temp_group_callbacks._callbacks.insert(callback);
@@ -943,7 +943,7 @@ extern "C" PLUGIN_API Status OnUserTempGroupChange_Register(UserTempPermissionCa
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserTempGroupChange_Unregister(UserTempPermissionCallback callback)
+extern "C" PLUGIN_API Status OnUserTempGroupChange_Unregister(UserTempGroupCallback callback)
 {
 	std::unique_lock lock(user_temp_group_callbacks._lock);
 	const size_t ret = user_temp_group_callbacks._callbacks.erase(callback);
