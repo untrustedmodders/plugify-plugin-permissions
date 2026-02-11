@@ -66,6 +66,8 @@
         OnUserTempPermissionChange_Unregister;
         OnUserTempPermissionsChange_Register;
         OnUserTempPermissionsChange_Unregister;
+        OnUserTempGroupChange_Register;
+        OnUserTempGroupChange_Unregister;
         OnPermissionExpirationCallback_Register;
         OnPermissionExpirationCallback_Unregister;
         OnGroupExpirationCallback_Register;

@@ -6366,6 +6366,268 @@
             "description": "Unregister listener on user temp permissions add/remove"
         },
         {
+            "name": "OnUserTempGroupChange_Register",
+            "funcName": "OnUserTempGroupChange_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserTempPermissionCallback",
+                        "funcName": "UserTempPermissionCallback",
+                        "description": "Callback invoked when a group is added or removed from a user.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the affected user."
+                            },
+                            {
+                                "name": "group",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Name of the group added or removed."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Group duration."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user temp group add/remove"
+        },
+        {
+            "name": "OnUserTempGroupChange_Unregister",
+            "funcName": "OnUserTempGroupChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserTempPermissionCallback",
+                        "funcName": "UserTempPermissionCallback",
+                        "description": "Callback invoked when a group is added or removed from a user.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "action",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Action performed (Add or Remove).",
+                                "enum": {
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Player ID of the affected user."
+                            },
+                            {
+                                "name": "group",
+                                "type": "string",
+                                "ref": false,
+                                "description": "Name of the group added or removed."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Group duration."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on user temp group add/remove"
+        },
+        {
             "name": "OnPermissionExpirationCallback_Register",
             "funcName": "OnPermissionExpirationCallback_Register",
             "paramTypes": [

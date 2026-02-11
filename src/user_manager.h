@@ -96,6 +96,7 @@ using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action,
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param group		Name of the group added or removed.
+ * @param timestamp	Group duration.
  */
 using UserTempGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t timestamp);

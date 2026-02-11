@@ -925,6 +925,32 @@ extern "C" PLUGIN_API Status OnUserTempPermissionsChange_Unregister(UserTempPerm
 }
 
 /**
+ * @brief Register listener on user temp group add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempGroupChange_Register(UserTempPermissionCallback callback)
+{
+	std::unique_lock lock(user_temp_group_callbacks._lock);
+	auto ret = user_temp_group_callbacks._callbacks.insert(callback);
+	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on user temp group add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempGroupChange_Unregister(UserTempPermissionCallback callback)
+{
+	std::unique_lock lock(user_temp_group_callbacks._lock);
+	const size_t ret = user_temp_group_callbacks._callbacks.erase(callback);
+	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
  * @brief Register listener on user permission expiration
  *
  * @param callback Function callback.
