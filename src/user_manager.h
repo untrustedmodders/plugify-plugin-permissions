@@ -50,20 +50,9 @@ using UserSetCookieCallback = void (*)(const uint64_t pluginID, const uint64_t t
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param group		Name of the group added or removed.
+ * @param timestamp Group duration
  */
 using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                   const plg::string& group);
-
-/**
- * @brief Callback invoked when a group is added or removed from a user.
- *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param targetID	Player ID of the affected user.
- * @param group		Name of the group added or removed.
- * @param timestamp	Group duration.
- */
-using UserTempGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t timestamp);
 
 /**
@@ -120,13 +109,6 @@ struct UserGroupCallbacks
 {
     std::shared_mutex _lock;
     phmap::flat_hash_set<UserGroupCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserTempGroupCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_set<UserTempGroupCallback> _callbacks;
     std::atomic_int _counter;
 };
 

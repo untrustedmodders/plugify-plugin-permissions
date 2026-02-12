@@ -9,7 +9,6 @@ UserPermissionCallbacks user_permission_callbacks;
 UserSetCookieCallbacks user_set_cookie_callbacks;
 
 UserGroupCallbacks user_group_callbacks;
-UserTempGroupCallbacks user_temp_group_callbacks;
 
 UserCreateCallbacks user_create_callbacks;
 UserDeleteCallbacks user_delete_callbacks;
@@ -34,7 +33,7 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
         callback(targetID, *perm);
 }
 
-void g_GroupExpirationCallback(uint32_t timer, const plg::vector<plg::any>& userData)
+void g_GroupExpirationCallback(uint32_t /*timer*/, const plg::vector<plg::any>& userData)
 {
     const plg::string* group_name = &plg::get<plg::string>(userData[0]);
     uint64_t targetID = plg::get<uint64_t>(userData[1]);
@@ -46,7 +45,6 @@ void g_GroupExpirationCallback(uint32_t timer, const plg::vector<plg::any>& user
         const auto it = users.find(targetID);
         if (it == users.end())
             return;
-        std::pair p = {timer, g};
         for (const auto& g_it : it->second._t_groups)
             if (g_it.group == g)
             {
@@ -285,9 +283,11 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
+ * @param timestamp Group duration
  * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
-extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName)
+extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName,
+                                      const time_t timestamp)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -303,17 +303,47 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
         while (ggg)
         {
             if (ggg == g)
-                return Status::GroupAlreadyExist;
+                return Status::GroupAlreadyExist; // Requested group already permanent
             ggg = ggg->_parent;
         }
     }
-    v->second._groups.push_back(g);
+    for (auto it = v->second._t_groups.begin(); it != v->second._t_groups.end(); it++)
+    {
+        const Group* ggg = it->group;
+        if (ggg == g) // User already have this group as temporary
+        {
+            if (timestamp != 0)
+            {
+                g_TimerSystem.RescheduleTimer(it->timer, static_cast<double>(timestamp) - static_cast<double>(time(nullptr)));
+                std::shared_lock lock2(user_group_callbacks._lock);
+                for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+                    cb(pluginID, Action::Add, targetID, groupName, timestamp);
+                return Status::Success;
+            }
+            else // Add group as permanent
+            {
+                v->second._t_groups.erase(it);
+                break;
+            }
+        }
+        while (ggg)
+        {
+            if (ggg == g)
+                return Status::GroupAlreadyExist; // Because requested group is parent
+            ggg = ggg->_parent;
+        }
+    }
+
+    if (timestamp == 0)
+        v->second._groups.push_back(g);
+    else
+        v->second.addTempGroup(g, timestamp, targetID);
     v->second.sortGroups();
 
     {
         std::shared_lock lock2(user_group_callbacks._lock);
         for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-            cb(pluginID, Action::Add, targetID, groupName);
+            cb(pluginID, Action::Add, targetID, groupName, timestamp);
     }
 
     return Status::Success;
@@ -337,89 +367,31 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
     Group* g = GetGroup(groupName);
     if (g == nullptr)
         return Status::ChildGroupNotFound;
-    {
-        std::shared_lock lock2(user_group_callbacks._lock);
-        for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-            cb(pluginID, Action::Remove, targetID, groupName);
-    }
-    return plg::erase(v->second._groups, g) > 0 ? Status::Success : Status::ParentGroupNotFound;
-}
 
-/**
- * @brief Add a temporal group to a user.
- *
- * @param pluginID Identifier of the plugin that calls the method.
- * @param targetID Player ID.
- * @param groupName Group name.
- * @param timestamp Group duration
- * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
- */
-extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_t targetID,
-                                          const plg::string& groupName, const time_t timestamp)
-{
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
-
-    Group* g = GetGroup(groupName);
-    if (g == nullptr)
-        return Status::GroupNotFound;
-    for (const auto gg : v->second._groups)
+    for (auto it = v->second._t_groups.begin(); it != v->second._t_groups.end(); it++)
     {
-        const Group* ggg = gg;
-        while (ggg)
+        if (it->group == g)
         {
-            if (ggg == g)
-                return Status::GroupAlreadyExist;
-            ggg = ggg->_parent;
+            std::shared_lock lock2(user_group_callbacks._lock);
+            for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+                cb(pluginID, Action::Remove, targetID, groupName, it->timestamp);
+            v->second._t_groups.erase(it);
+            return Status::Success;
         }
     }
-    for (const auto& gg : v->second._t_groups)
+
+    for (auto it = v->second._groups.begin(); it != v->second._groups.end(); it++)
     {
-        const Group* ggg = gg.group;
-        while (ggg)
+        if (*it == g)
         {
-            if (ggg == g)
-                return Status::GroupAlreadyExist;
-            ggg = ggg->_parent;
+            std::shared_lock lock2(user_group_callbacks._lock);
+            for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+                cb(pluginID, Action::Remove, targetID, groupName, 0);
+            v->second._groups.erase(it);
+            return Status::Success;
         }
     }
-    v->second.addTempGroup(g, timestamp, targetID);
-    {
-        std::shared_lock lock2(user_temp_group_callbacks._lock);
-        for (const UserTempGroupCallback cb : user_temp_group_callbacks._callbacks)
-            cb(pluginID, Action::Add, targetID, groupName, timestamp);
-    }
-
-    return Status::Success;
-}
-
-/**
- * @brief Remove a temporal group from a user.
- *
- * @param pluginID Identifier of the plugin that calls the method.
- * @param targetID Player ID.
- * @param groupName Group name.
- * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
- */
-extern "C" PLUGIN_API Status RemoveTempGroup(const uint64_t pluginID, const uint64_t targetID,
-                                             const plg::string& groupName)
-{
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
-
-    Group* g = GetGroup(groupName);
-    if (g == nullptr)
-        return Status::ChildGroupNotFound;
-    {
-        std::shared_lock lock2(user_temp_group_callbacks._lock);
-        for (const UserTempGroupCallback cb : user_temp_group_callbacks._callbacks)
-            cb(pluginID, Action::Remove, targetID, groupName, 0);
-    }
-    return v->second.delTempGroup(g) ? Status::Success : Status::ParentGroupNotFound;
+    return Status::ParentGroupNotFound;
 }
 
 /**
