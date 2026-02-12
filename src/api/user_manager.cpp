@@ -5,6 +5,9 @@ phmap::flat_hash_map<uint64_t, User> users;
 std::shared_mutex users_mtx;
 
 UserPermissionCallbacks user_permission_callbacks;
+UserPermissionsCallbacks user_permissions_callbacks;
+UserTempPermissionCallbacks user_temp_permission_callbacks;
+UserTempPermissionsCallbacks user_temp_permissions_callbacks;
 
 UserSetCookieCallbacks user_set_cookie_callbacks;
 
@@ -125,11 +128,10 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
  */
 extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::string& perm)
 {
-    uint16_t perm_type;
     std::shared_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v != users.end())
-        return v->second.hasPermission(perm, perm_type);
+        return v->second.hasPermission(perm);
     return Status::TargetUserNotFound;
 }
 
@@ -184,7 +186,7 @@ extern "C" PLUGIN_API Status GetUserGroups(const uint64_t targetID, plg::vector<
         outGroups.push_back(g->_name);
 
     for (const auto& g : v->second._t_groups)
-        outGroups.push_back(g.group->_name + " " + plg::to_string(g.timestamp));
+        outGroups.push_back(g.group->_name + "" + plg::to_string(g.timestamp));
 
     return Status::Success;
 }
@@ -212,37 +214,96 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param perm Permission line.
- * @param timestamp Permission duration
- * @return Success, TargetUserNotFound, PermAlreadyGranted
+ * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
-                                           const time_t timestamp)
+extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm)
 {
-    uint16_t perm_type;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
         return Status::TargetUserNotFound;
-
-    if (timestamp != 0) // Add temp permission
-    {
-        (void)v->second.hasPermission(perm, perm_type);
-        if (perm_type != 1)
-            v->second.addTempPerm(perm, timestamp, targetID);
-        else
-            return Status::PermAlreadyGranted;
-    }
-    else // Add permanent permission
-    {
-        (void)v->second.hasPermission(perm, perm_type);
-        if (perm_type == 0)
-            v->second.temp_nodes.deletePerm(perm);
-        v->second.user_nodes.addPerm(perm);
-    }
+    v->second.user_nodes.addPerm(perm);
     {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+            cb(pluginID, Action::Add, targetID, perm);
+    }
+    return Status::Success;
+}
+
+/**
+ * @brief Add a permissions to a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID
+ * @param perms Permissions array
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status AddPermissions(const uint64_t pluginID, const uint64_t targetID,
+                                            const plg::vector<plg::string>& perms)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+    for (const auto& perm : perms) v->second.user_nodes.addPerm(perm);
+    {
+        std::shared_lock lock2(user_permissions_callbacks._lock);
+        for (const UserPermissionsCallback cb : user_permissions_callbacks._callbacks)
+            cb(pluginID, Action::Add, targetID, perms);
+    }
+    return Status::Success;
+}
+
+/**
+ * @brief Add a temporal permission to a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID.
+ * @param perm Permission line.
+ * @param timestamp Permission duration
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status AddTempPermission(const uint64_t pluginID, const uint64_t targetID,
+                                               const plg::string& perm, const time_t timestamp)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+    v->second.addTempPerm(perm, timestamp, targetID);
+    {
+        std::shared_lock lock2(user_temp_permission_callbacks._lock);
+        for (const UserTempPermissionCallback cb : user_temp_permission_callbacks._callbacks)
             cb(pluginID, Action::Add, targetID, perm, timestamp);
+    }
+    return Status::Success;
+}
+
+/**
+ * @brief Add a temporal permissions to a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID
+ * @param perms Permissions array
+ * @param timestamps Permissions duration
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status AddTempPermissions(const uint64_t pluginID, const uint64_t targetID,
+                                                const plg::vector<plg::string>& perms,
+                                                const plg::vector<time_t>& timestamps)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+    const size_t sz = perms.size();
+    for (size_t i = 0; i < sz; ++i) v->second.addTempPerm(perms[i], timestamps[i], targetID);
+
+    {
+        std::shared_lock lock2(user_temp_permissions_callbacks._lock);
+        for (const UserTempPermissionsCallback cb : user_temp_permissions_callbacks._callbacks)
+            cb(pluginID, Action::Add, targetID, perms, timestamps);
     }
     return Status::Success;
 }
@@ -253,28 +314,97 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param perm Permission line.
- * @return Success, TargetUserNotFound, PermNotFound
+ * @return Success, TargetUserNotFound
  */
 extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm)
 {
-    uint16_t perm_type;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
         return Status::TargetUserNotFound;
 
-    (void)v->second.hasPermission(perm, perm_type);
-    if (perm_type > 1)
-        return Status::PermNotFound; // Because this permission is in Groups
     {
-        const time_t timestamp = perm_type == 0 ? 1 : 0;
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, Action::Remove, targetID, perm, timestamp);
+            cb(pluginID, Action::Remove, targetID, perm);
     }
-    if (perm_type == 1)
+    v->second.user_nodes.deletePerm(perm);
+    return Status::Success;
+}
+
+/**
+ * @brief Remove a permissions to a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID
+ * @param perms Permissions array
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status RemovePermissions(const uint64_t pluginID, const uint64_t targetID,
+                                               const plg::vector<plg::string>& perms)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+
+    {
+        std::shared_lock lock2(user_permissions_callbacks._lock);
+        for (const UserPermissionsCallback cb : user_permissions_callbacks._callbacks)
+            cb(pluginID, Action::Remove, targetID, perms);
+    }
+    for (const auto& perm : perms)
         v->second.user_nodes.deletePerm(perm);
-    else
+    return Status::Success;
+}
+
+/**
+ * @brief Remove a permission from a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID.
+ * @param perm Permission line.
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status RemoveTempPermission(const uint64_t pluginID, const uint64_t targetID,
+                                                  const plg::string& perm)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+
+    {
+        std::shared_lock lock2(user_temp_permission_callbacks._lock);
+        for (const UserTempPermissionCallback cb : user_temp_permission_callbacks._callbacks)
+            cb(pluginID, Action::Remove, targetID, perm, -1);
+    }
+    v->second.temp_nodes.deletePerm(perm);
+    return Status::Success;
+}
+
+/**
+ * @brief Remove a permissions to a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID
+ * @param perms Permissions array
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status RemoveTempPermissions(const uint64_t pluginID, const uint64_t targetID,
+                                                   const plg::vector<plg::string>& perms)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+
+    {
+        std::shared_lock lock2(user_temp_permissions_callbacks._lock);
+        for (const UserTempPermissionsCallback cb : user_temp_permissions_callbacks._callbacks)
+            cb(pluginID, Action::Remove, targetID, perms, {});
+    }
+    for (const auto& perm : perms)
         v->second.temp_nodes.deletePerm(perm);
     return Status::Success;
 }
@@ -354,8 +484,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
  * @param timestamp Group duration
  * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
-extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_t targetID,
-                                          const plg::string& groupName, const time_t timestamp)
+extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName, const time_t timestamp)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -403,8 +532,7 @@ extern "C" PLUGIN_API Status AddTempGroup(const uint64_t pluginID, const uint64_
  * @param groupName Group name.
  * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status RemoveTempGroup(const uint64_t pluginID, const uint64_t targetID,
-                                             const plg::string& groupName)
+extern "C" PLUGIN_API Status RemoveTempGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -615,6 +743,32 @@ extern "C" PLUGIN_API Status OnUserPermissionChange_Unregister(UserPermissionCal
 }
 
 /**
+ * @brief Register listener on user permissions add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserPermissionsChange_Register(UserPermissionsCallback callback)
+{
+    std::unique_lock lock(user_permissions_callbacks._lock);
+    auto ret = user_permissions_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on user permissions add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserPermissionsChange_Unregister(UserPermissionsCallback callback)
+{
+    std::unique_lock lock(user_permissions_callbacks._lock);
+    const size_t ret = user_permissions_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
  * @brief Register listener on user cookie sets
  *
  * @param callback Function callback.
@@ -716,6 +870,84 @@ extern "C" PLUGIN_API Status OnUserDelete_Unregister(UserDeleteCallback callback
     std::unique_lock lock(user_delete_callbacks._lock);
     const size_t ret = user_delete_callbacks._callbacks.erase(callback);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
+ * @brief Register listener on user temp permission add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempPermissionChange_Register(UserTempPermissionCallback callback)
+{
+    std::unique_lock lock(user_temp_permission_callbacks._lock);
+    auto ret = user_temp_permission_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on user temp permission add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempPermissionChange_Unregister(UserTempPermissionCallback callback)
+{
+    std::unique_lock lock(user_temp_permission_callbacks._lock);
+    const size_t ret = user_temp_permission_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
+ * @brief Register listener on user temp permissions add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempPermissionsChange_Register(UserTempPermissionsCallback callback)
+{
+    std::unique_lock lock(user_temp_permissions_callbacks._lock);
+    auto ret = user_temp_permissions_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on user temp permissions add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempPermissionsChange_Unregister(UserTempPermissionsCallback callback)
+{
+    std::unique_lock lock(user_temp_permissions_callbacks._lock);
+    const size_t ret = user_temp_permissions_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
+ * @brief Register listener on user temp group add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempGroupChange_Register(UserTempGroupCallback callback)
+{
+	std::unique_lock lock(user_temp_group_callbacks._lock);
+	auto ret = user_temp_group_callbacks._callbacks.insert(callback);
+	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on user temp group add/remove
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserTempGroupChange_Unregister(UserTempGroupCallback callback)
+{
+	std::unique_lock lock(user_temp_group_callbacks._lock);
+	const size_t ret = user_temp_group_callbacks._callbacks.erase(callback);
+	return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**

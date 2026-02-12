@@ -61,6 +61,7 @@ using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action,
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param group		Name of the group added or removed.
+ * @param timestamp	Group duration.
  */
 using UserTempGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t timestamp);
@@ -80,6 +81,7 @@ using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targ
 /**
  * @brief Callback invoked before a user is deleted.
  *
+ * @param pluginID		Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
  */
 using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targetID);
