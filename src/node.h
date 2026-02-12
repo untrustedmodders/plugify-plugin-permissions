@@ -28,7 +28,8 @@ enum class Status : int32_t
     GroupAlreadyExist = 10,
     UserAlreadyExist = 11,
     CallbackAlreadyExist = 12,
-    CallbackNotFound = 13
+    CallbackNotFound = 13,
+    PermAlreadyGranted = 14
 };
 
 struct string_hash
@@ -130,23 +131,23 @@ struct Node
             curNode = &it->second;
         }
 
-    	if (hasWildcard)
-    	{
-    		for (auto& val : curNode->nodes | std::views::values)
-    			destroyAllTimers(val);
-    		curNode->nodes.clear();
-    	}
-    	// Not wildcard - clear only last
-    	else
-    	{
-    		const auto it = curNode->nodes.find(names[sz - 1], hashes[sz - 1]);
-    		if (it == curNode->nodes.end()) return;
-    		if (it->second.timer != 0xFFFFFFFF)
-    			g_TimerSystem.KillTimer(it->second.timer);
-    		for (auto& val : it->second.nodes | std::views::values)
-    			destroyAllTimers(val);
-    		curNode->nodes.erase(it);
-    	}
+        if (hasWildcard)
+        {
+            for (auto& val : curNode->nodes | std::views::values)
+                destroyAllTimers(val);
+            curNode->nodes.clear();
+        }
+        // Not wildcard - clear only last
+        else
+        {
+            const auto it = curNode->nodes.find(names[sz - 1], hashes[sz - 1]);
+            if (it == curNode->nodes.end()) return;
+            if (it->second.timer != 0xFFFFFFFF)
+                g_TimerSystem.KillTimer(it->second.timer);
+            for (auto& val : it->second.nodes | std::views::values)
+                destroyAllTimers(val);
+            curNode->nodes.erase(it);
+        }
 
         if (curNode->end_node || !curNode->nodes.empty())
             return;
@@ -175,7 +176,8 @@ struct Node
             auto ss = std::string_view(s);
             if (ss.starts_with('-')) ss = ss.substr(1);
             if (ss == "*") break;
-            node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF,
+            node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node, string_hash>(),
+                                             0xFFFFFFFF,
                                              false, false, false, 0).first->second);
         }
         node->state = allow;
@@ -223,7 +225,8 @@ struct Node
                     wildcard = true;
                     break;
                 };
-                node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF,
+                node = &(node->nodes.try_emplace(plg::string(ss),
+                                                 phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF,
                                                  false, false, false, 0).first->second);
             }
 
@@ -255,27 +258,29 @@ struct Node
 };
 
 inline void dumpNodes(const plg::string& base_name, const Node& root,
-									plg::vector<plg::string>& output_perms)
+                      plg::vector<plg::string>& output_perms)
 {
-	if (root.end_node)
-	{
-		plg::string s = root.state ? "" : "-";
-		s += base_name;
-		if (root.wildcard)
-			s += ".*";
-		if (root.timestamp > 0)
-			s += " " + plg::to_string(root.timestamp);
-		output_perms.push_back(std::move(s));
-	}
-	for (const auto& [key, val] : root.nodes) dumpNodes(base_name + "." + key, val, output_perms);
+    if (root.end_node)
+    {
+        plg::string s = root.state ? "" : "-";
+        s += base_name;
+        if (root.wildcard)
+            s += ".*";
+        if (root.timestamp > 0)
+            s += " " + plg::to_string(root.timestamp);
+        output_perms.push_back(std::move(s));
+    }
+    for (const auto& [key, val] : root.nodes) dumpNodes(base_name + "." + key, val, output_perms);
 }
 
 PLUGIFY_FORCE_INLINE plg::vector<plg::string> dumpNode(const Node& root_node)
 {
-	plg::vector<plg::string> perms;
-	if (root_node.wildcard)
-		perms.push_back((root_node.state ? "*" : "-*") + (root_node.timestamp > 0 ? (" " + plg::to_string(root_node.timestamp)) : ""));
-	for (const auto& [key, val] : root_node.nodes) dumpNodes(key, val, perms);
+    plg::vector<plg::string> perms;
+    if (root_node.wildcard)
+        perms.push_back(
+            (root_node.state ? "*" : "-*") + (
+                root_node.timestamp > 0 ? (" " + plg::to_string(root_node.timestamp)) : ""));
+    for (const auto& [key, val] : root_node.nodes) dumpNodes(key, val, perms);
 
-	return perms;
+    return perms;
 }

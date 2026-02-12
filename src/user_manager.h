@@ -27,45 +27,10 @@ inline void GroupManager_Callback(const Group* group)
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param perm		Permission line affected.
- */
-using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                        const plg::string& perm);
-
-/**
- * @brief Callback invoked when multiple permissions are added or removed for a user.
- *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param targetID	Player ID of the affected user.
- * @param perms		Array of permissions affected.
- */
-using UserPermissionsCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                         const plg::vector<plg::string>& perms);
-
-/**
- * @brief Callback invoked when a permission is added or removed for a user.
- *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param targetID	Player ID of the affected user.
- * @param perm		Permission line affected.
  * @param timestamp Permission duration.
  */
-using UserTempPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                            const plg::string& perm, const time_t timestamp);
-
-/**
- * @brief Callback invoked when multiple permissions are added or removed for a user.
- *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param targetID	Player ID of the affected user.
- * @param perms		Array of permissions affected.
- * @param timestamps Array of permission durations.
- */
-using UserTempPermissionsCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                             const plg::vector<plg::string>& perms,
-                                             const plg::vector<time_t>& timestamps);
+using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
+                                        const plg::string& perm, const time_t timestamp);
 
 /**
  * @brief Callback invoked when a cookie is set for a user.
@@ -139,27 +104,6 @@ struct UserPermissionCallbacks
 {
     std::shared_mutex _lock;
     phmap::flat_hash_set<UserPermissionCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserPermissionsCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_set<UserPermissionsCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserTempPermissionCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_set<UserTempPermissionCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserTempPermissionsCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_set<UserTempPermissionsCallback> _callbacks;
     std::atomic_int _counter;
 };
 

@@ -10,12 +10,14 @@
 #include "timer_system.h"
 
 struct User;
+
 struct TempGroup
 {
     time_t timestamp;
     Group* group;
     uint32_t timer;
 };
+
 inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
 
 inline bool sortFF(const TempGroup& i, const TempGroup& j)
@@ -54,7 +56,7 @@ struct User
         return false;
     }
 
-    [[nodiscard]] Status hasPermission(const plg::string& perm) const
+    [[nodiscard]] Status hasPermission(const plg::string& perm, uint16_t& perm_type) const
     {
         auto ispl = std::views::split(perm, '.');
         uint64_t hashes[64];
@@ -69,24 +71,39 @@ struct User
         }
 
         Status hasPerm = temp_nodes._hasPermission(names, hashes, i);
-        if (hasPerm != Status::PermNotFound) // Check if user defined this permission
+        if (hasPerm != Status::PermNotFound) // Check if user defined this permission temporarily
+        {
+            perm_type = 0;
             return hasPerm;
+        }
 
         hasPerm = user_nodes._hasPermission(names, hashes, i);
         if (hasPerm != Status::PermNotFound) // Check if user defined this permission
+        {
+            perm_type = 1;
             return hasPerm;
+        }
 
         for (const auto& p : _t_groups)
         {
             hasPerm = p.group->_hasPermission(names, hashes, i);
-            if (hasPerm != Status::PermNotFound) return hasPerm;
+            if (hasPerm != Status::PermNotFound)
+            {
+                perm_type = 2;
+                return hasPerm;
+            }
         }
 
         for (const auto g : _groups)
         {
             hasPerm = g->_hasPermission(names, hashes, i);
-            if (hasPerm != Status::PermNotFound) return hasPerm;
+            if (hasPerm != Status::PermNotFound)
+            {
+                perm_type = 3;
+                return hasPerm;
+            }
         }
+        perm_type = 4;
         return Status::PermNotFound;
     }
 
