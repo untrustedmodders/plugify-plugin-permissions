@@ -3448,6 +3448,12 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Permission line affected."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Permission duration."
                             }
                         ],
                         "retType": {
@@ -3699,6 +3705,12 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Permission line affected."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Permission duration."
                             }
                         ],
                         "retType": {
@@ -4390,6 +4402,12 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Name of the group added or removed."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Group duration."
                             }
                         ],
                         "retType": {
@@ -4519,6 +4537,12 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Name of the group added or removed."
+                            },
+                            {
+                                "name": "timestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Group duration."
                             }
                         ],
                         "retType": {
