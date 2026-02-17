@@ -84,8 +84,10 @@ struct Node
         return current->state ? Status::Allow : Status::Disallow;
     }
 
-    PLUGIFY_FORCE_INLINE void deletePerm(const plg::string& perm)
+    PLUGIFY_FORCE_INLINE void deletePerm(std::string_view perm)
     {
+        if (perm.starts_with('-'))
+            perm = perm.substr(1);
         auto ispl = std::views::split(perm, '.');
         uint64_t hashes[64];
         std::string_view names[64];

@@ -244,7 +244,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     {
         if (perm_type == 0) // Delete temporal permission anyway
             v->second.temp_nodes.deletePerm(perm);
-        else if (!diff && perm_type == 3) // No difference with group
+        else if (!diff && perm_type != 2) // No difference with group
             return Status::PermAlreadyGranted;
         v->second.user_nodes.addPerm(perm);
     }
