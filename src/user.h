@@ -56,10 +56,16 @@ struct User
         return false;
     }
 
+    [[nodiscard]] int getImmunity() const
+    {
+        return std::max(_groups.empty() ? -1 : _groups.front()->_priority,
+                        _t_groups.empty() ? -1 : _t_groups.front().group->_priority);
+    }
+
     [[nodiscard]] Status hasPermission(std::string_view perm, uint16_t& perm_type) const
     {
-    	if (perm.starts_with('-'))
-    		perm = perm.substr(1);
+        if (perm.starts_with('-'))
+            perm = perm.substr(1);
         auto ispl = std::views::split(perm, '.');
         uint64_t hashes[64];
         std::string_view names[64];

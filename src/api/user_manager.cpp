@@ -103,12 +103,8 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
     if (v2 == users.end())
         return Status::TargetUserNotFound;
 
-    const auto i1 = v1->second._immunity == -1
-                        ? (v1->second._groups.empty() ? -1 : v1->second._groups.front()->_priority)
-                        : v1->second._immunity;
-    const auto i2 = v2->second._immunity == -1
-                        ? (v2->second._groups.empty() ? -1 : v2->second._groups.front()->_priority)
-                        : v2->second._immunity;
+    const int i1 = v1->second.getImmunity();
+    const int i2 = v2->second.getImmunity();
 
     return i1 >= i2 ? Status::Allow : Status::Disallow;
 }
