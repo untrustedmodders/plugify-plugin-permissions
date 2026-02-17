@@ -56,8 +56,10 @@ struct User
         return false;
     }
 
-    [[nodiscard]] Status hasPermission(const plg::string& perm, uint16_t& perm_type) const
+    [[nodiscard]] Status hasPermission(std::string_view perm, uint16_t& perm_type) const
     {
+    	if (perm.starts_with('-'))
+    		perm = perm.substr(1);
         auto ispl = std::views::split(perm, '.');
         uint64_t hashes[64];
         std::string_view names[64];
