@@ -216,25 +216,36 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
 extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp)
 {
-    uint16_t perm_type;
+    const bool denied = perm.starts_with('-');
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
         return Status::TargetUserNotFound;
 
+    uint16_t perm_type;
+    const Status status = v->second.hasPermission(perm, perm_type);
+    const bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
     if (timestamp != 0) // Add temp permission
     {
-        (void)v->second.hasPermission(perm, perm_type);
+        // Temporal or defined in groups (or not defined at all)
         if (perm_type != 1)
+        {
+            if (!diff)
+                return Status::PermAlreadyGranted;
             v->second.addTempPerm(perm, timestamp, targetID);
-        else
+        }
+        // perm_type == 1 (permanent permission)
+        else if (!diff)
             return Status::PermAlreadyGranted;
+        else // Differs from permanent perm by allowance
+            v->second.addTempPerm(perm, timestamp, targetID);
     }
     else // Add permanent permission
     {
-        (void)v->second.hasPermission(perm, perm_type);
-        if (perm_type == 0)
+        if (perm_type == 0) // Delete temporal permission anyway
             v->second.temp_nodes.deletePerm(perm);
+        else if (!diff && perm_type == 3) // No difference with group
+            return Status::PermAlreadyGranted;
         v->second.user_nodes.addPerm(perm);
     }
     {
@@ -297,6 +308,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
     Group* g = GetGroup(groupName);
     if (g == nullptr)
         return Status::GroupNotFound;
+    // Check array of permanent groups
     for (const auto gg : v->second._groups)
     {
         const Group* ggg = gg;
@@ -307,6 +319,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
             ggg = ggg->_parent;
         }
     }
+    // Not permanent - check temporaries
     for (auto it = v->second._t_groups.begin(); it != v->second._t_groups.end(); it++)
     {
         const Group* ggg = it->group;
@@ -314,17 +327,19 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
         {
             if (timestamp != 0)
             {
-                g_TimerSystem.RescheduleTimer(it->timer, static_cast<double>(timestamp) - static_cast<double>(time(nullptr)));
+                if (it->timestamp == timestamp) // No changes - return error
+                    return Status::GroupAlreadyExist;
+                it->timestamp = timestamp;
+                g_TimerSystem.RescheduleTimer(
+                    it->timer, static_cast<double>(it->timestamp) - static_cast<double>(time(nullptr)));
                 std::shared_lock lock2(user_group_callbacks._lock);
                 for (const UserGroupCallback cb : user_group_callbacks._callbacks)
                     cb(pluginID, Action::Add, targetID, groupName, timestamp);
                 return Status::Success;
             }
-            else // Add group as permanent
-            {
-                v->second._t_groups.erase(it);
-                break;
-            }
+            // Add group as permanent
+            v->second._t_groups.erase(it);
+            break;
         }
         while (ggg)
         {
@@ -368,6 +383,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
     if (g == nullptr)
         return Status::ChildGroupNotFound;
 
+    // Search in temporal groups
     for (auto it = v->second._t_groups.begin(); it != v->second._t_groups.end(); it++)
     {
         if (it->group == g)
@@ -379,7 +395,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
             return Status::Success;
         }
     }
-
+    // Miss - search in permanent groups
     for (auto it = v->second._groups.begin(); it != v->second._groups.end(); it++)
     {
         if (*it == g)
