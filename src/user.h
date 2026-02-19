@@ -58,8 +58,10 @@ struct User
 
     [[nodiscard]] int getImmunity() const
     {
-        return std::max(_groups.empty() ? -1 : _groups.front()->_priority,
-                        _t_groups.empty() ? -1 : _t_groups.front().group->_priority);
+        if (_immunity == -1) // Force use group's priority
+            return std::max(_groups.empty() ? -1 : _groups.front()->_priority,
+                            _t_groups.empty() ? -1 : _t_groups.front().group->_priority);
+        return _immunity;
     }
 
     [[nodiscard]] Status hasPermission(std::string_view perm, uint16_t& perm_type) const
