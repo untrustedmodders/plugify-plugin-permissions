@@ -9,6 +9,8 @@ GroupPermissionCallbacks group_permission_callbacks;
 GroupCreateCallbacks group_create_callbacks;
 GroupDeleteCallbacks group_delete_callbacks;
 
+LoadGroupsCallbacks load_groups_callbacks;
+
 PLUGIFY_WARN_PUSH()
 
 #if defined(__clang__)
@@ -404,6 +406,51 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
     std::unique_lock lock(groups_mtx);
     const auto v = groups.find(hash);
     return v != groups.end();
+}
+
+/**
+ * @brief Dispatches a request to load server groups for a plugin.
+ *
+ * This function notifies all registered LoadGroups callbacks that
+ * group data for the specified plugin must be loaded.
+ * It does not perform any storage operations itself — the actual
+ * loading logic is handled by subscribed extensions (e.g., database providers).
+ *
+ * Thread-safe: acquires a shared lock while iterating over callbacks.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ */
+extern "C" PLUGIN_API void LoadGroups(const uint64_t pluginID)
+{
+	std::shared_lock lock2(load_groups_callbacks._lock);
+	for (const LoadGroupsCallback cb : load_groups_callbacks._callbacks)
+		cb(pluginID);
+}
+
+/**
+ * @brief Register listener on LoadGroups event.
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnLoadGroups_Register(LoadGroupsCallback callback)
+{
+	std::unique_lock lock(load_groups_callbacks._lock);
+	auto ret = load_groups_callbacks._callbacks.insert(callback);
+	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on LoadGroups event.
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnLoadGroups_Unregister(LoadGroupsCallback callback)
+{
+	std::unique_lock lock(load_groups_callbacks._lock);
+	const size_t ret = load_groups_callbacks._callbacks.erase(callback);
+	return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**

@@ -17,6 +17,9 @@
         CreateUser;
         DeleteUser;
         UserExists;
+        UserLoadData;
+        OnUserLoadData_Register;
+        OnUserLoadData_Unregister;
         OnGroupSetParent_Register;
         OnGroupSetParent_Unregister;
         OnGroupSetCookie_Register;
@@ -42,6 +45,9 @@
         CreateGroup;
         DeleteGroup;
         GroupExists;
+        LoadGroups;
+        OnLoadGroups_Register;
+        OnLoadGroups_Unregister;
         OnUserPermissionChange_Register;
         OnUserPermissionChange_Unregister;
         OnUserSetCookie_Register;

@@ -2172,6 +2172,219 @@
             "description": "Get a cookie value for a user."
         },
         {
+            "name": "LoadGroups",
+            "funcName": "LoadGroups",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                }
+            ],
+            "retType": {
+                "type": "void"
+            },
+            "group": "GroupManager",
+            "description": "Dispatches a request to load server groups for a plugin."
+        },
+        {
+            "name": "OnLoadGroups_Register",
+            "funcName": "OnLoadGroups_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "LoadGroupsCallback",
+                        "funcName": "LoadGroupsCallback",
+                        "description": "Called when the core requests loading of server groups. This callback is triggered when the system needs to load\n * group definitions associated with a specific plugin.\n * Extensions (e.g., database providers) should subscribe to\n * this event and load the groups into memory.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        }
+                    ]
+                }
+            },
+            "group": "GroupListeners",
+            "description": "Register listener on LoadGroups event."
+        },
+        {
+            "name": "OnLoadGroups_Unregister",
+            "funcName": "OnLoadGroups_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "LoadGroupsCallback",
+                        "funcName": "LoadGroupsCallback",
+                        "description": "Called when the core requests loading of server groups. This callback is triggered when the system needs to load\n * group definitions associated with a specific plugin.\n * Extensions (e.g., database providers) should subscribe to\n * this event and load the groups into memory.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        }
+                    ]
+                }
+            },
+            "group": "GroupListeners",
+            "description": "Unregister listener on LoadGroups event."
+        },
+        {
             "name": "DeleteGroup",
             "funcName": "DeleteGroup",
             "paramTypes": [
@@ -3121,6 +3334,237 @@
             },
             "group": "GroupListeners",
             "description": "Unregister listener on group cookie sets"
+        },
+        {
+            "name": "UserLoadData",
+            "funcName": "UserLoadData",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "PlayerID of the user whose data should be loaded."
+                }
+            ],
+            "retType": {
+                "type": "void"
+            },
+            "group": "UserManager",
+            "description": "Requests loading of a user's data."
+        },
+        {
+            "name": "OnUserLoadData_Register",
+            "funcName": "OnUserLoadData_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserLoadCallback",
+                        "funcName": "UserLoadCallback",
+                        "description": "Called when a user data load is requested.\n \nThis callback is triggered by the core when it requires user data to be loaded from an external storage (e.g. database).\nExtensions can subscribe to this event to perform the actual\nloading process and initialize the user in memory.\nThis event does NOT guarantee that the user object already exists in memory.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose data should be loaded."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on UserLoadData event."
+        },
+        {
+            "name": "OnUserLoadData_Unregister",
+            "funcName": "OnUserLoadData_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserLoadCallback",
+                        "funcName": "UserLoadCallback",
+                        "description": "Called when a user data load is requested.\n \nThis callback is triggered by the core when it requires user data to be loaded from an external storage (e.g. database).\nExtensions can subscribe to this event to perform the actual\nloading process and initialize the user in memory.\nThis event does NOT guarantee that the user object already exists in memory.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the call."
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose data should be loaded."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on UserLoadData event."
         },
         {
             "name": "OnGroupPermissionChange_Register",

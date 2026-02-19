@@ -16,6 +16,8 @@ UserDeleteCallbacks user_delete_callbacks;
 PermExpirationCallbacks perm_expiration_callbacks;
 GroupExpirationCallbacks group_expiration_callbacks;
 
+UserLoadCallbacks user_load_callbacks;
+
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
 {
     const plg::string* perm = &plg::get<plg::string>(userData[0]);
@@ -570,6 +572,52 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
     std::shared_lock lock(users_mtx);
     const auto v = users.find(targetID);
     return v != users.end();
+}
+
+/**
+ * @brief Requests loading of a user's data.
+ *
+ * This function is called to initiate the user data loading process.
+ * It triggers the corresponding load event so that subscribed
+ * extensions (e.g., database providers) can load and initialize
+ * the user's data in memory.
+ *
+ * The function itself does not perform any storage operations.
+ * It only dispatches the load request.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID PlayerID of the user whose data should be loaded.
+ */
+extern "C" PLUGIN_API void UserLoadData(const uint64_t pluginID, const uint64_t targetID) {
+	std::shared_lock lock2(user_load_callbacks._lock);
+	for (const UserLoadCallback cb : user_load_callbacks._callbacks)
+		cb(pluginID, targetID);
+}
+
+/**
+ * @brief Register listener on UserLoadData event.
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserLoadData_Register(UserLoadCallback callback)
+{
+	std::unique_lock lock(user_load_callbacks._lock);
+	auto ret = user_load_callbacks._callbacks.insert(callback);
+	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on UserLoadData event.
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnUserLoadData_Unregister(UserLoadCallback callback)
+{
+	std::unique_lock lock(user_load_callbacks._lock);
+	const size_t ret = user_load_callbacks._callbacks.erase(callback);
+	return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**

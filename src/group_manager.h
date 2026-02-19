@@ -70,6 +70,19 @@ using GroupCreateCallback = void (*)(const uint64_t pluginID, const plg::string&
  */
 using GroupDeleteCallback = void (*)(const uint64_t pluginID, const plg::string& name);
 
+/**
+ * @brief Called when the core requests loading of server groups.
+ *
+ * This callback is triggered when the system needs to load
+ * group definitions associated with a specific plugin.
+ * Extensions (e.g., database providers) should subscribe to
+ * this event and load the groups into memory.
+ *
+ * @param pluginID Identifier of the plugin that initiated the call.
+ */
+using LoadGroupsCallback = void(*)(const uint64_t pluginID);
+
+
 struct SetParentCallbacks
 {
     std::shared_mutex _lock;
@@ -103,4 +116,11 @@ struct GroupDeleteCallbacks
     std::shared_mutex _lock;
     phmap::flat_hash_set<GroupDeleteCallback> _callbacks;
     std::atomic_int _counter;
+};
+
+struct LoadGroupsCallbacks
+{
+	std::shared_mutex _lock;
+	phmap::flat_hash_set<LoadGroupsCallback> _callbacks;
+	std::atomic_int _counter;
 };

@@ -91,6 +91,20 @@ using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::strin
  */
 using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& group);
 
+/**
+ * @brief Called when a user data load is requested.
+ *
+ * This callback is triggered by the core when it requires
+ * user data to be loaded from an external storage (e.g. database).
+ * Extensions can subscribe to this event to perform the actual
+ * loading process and initialize the user in memory.
+ * This event does NOT guarantee that the user object already exists in memory.
+ *
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param targetID	PlayerID of the user whose data should be loaded.
+ */
+using UserLoadCallback = void(*)(const uint64_t pluginID, const uint64_t targetID);
+
 struct UserPermissionCallbacks
 {
     std::shared_mutex _lock;
@@ -138,4 +152,11 @@ struct GroupExpirationCallbacks
     std::shared_mutex _lock;
     phmap::flat_hash_set<GroupExpirationCallback> _callbacks;
     std::atomic_int _counter;
+};
+
+struct UserLoadCallbacks
+{
+	std::shared_mutex _lock;
+	phmap::flat_hash_set<UserLoadCallback> _callbacks;
+	std::atomic_int _counter;
 };

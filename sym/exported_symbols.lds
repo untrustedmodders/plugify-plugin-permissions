@@ -18,6 +18,9 @@ _GetAllCookies
 _CreateUser
 _DeleteUser
 _UserExists
+_UserLoadData
+_OnUserLoadData_Register
+_OnUserLoadData_Unregister
 _OnUserPermissionChange_Register
 _OnUserPermissionChange_Unregister
 _OnUserSetCookie_Register
@@ -43,6 +46,9 @@ _GetAllCookiesGroup
 _CreateGroup
 _DeleteGroup
 _GroupExists
+_LoadGroups
+_OnLoadGroups_Register
+_OnLoadGroups_Unregister
 _OnGroupSetParent_Register
 _OnGroupSetParent_Unregister
 _OnGroupSetCookie_Register
