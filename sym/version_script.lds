@@ -17,9 +17,9 @@
         CreateUser;
         DeleteUser;
         UserExists;
-        UserLoadData;
-        OnUserLoadData_Register;
-        OnUserLoadData_Unregister;
+        LoadUser;
+        OnLoadUser_Register;
+        OnLoadUser_Unregister;
         OnGroupSetParent_Register;
         OnGroupSetParent_Unregister;
         OnGroupSetCookie_Register;

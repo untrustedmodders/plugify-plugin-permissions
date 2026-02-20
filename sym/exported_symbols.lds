@@ -18,9 +18,9 @@ _GetAllCookies
 _CreateUser
 _DeleteUser
 _UserExists
-_UserLoadData
-_OnUserLoadData_Register
-_OnUserLoadData_Unregister
+_LoadUser
+_OnLoadUser_Register
+_OnLoadUser_Unregister
 _OnUserPermissionChange_Register
 _OnUserPermissionChange_Unregister
 _OnUserSetCookie_Register
