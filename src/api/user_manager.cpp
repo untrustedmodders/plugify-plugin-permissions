@@ -588,19 +588,19 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID PlayerID of the user whose data should be loaded.
  */
-extern "C" PLUGIN_API void UserLoadData(const uint64_t pluginID, const uint64_t targetID) {
+extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID) {
 	std::shared_lock lock2(user_load_callbacks._lock);
 	for (const UserLoadCallback cb : user_load_callbacks._callbacks)
 		cb(pluginID, targetID);
 }
 
 /**
- * @brief Register listener on UserLoadData event.
+ * @brief Register listener on LoadUser event.
  *
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserLoadData_Register(UserLoadCallback callback)
+extern "C" PLUGIN_API Status OnLoadUser_Register(UserLoadCallback callback)
 {
 	std::unique_lock lock(user_load_callbacks._lock);
 	auto ret = user_load_callbacks._callbacks.insert(callback);
@@ -608,12 +608,12 @@ extern "C" PLUGIN_API Status OnUserLoadData_Register(UserLoadCallback callback)
 }
 
 /**
- * @brief Unregister listener on UserLoadData event.
+ * @brief Unregister listener on LoadUser event.
  *
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserLoadData_Unregister(UserLoadCallback callback)
+extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserLoadCallback callback)
 {
 	std::unique_lock lock(user_load_callbacks._lock);
 	const size_t ret = user_load_callbacks._callbacks.erase(callback);

@@ -3336,8 +3336,8 @@
             "description": "Unregister listener on group cookie sets"
         },
         {
-            "name": "UserLoadData",
-            "funcName": "UserLoadData",
+            "name": "LoadUser",
+            "funcName": "LoadUser",
             "paramTypes": [
                 {
                     "name": "pluginID",
@@ -3359,8 +3359,8 @@
             "description": "Requests loading of a user's data."
         },
         {
-            "name": "OnUserLoadData_Register",
-            "funcName": "OnUserLoadData_Register",
+            "name": "OnLoadUser_Register",
+            "funcName": "OnLoadUser_Register",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -3460,11 +3460,11 @@
                 }
             },
             "group": "UserListeners",
-            "description": "Register listener on UserLoadData event."
+            "description": "Register listener on LoadUser event."
         },
         {
-            "name": "OnUserLoadData_Unregister",
-            "funcName": "OnUserLoadData_Unregister",
+            "name": "OnLoadUser_Unregister",
+            "funcName": "OnLoadUser_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -3564,7 +3564,7 @@
                 }
             },
             "group": "UserListeners",
-            "description": "Unregister listener on UserLoadData event."
+            "description": "Unregister listener on LoadUser event."
         },
         {
             "name": "OnGroupPermissionChange_Register",
