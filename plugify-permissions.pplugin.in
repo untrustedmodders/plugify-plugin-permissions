@@ -1034,6 +1034,12 @@
                     "type": "int64",
                     "ref": false,
                     "description": "Permission duration."
+                },
+                {
+                    "name": "dontBroadcast",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally."
                 }
             ],
             "retType": {
@@ -1604,6 +1610,12 @@
                     "type": "int64",
                     "ref": false,
                     "description": "Group duration."
+                },
+                {
+                    "name": "dontBroadcast",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the group change event to registered UserGroup listeners. The group is still applied internally."
                 }
             ],
             "retType": {
@@ -2500,6 +2512,12 @@
                     "type": "any",
                     "ref": false,
                     "description": "Cookie value."
+                },
+                {
+                    "name": "dontBroadcast",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the cookie change event to registered UserSetCookie listeners. The cookie is still applied internally."
                 }
             ],
             "retType": {

@@ -209,10 +209,11 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
  * @param targetID Player ID.
  * @param perm Permission line.
  * @param timestamp Permission duration
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
  * @return Success, TargetUserNotFound, PermAlreadyGranted
  */
 extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
-                                           const time_t timestamp)
+                                           const time_t timestamp, const bool dontBroadcast)
 {
     const bool denied = perm.starts_with('-');
     std::unique_lock lock(users_mtx);
@@ -246,7 +247,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
             return Status::PermAlreadyGranted;
         v->second.user_nodes.addPerm(perm);
     }
-    {
+    if (!dontBroadcast) {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             cb(pluginID, Action::Add, targetID, perm, timestamp);
@@ -292,11 +293,12 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
- * @param timestamp Group duration
+ * @param timestamp Group duration.
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the group change event to registered UserGroup listeners. The group is still applied internally.
  * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
 extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName,
-                                      const time_t timestamp)
+                                      const time_t timestamp, const bool dontBroadcast)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -353,7 +355,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
         v->second.addTempGroup(g, timestamp, targetID);
     v->second.sortGroups();
 
-    {
+    if (!dontBroadcast) {
         std::shared_lock lock2(user_group_callbacks._lock);
         for (const UserGroupCallback cb : user_group_callbacks._callbacks)
             cb(pluginID, Action::Add, targetID, groupName, timestamp);
@@ -453,10 +455,11 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
  * @param targetID Player ID.
  * @param name Cookie name.
  * @param cookie Cookie value.
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the cookie change event to registered UserSetCookie listeners. The cookie is still applied internally.
  * @return Success, TargetUserNotFound
  */
 extern "C" PLUGIN_API Status SetCookie(const uint64_t pluginID, const uint64_t targetID, const plg::string& name,
-                                       const plg::any& cookie)
+                                       const plg::any& cookie, const bool dontBroadcast)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -464,7 +467,7 @@ extern "C" PLUGIN_API Status SetCookie(const uint64_t pluginID, const uint64_t t
         return Status::TargetUserNotFound;
 
     v->second.cookies[name] = cookie;
-    {
+    if (!dontBroadcast) {
         std::shared_lock lock2(user_set_cookie_callbacks._lock);
         for (const UserSetCookieCallback cb : user_set_cookie_callbacks._callbacks)
             cb(pluginID, targetID, name, cookie);
