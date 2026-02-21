@@ -20,7 +20,6 @@ struct Group
         this->_name = name;
         this->_parent = parent;
         this->_priority = priority;
-        // this->_nodes = Node::loadNode(perms);
         this->_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
         for (const plg::string& perm: perms)
             this->_nodes.addPerm(perm);

@@ -218,9 +218,6 @@ struct User
                 addTempGroup(g, timestamp, user_id);
         }
         sortGroups();
-        // this->user_nodes = Node::loadNode(perms);
-        // this->temp_nodes = Node::loadTempNode(temp_perms, user_id);
-        // Remark: this change was made to resolve inconsistency with collisions in groups/permanent/temporal permissions
         this->user_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
         this->temp_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
         for (const plg::string& s : perms)
