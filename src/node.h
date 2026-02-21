@@ -13,6 +13,8 @@
 
 const uint64_t AllAccess = XXH3_64bits("*", 1);
 
+extern void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData);
+
 enum class Status : int32_t
 {
     Success = 0,
@@ -29,7 +31,10 @@ enum class Status : int32_t
     UserAlreadyExist = 11,
     CallbackAlreadyExist = 12,
     CallbackNotFound = 13,
-    PermAlreadyGranted = 14
+    PermAlreadyGranted = 14,
+    TemporalGroup = 15,
+    PermanentGroup = 16,
+    GroupNotDefined = 17
 };
 
 struct string_hash
@@ -50,6 +55,24 @@ struct string_hash
         else return XXH32(txt.data(), txt.size(), 0);
     }
 };
+
+PLUGIFY_FORCE_INLINE void parseTempString(const std::string_view& input, std::string_view& output, time_t& timestamp)
+{
+    int j = 0;
+    auto spl = std::views::split(input, ' ');
+    for (auto&& ss : spl)
+    {
+        if (j == 0)
+            output = std::string_view(ss);
+        else
+        {
+            std::from_chars(ss.begin(), ss.begin() + ss.size(), timestamp);
+            break;
+        }
+        ++j;
+    }
+    assert (timestamp != 0);
+}
 
 struct Node
 {
@@ -166,7 +189,7 @@ struct Node
         }
     }
 
-    PLUGIFY_FORCE_INLINE Node* addPerm(const plg::string& perm)
+    PLUGIFY_FORCE_INLINE Node* addPerm(std::string_view perm)
     {
         const bool allow = !perm.starts_with('-');
         const bool hasWildcard = perm.ends_with('*');
@@ -197,48 +220,105 @@ struct Node
             destroyAllTimers(val);
     }
 
-    PLUGIFY_FORCE_INLINE static Node loadNode(const plg::vector<plg::string>& perms)
-    {
-        Node result{phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
-        for (const plg::string& perm : perms)
-        {
-            if (perm.empty()) // empty lines?
-                continue;
-            if (perm.at(0) == '*')
-            {
-                // skip situation with perm "*"
-                result.wildcard = true;
-                continue;
-            }
+    // PLUGIFY_FORCE_INLINE static Node loadNode(const plg::vector<plg::string>& perms)
+    // {
+    //     Node result{phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
+    //     for (const plg::string& perm : perms)
+    //     {
+    //         if (perm.empty()) // empty lines?
+    //             continue;
+    //         if (perm.at(0) == '*')
+    //         {
+    //             // skip situation with perm "*"
+    //             result.wildcard = true;
+    //             continue;
+    //         }
+    //
+    //         auto spl = std::views::split(perm, '.');
+    //
+    //         const bool state = !perm.starts_with('-');
+    //         bool wildcard = false;
+    //
+    //         Node* node = &result;
+    //
+    //         for (auto&& s : spl)
+    //         {
+    //             auto ss = std::string_view(s.begin(), s.end());
+    //             if (ss.starts_with('-')) ss = ss.substr(1);
+    //             if (ss == "*")
+    //             {
+    //                 wildcard = true;
+    //                 break;
+    //             };
+    //             node = &(node->nodes.try_emplace(plg::string(ss),
+    //                                              phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF,
+    //                                              false, false, false, 0).first->second);
+    //         }
+    //
+    //         node->state = state;
+    //         node->wildcard = wildcard;
+    //         node->end_node = true;
+    //     }
+    //     forceRehash(result.nodes); // to speedup lookup
+    //     return result;
+    // }
 
-            auto spl = std::views::split(perm, '.');
-
-            const bool state = !perm.starts_with('-');
-            bool wildcard = false;
-
-            Node* node = &result;
-
-            for (auto&& s : spl)
-            {
-                auto ss = std::string_view(s.begin(), s.end());
-                if (ss.starts_with('-')) ss = ss.substr(1);
-                if (ss == "*")
-                {
-                    wildcard = true;
-                    break;
-                };
-                node = &(node->nodes.try_emplace(plg::string(ss),
-                                                 phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF,
-                                                 false, false, false, 0).first->second);
-            }
-
-            node->state = state;
-            node->wildcard = wildcard;
-            node->end_node = true;
-        }
-        forceRehash(result.nodes); // to speedup lookup
-        return result;
-    }
+    // PLUGIFY_FORCE_INLINE static Node loadTempNode(const plg::vector<plg::string>& perms, uint64_t user_id)
+    // {
+    //     Node result{phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
+    //     size_t i = 0;
+    //     for (const plg::string& perm : perms)
+    //     {
+    //         ++i;
+    //         if (perm.empty()) // empty lines?
+    //             continue;
+    //         if (perm.at(0) == '*')
+    //         {
+    //             // skip situation with perm "*"
+    //             result.wildcard = true;
+    //             continue;
+    //         }
+    //
+    //         time_t timestamp = 0;
+    //         std::string_view perm_view;
+    //         parseTempString(perm, perm_view, timestamp);
+    //
+    //         auto spl = std::views::split(perm_view, '.');
+    //
+    //         const bool state = !perm.starts_with('-');
+    //         bool wildcard = false;
+    //
+    //         Node* node = &result;
+    //
+    //         for (auto&& s : spl)
+    //         {
+    //             auto ss = std::string_view(s.begin(), s.end());
+    //             if (ss.starts_with('-')) ss = ss.substr(1);
+    //             if (ss == "*")
+    //             {
+    //                 wildcard = true;
+    //                 break;
+    //             };
+    //             node = &(node->nodes.try_emplace(plg::string(ss),
+    //                                              phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF,
+    //                                              false, false, false, 0).first->second);
+    //         }
+    //
+    //         node->state = state;
+    //         node->wildcard = wildcard;
+    //         node->end_node = true;
+    //         node->timestamp = timestamp;
+    //         node->timer = g_TimerSystem.CreateTimer(
+    //             static_cast<double>(timestamp) - static_cast<double>(time(nullptr)),
+    //             g_PermExpirationCallback, TimerFlag::Default,
+    //             plg::vector<plg::any>{
+    //                 perm,
+    //                 user_id
+    //             });
+    //     }
+    //     forceRehash(result.nodes); // to speedup lookup
+    //     return result;
+    // }
 
     PLUGIFY_FORCE_INLINE static void forceRehash(phmap::flat_hash_map<plg::string, Node, string_hash>& nodes)
     {

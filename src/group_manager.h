@@ -8,7 +8,7 @@
 
 extern phmap::flat_hash_map<uint64_t, Group*> groups;
 
-PLUGIFY_FORCE_INLINE Group* GetGroup(const plg::string& name)
+PLUGIFY_FORCE_INLINE Group* GetGroup(const std::string_view& name)
 {
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::shared_lock lock(groups_mtx);

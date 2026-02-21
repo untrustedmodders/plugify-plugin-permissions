@@ -28,7 +28,7 @@ inline bool sortFF(const TempGroup& i, const TempGroup& j)
 void g_PermExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 void g_GroupExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 
-extern Group* GetGroup(const plg::string& name);
+extern Group* GetGroup(const std::string_view& name);
 
 struct User
 {
@@ -41,20 +41,6 @@ struct User
     plg::vector<Group*> _groups; // groups that player belongs to
     plg::vector<TempGroup> _t_groups; // temporal groups
     int _immunity;
-
-    bool hasGroup(const plg::string& s)
-    {
-        for (const auto& g : _groups)
-        {
-            const Group* i = g;
-            while (i)
-            {
-                if (s == i->_name) return true;
-                i = i->_parent;
-            }
-        }
-        return false;
-    }
 
     [[nodiscard]] int getImmunity() const
     {
@@ -117,6 +103,40 @@ struct User
         return Status::PermNotFound;
     }
 
+    PLUGIFY_FORCE_INLINE bool addPerm(const plg::string& perm, time_t timestamp, uint64_t user_id)
+    {
+        uint16_t perm_type;
+        const bool denied = perm.starts_with('-');
+        const Status status = hasPermission(perm, perm_type);
+        const bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
+
+        if (timestamp != 0) // Add temp permission
+        {
+            // Temporal or defined in groups (or not defined at all)
+            if (perm_type != 1)
+            {
+                if (!diff)
+                    return false;
+                addTempPerm(perm, timestamp, user_id);
+            }
+            // perm_type == 1 (permanent permission)
+            else if (!diff)
+                return false;
+            else // Differs from permanent perm by allowance
+                addTempPerm(perm, timestamp, user_id);
+        }
+        else // Add permanent permission
+        {
+            if (perm_type == 0) // Delete temporal permission anyway
+                temp_nodes.deletePerm(perm);
+            else if (!diff && perm_type != 2) // No difference with group
+                return false;
+            user_nodes.addPerm(perm);
+        }
+
+        return true;
+    }
+
     PLUGIFY_FORCE_INLINE void addTempPerm(const plg::string& perm, time_t timestamp, uint64_t user_id)
     {
         Node* node = temp_nodes.addPerm(perm);
@@ -144,7 +164,7 @@ struct User
         this->sortGroups();
     }
 
-    PLUGIFY_FORCE_INLINE bool delTempGroup(Group* g)
+    PLUGIFY_FORCE_INLINE bool delTempGroup(const Group* g)
     {
         for (auto it = this->_t_groups.begin(); it != this->_t_groups.end(); ++it)
         {
@@ -164,12 +184,57 @@ struct User
         std::ranges::sort(this->_t_groups, sortFF);
     }
 
-    User(int immunity, plg::vector<Group*>&& __groups, const plg::vector<plg::string>& perms)
+    User(int immunity, plg::vector<Group*>&& __groups, const plg::vector<plg::string>& perms,
+         const plg::vector<plg::string>& temp_perms, const plg::vector<plg::string>& temp_groups,
+         const uint64_t user_id)
     {
         this->_immunity = immunity;
         this->_groups = std::move(__groups);
+        for (const plg::string& s : temp_groups)
+        {
+            std::string_view group_view;
+            time_t timestamp = 0;
+            parseTempString(s, group_view, timestamp);
+            Group* g = GetGroup(group_view);
+            // Skip missed or already defined groups
+            if (g == nullptr)
+                continue;
+
+            bool found = false;
+            for (const auto gg : this->_groups)
+            {
+                const Group* ggg = gg;
+                while (ggg)
+                {
+                    if (ggg == g)
+                    {
+                        found = true;
+                        break;
+                    }
+                    ggg = ggg->_parent;
+                }
+            }
+            if (!found)
+                addTempGroup(g, timestamp, user_id);
+        }
         sortGroups();
-        this->user_nodes = Node::loadNode(perms);
-        this->temp_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, false, 0};
+        // this->user_nodes = Node::loadNode(perms);
+        // this->temp_nodes = Node::loadTempNode(temp_perms, user_id);
+        // Remark: this change was made to resolve inconsistency with collisions in groups/permanent/temporal permissions
+        this->user_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
+        this->temp_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
+        for (const plg::string& s : perms)
+            addPerm(s, 0, user_id);
+
+        for (const plg::string& s : temp_perms)
+        {
+            std::string_view perm_view;
+            time_t timestamp = 0;
+            parseTempString(s, perm_view, timestamp);
+            addPerm(plg::string(perm_view), timestamp, user_id);
+        }
+
+        Node::forceRehash(this->user_nodes.nodes);
+        Node::forceRehash(this->temp_nodes.nodes);
     }
 };

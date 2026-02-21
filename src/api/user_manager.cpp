@@ -134,7 +134,7 @@ extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::s
  *
  * @param targetID Player ID.
  * @param groupName Group name.
- * @return Allow, Disallow, TargetUserNotFound, GroupNotFound
+ * @return PermanentGroup, TemporalGroup, GroupNotDefined TargetUserNotFound, GroupNotFound
  */
 extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string& groupName)
 {
@@ -153,11 +153,21 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string
         while (ggg)
         {
             if (ggg == g)
-                return Status::Allow;
+                return Status::PermanentGroup;
             ggg = ggg->_parent;
         }
     }
-    return Status::Disallow;
+    for (const auto gg : v->second._t_groups)
+    {
+        auto ggg = gg.group;
+        while (ggg)
+        {
+            if (ggg == g)
+                return Status::TemporalGroup;
+            ggg = ggg->_parent;
+        }
+    }
+    return Status::GroupNotDefined;
 }
 
 /**
@@ -198,7 +208,24 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
     const auto v = users.find(targetID);
     if (v == users.end())
         return Status::TargetUserNotFound;
-    immunity = v->second._immunity;
+    immunity = v->second.getImmunity();
+    return Status::Success;
+}
+
+/**
+ * @brief Set the immunity level of a user.
+ *
+ * @param targetID Player ID.
+ * @param immunity Immunity
+ * @return Success, TargetUserNotFound
+ */
+extern "C" PLUGIN_API Status SetImmunity(const uint64_t targetID, const int immunity)
+{
+    std::shared_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+    v->second._immunity = immunity;
     return Status::Success;
 }
 
@@ -215,39 +242,16 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
 extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
-    const bool denied = perm.starts_with('-');
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
         return Status::TargetUserNotFound;
 
-    uint16_t perm_type;
-    const Status status = v->second.hasPermission(perm, perm_type);
-    const bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
-    if (timestamp != 0) // Add temp permission
+    if (!v->second.addPerm(perm, timestamp, targetID))
+        return Status::PermAlreadyGranted;
+
+    if (!dontBroadcast)
     {
-        // Temporal or defined in groups (or not defined at all)
-        if (perm_type != 1)
-        {
-            if (!diff)
-                return Status::PermAlreadyGranted;
-            v->second.addTempPerm(perm, timestamp, targetID);
-        }
-        // perm_type == 1 (permanent permission)
-        else if (!diff)
-            return Status::PermAlreadyGranted;
-        else // Differs from permanent perm by allowance
-            v->second.addTempPerm(perm, timestamp, targetID);
-    }
-    else // Add permanent permission
-    {
-        if (perm_type == 0) // Delete temporal permission anyway
-            v->second.temp_nodes.deletePerm(perm);
-        else if (!diff && perm_type != 2) // No difference with group
-            return Status::PermAlreadyGranted;
-        v->second.user_nodes.addPerm(perm);
-    }
-    if (!dontBroadcast) {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             cb(pluginID, Action::Add, targetID, perm, timestamp);
@@ -355,7 +359,8 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
         v->second.addTempGroup(g, timestamp, targetID);
     v->second.sortGroups();
 
-    if (!dontBroadcast) {
+    if (!dontBroadcast)
+    {
         std::shared_lock lock2(user_group_callbacks._lock);
         for (const UserGroupCallback cb : user_group_callbacks._callbacks)
             cb(pluginID, Action::Add, targetID, groupName, timestamp);
@@ -467,7 +472,8 @@ extern "C" PLUGIN_API Status SetCookie(const uint64_t pluginID, const uint64_t t
         return Status::TargetUserNotFound;
 
     v->second.cookies[name] = cookie;
-    if (!dontBroadcast) {
+    if (!dontBroadcast)
+    {
         std::shared_lock lock2(user_set_cookie_callbacks._lock);
         for (const UserSetCookieCallback cb : user_set_cookie_callbacks._callbacks)
             cb(pluginID, targetID, name, cookie);
@@ -510,12 +516,16 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
  * @param targetID Player ID.
  * @param immunity User immunity (set -1 to return highest group priority).
  * @param groupNames Array of groups to inherit.
- * @param perms Array of permissions.
- * @return Success, UserAlreadyExist, GroupNotFound
+ * @param perms Array of permissions
+ * @param tempGroups Array of temporal groups ("group timestamp").
+ * @param tempPerms Array of temporal permissions (perm.iss.ion timestamp).
+ * @return Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound
  */
 extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t targetID, int immunity,
                                         const plg::vector<plg::string>& groupNames,
-                                        const plg::vector<plg::string>& perms)
+                                        const plg::vector<plg::string>& perms,
+                                        const plg::vector<plg::string>& tempGroups,
+                                        const plg::vector<plg::string>& tempPerms)
 {
     std::unique_lock lock(users_mtx);
     if (users.contains(targetID))
@@ -528,10 +538,15 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t 
         Group* group = GetGroup(name);
         if (group == nullptr)
             return Status::GroupNotFound;
-        groupPointers.push_back(group);
+        if (std::ranges::find(groupPointers, group) == groupPointers.end())
+            groupPointers.push_back(group);
     }
 
-    users.try_emplace(targetID, immunity, std::move(groupPointers), perms);
+    for (auto& name : tempGroups)
+        if (GetGroup(name) == nullptr)
+            return Status::ChildGroupNotFound;
+
+    users.try_emplace(targetID, immunity, std::move(groupPointers), perms, tempPerms, tempGroups, targetID);
     {
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks)
@@ -591,10 +606,11 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID PlayerID of the user whose data should be loaded.
  */
-extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID) {
-	std::shared_lock lock2(user_load_callbacks._lock);
-	for (const UserLoadCallback cb : user_load_callbacks._callbacks)
-		cb(pluginID, targetID);
+extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID)
+{
+    std::shared_lock lock2(user_load_callbacks._lock);
+    for (const UserLoadCallback cb : user_load_callbacks._callbacks)
+        cb(pluginID, targetID);
 }
 
 /**
@@ -605,9 +621,9 @@ extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targ
  */
 extern "C" PLUGIN_API Status OnLoadUser_Register(UserLoadCallback callback)
 {
-	std::unique_lock lock(user_load_callbacks._lock);
-	auto ret = user_load_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+    std::unique_lock lock(user_load_callbacks._lock);
+    auto ret = user_load_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -618,9 +634,9 @@ extern "C" PLUGIN_API Status OnLoadUser_Register(UserLoadCallback callback)
  */
 extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserLoadCallback callback)
 {
-	std::unique_lock lock(user_load_callbacks._lock);
-	const size_t ret = user_load_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+    std::unique_lock lock(user_load_callbacks._lock);
+    const size_t ret = user_load_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
