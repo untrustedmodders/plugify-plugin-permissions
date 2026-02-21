@@ -134,7 +134,7 @@ extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::s
  *
  * @param targetID Player ID.
  * @param groupName Group name.
- * @return PermanentGroup, TemporalGroup, GroupNotDefined TargetUserNotFound, GroupNotFound
+ * @return PermanentGroup, TemporalGroup, GroupNotDefined, TargetUserNotFound, GroupNotFound
  */
 extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string& groupName)
 {

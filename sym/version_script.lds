@@ -7,6 +7,7 @@
         HasGroup;
         GetUserGroups;
         GetImmunity;
+        SetImmunity;
         AddPermission;
         RemovePermission;
         AddGroup;

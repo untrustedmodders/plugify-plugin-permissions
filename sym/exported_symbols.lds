@@ -8,6 +8,7 @@ _HasPermission
 _HasGroup
 _GetUserGroups
 _GetImmunity
+_SetImmunity
 _AddPermission
 _RemovePermission
 _AddGroup
