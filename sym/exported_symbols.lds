@@ -20,8 +20,11 @@ _CreateUser
 _DeleteUser
 _UserExists
 _LoadUser
+_LoadedUser
 _OnLoadUser_Register
 _OnLoadUser_Unregister
+_OnLoadedUser_Register
+_OnLoadedUser_Unregister
 _OnUserPermissionChange_Register
 _OnUserPermissionChange_Unregister
 _OnUserSetCookie_Register

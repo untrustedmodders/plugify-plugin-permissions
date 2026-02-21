@@ -3895,7 +3895,30 @@
                 "type": "void"
             },
             "group": "UserManager",
-            "description": "Requests loading of a user's data."
+            "description": "Dispatches a request to load user data. Notifies all registered listeners that the specified user's data should be loaded from an external storage provider. This function does not perform any storage operations by itself. It only broadcasts the load request event."
+        },
+        {
+            "name": "LoadedUser",
+            "funcName": "LoadedUser",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the storage plugin reporting completion."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "PlayerID of the loaded user."
+                }
+            ],
+            "retType": {
+                "type": "void"
+            },
+            "group": "UserManager",
+            "description": "Dispatches a user-loaded event. Invoked by a storage provider to indicate that the requested user data loading process has completed successfully. After this call, the user is considered fully initialized."
         },
         {
             "name": "OnLoadUser_Register",
@@ -4128,6 +4151,238 @@
             },
             "group": "UserListeners",
             "description": "Unregister listener on LoadUser event."
+        },
+        {
+            "name": "OnLoadedUser_Register",
+            "funcName": "OnLoadedUser_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserLoadedCallback",
+                        "funcName": "UserLoadedCallback",
+                        "description": "Called when a user's data has been fully loaded. This callback is triggered after a storage extension has completed loading and applying the user's persistent data (e.g. groups, permissions, metadata). At this stage, the user is considered fully initialized and ready for normal operation within the system.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that reports the completion of the loading process."
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose data has been loaded."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on LoadedUser event."
+        },
+        {
+            "name": "OnLoadedUser_Unregister",
+            "funcName": "OnLoadedUser_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserLoadedCallback",
+                        "funcName": "UserLoadedCallback",
+                        "description": "Called when a user's data has been fully loaded. This callback is triggered after a storage extension has completed loading and applying the user's persistent data (e.g. groups, permissions, metadata). At this stage, the user is considered fully initialized and ready for normal operation within the system.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that reports the completion of the loading process."
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose data has been loaded."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on LoadedUser event."
         },
         {
             "name": "OnGroupPermissionChange_Register",
