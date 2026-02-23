@@ -17,6 +17,7 @@ PermExpirationCallbacks perm_expiration_callbacks;
 GroupExpirationCallbacks group_expiration_callbacks;
 
 UserLoadCallbacks user_load_callbacks;
+UserLoadedCallbacks user_loaded_callbacks;
 
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
 {
@@ -130,7 +131,7 @@ extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::s
  *
  * @param targetID Player ID.
  * @param groupName Group name.
- * @return PermanentGroup, TemporalGroup, GroupNotDefined TargetUserNotFound, GroupNotFound
+ * @return PermanentGroup, TemporalGroup, GroupNotDefined, TargetUserNotFound, GroupNotFound
  */
 extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string& groupName)
 {
@@ -540,24 +541,40 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
 }
 
 /**
- * @brief Requests loading of a user's data.
+ * @brief Dispatches a request to load user data.
  *
- * This function is called to initiate the user data loading process.
- * It triggers the corresponding load event so that subscribed
- * extensions (e.g., database providers) can load and initialize
- * the user's data in memory.
+ * Notifies all registered listeners that the specified user's data
+ * should be loaded from an external storage provider.
  *
- * The function itself does not perform any storage operations.
- * It only dispatches the load request.
+ * This function does not perform any storage operations by itself.
+ * It only broadcasts the load request event.
  *
- * @param pluginID Identifier of the plugin that calls the method.
- * @param targetID PlayerID of the user whose data should be loaded.
+ * @param pluginID   Identifier of the calling plugin.
+ * @param targetID   PlayerID of the user to be loaded.
  */
 extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID)
 {
     std::shared_lock lock2(user_load_callbacks._lock);
     for (const UserLoadCallback cb : user_load_callbacks._callbacks)
         cb(pluginID, targetID);
+}
+
+/**
+ * @brief Dispatches a user-loaded event.
+ *
+ * Invoked by a storage provider to indicate that the requested
+ * user data loading process has completed successfully.
+ *
+ * After this call, the user is considered fully initialized.
+ *
+ * @param pluginID Identifier of the storage plugin reporting completion.
+ * @param targetID PlayerID of the loaded user.
+ */
+extern "C" PLUGIN_API void LoadedUser(const uint64_t pluginID, const uint64_t targetID)
+{
+	std::shared_lock lock2(user_loaded_callbacks._lock);
+	for (const UserLoadedCallback cb : user_loaded_callbacks._callbacks)
+		cb(pluginID, targetID);
 }
 
 /**
@@ -583,6 +600,32 @@ extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserLoadCallback callback)
 {
     std::unique_lock lock(user_load_callbacks._lock);
     const size_t ret = user_load_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
+}
+
+/**
+ * @brief Register listener on LoadedUser event.
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnLoadedUser_Register(UserLoadedCallback callback)
+{
+    std::unique_lock lock(user_loaded_callbacks._lock);
+    auto ret = user_loaded_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+}
+
+/**
+ * @brief Unregister listener on LoadedUser event.
+ *
+ * @param callback Function callback.
+ * @return
+ */
+extern "C" PLUGIN_API Status OnLoadedUser_Unregister(UserLoadedCallback callback)
+{
+    std::unique_lock lock(user_loaded_callbacks._lock);
+    const size_t ret = user_loaded_callbacks._callbacks.erase(callback);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 

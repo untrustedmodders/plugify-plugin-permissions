@@ -7,6 +7,7 @@
         HasGroup;
         GetUserGroups;
         GetImmunity;
+        SetImmunity;
         AddPermission;
         RemovePermission;
         AddGroup;
@@ -18,8 +19,11 @@
         DeleteUser;
         UserExists;
         LoadUser;
+        LoadedUser;
         OnLoadUser_Register;
         OnLoadUser_Unregister;
+        OnLoadedUser_Register;
+        OnLoadedUser_Unregister;
         OnGroupSetParent_Register;
         OnGroupSetParent_Unregister;
         OnGroupSetCookie_Register;

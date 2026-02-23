@@ -103,6 +103,21 @@ using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::stri
  */
 using UserLoadCallback = void(*)(const uint64_t pluginID, const uint64_t targetID);
 
+/**
+ * @brief Called when a user's data has been fully loaded.
+ *
+ * This callback is triggered after a storage extension has completed
+ * loading and applying the user's persistent data (e.g. groups,
+ * permissions, metadata).
+ *
+ * At this stage, the user is considered fully initialized and ready
+ * for normal operation within the system.
+ *
+ * @param pluginID Identifier of the plugin that reports the completion of the loading process.
+ * @param targetID PlayerID of the user whose data has been loaded.
+ */
+using UserLoadedCallback = void(*)(const uint64_t pluginID, const uint64_t targetID);
+
 struct UserPermissionCallbacks
 {
     std::shared_mutex _lock;
@@ -154,7 +169,14 @@ struct GroupExpirationCallbacks
 
 struct UserLoadCallbacks
 {
-	std::shared_mutex _lock;
-	phmap::flat_hash_set<UserLoadCallback> _callbacks;
-	std::atomic_int _counter;
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<UserLoadCallback> _callbacks;
+    std::atomic_int _counter;
+};
+
+struct UserLoadedCallbacks
+{
+    std::shared_mutex _lock;
+    phmap::flat_hash_set<UserLoadedCallback> _callbacks;
+    std::atomic_int _counter;
 };
