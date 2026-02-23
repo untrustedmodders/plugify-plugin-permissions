@@ -18,8 +18,6 @@ struct TempGroup
     uint32_t timer;
 };
 
-inline bool sortF(const Group* i, const Group* j) { return i->_priority > j->_priority; }
-
 inline bool sortFF(const TempGroup& i, const TempGroup& j)
 {
     return i.group->_priority > j.group->_priority;
@@ -38,15 +36,13 @@ struct User
     Node temp_nodes;
 
     phmap::flat_hash_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;
-    plg::vector<Group*> _groups; // groups that player belongs to
-    plg::vector<TempGroup> _t_groups; // temporal groups
+    plg::vector<TempGroup> _groups; // groups that player belongs to
     int _immunity;
 
-    [[nodiscard]] int getImmunity() const
+    [[nodiscard]] PLUGIFY_FORCE_INLINE int getImmunity() const
     {
-        if (_immunity == -1) // Force use group's priority
-            return std::max(_groups.empty() ? -1 : _groups.front()->_priority,
-                            _t_groups.empty() ? -1 : _t_groups.front().group->_priority);
+        if (_immunity == -1)
+            return _groups.empty() ? -1 : _groups.front().group->_priority;
         return _immunity;
     }
 
@@ -80,22 +76,12 @@ struct User
             return hasPerm;
         }
 
-        for (const auto& p : _t_groups)
-        {
-            hasPerm = p.group->_hasPermission(names, hashes, i);
-            if (hasPerm != Status::PermNotFound)
-            {
-                perm_type = 2;
-                return hasPerm;
-            }
-        }
-
         for (const auto g : _groups)
         {
-            hasPerm = g->_hasPermission(names, hashes, i);
+            hasPerm = g.group->_hasPermission(names, hashes, i);
             if (hasPerm != Status::PermNotFound)
             {
-                perm_type = 3;
+                perm_type = g.timestamp == 0 ? 3 : 2;
                 return hasPerm;
             }
         }
@@ -153,25 +139,29 @@ struct User
         node->timestamp = timestamp;
     }
 
-    PLUGIFY_FORCE_INLINE void addTempGroup(Group* g, time_t timestamp, uint64_t targetID)
+    PLUGIFY_FORCE_INLINE void addGroup(Group* g, time_t timestamp, uint64_t targetID)
     {
-        uint32_t timer = g_TimerSystem.CreateTimer(static_cast<double>(timestamp) - static_cast<double>(time(nullptr)),
-                                                   g_GroupExpirationCallback, TimerFlag::Default, plg::vector<plg::any>{
-                                                       g->_name,
-                                                       targetID
-                                                   });
-        this->_t_groups.emplace_back(timestamp, g, timer);
+        TempGroup& tg = this->_groups.emplace_back(timestamp, g, 0xFFFFFFFF);
+        if (timestamp != 0)
+        {
+            tg.timer = g_TimerSystem.CreateTimer(static_cast<double>(timestamp) - static_cast<double>(time(nullptr)),
+                                                 g_GroupExpirationCallback, TimerFlag::Default, plg::vector<plg::any>{
+                                                     g->_name,
+                                                     targetID
+                                                 });
+        }
         this->sortGroups();
     }
 
-    PLUGIFY_FORCE_INLINE bool delTempGroup(const Group* g)
+    PLUGIFY_FORCE_INLINE bool delGroup(const Group* g)
     {
-        for (auto it = this->_t_groups.begin(); it != this->_t_groups.end(); ++it)
+        for (auto it = this->_groups.begin(); it != this->_groups.end(); ++it)
         {
             if (g == it->group)
             {
-                g_TimerSystem.KillTimer(it->timer);
-                this->_t_groups.erase(it);
+                if (it->timestamp != 0)
+                    g_TimerSystem.KillTimer(it->timer);
+                this->_groups.erase(it);
                 return true;
             }
         }
@@ -180,30 +170,27 @@ struct User
 
     PLUGIFY_FORCE_INLINE void sortGroups()
     {
-        std::ranges::sort(this->_groups, sortF);
-        std::ranges::sort(this->_t_groups, sortFF);
+        std::ranges::sort(this->_groups, sortFF);
     }
 
-    User(int immunity, plg::vector<Group*>&& __groups, const plg::vector<plg::string>& perms,
-         const plg::vector<plg::string>& temp_perms, const plg::vector<plg::string>& temp_groups,
+    User(const int immunity, const plg::vector<plg::string>& groupsList, const plg::vector<plg::string>& permsList,
          const uint64_t user_id)
     {
         this->_immunity = immunity;
-        this->_groups = std::move(__groups);
-        for (const plg::string& s : temp_groups)
+        for (const plg::string& s : groupsList)
         {
             std::string_view group_view;
             time_t timestamp = 0;
             parseTempString(s, group_view, timestamp);
             Group* g = GetGroup(group_view);
             // Skip missed or already defined groups
-            if (g == nullptr)
+            if (g == nullptr || timestamp != 0)
                 continue;
 
             bool found = false;
             for (const auto gg : this->_groups)
             {
-                const Group* ggg = gg;
+                const Group* ggg = gg.group;
                 while (ggg)
                 {
                     if (ggg == g)
@@ -215,21 +202,58 @@ struct User
                 }
             }
             if (!found)
-                addTempGroup(g, timestamp, user_id);
+                addGroup(g, 0, user_id);
+        }
+        for (const plg::string& s : groupsList)
+        {
+            std::string_view group_view;
+            time_t timestamp = 0;
+            parseTempString(s, group_view, timestamp);
+            Group* g = GetGroup(group_view);
+            // Skip missed or already defined groups
+            if (g == nullptr || timestamp == 0)
+                continue;
+
+            bool found = false;
+            for (const auto gg : this->_groups)
+            {
+                const Group* ggg = gg.group;
+                while (ggg)
+                {
+                    if (ggg == g)
+                    {
+                        found = true;
+                        break;
+                    }
+                    ggg = ggg->_parent;
+                }
+            }
+            if (!found)
+                addGroup(g, timestamp, user_id);
         }
         sortGroups();
         this->user_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
         this->temp_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
-        for (const plg::string& s : perms)
-            addPerm(s, 0, user_id);
 
-        for (const plg::string& s : temp_perms)
+        for (const plg::string& s : permsList)
         {
             std::string_view perm_view;
             time_t timestamp = 0;
             parseTempString(s, perm_view, timestamp);
+            if (timestamp != 0)
+                continue;
+            addPerm(plg::string(perm_view), 0, user_id);
+        }
+        for (const plg::string& s : permsList)
+        {
+            std::string_view perm_view;
+            time_t timestamp = 0;
+            parseTempString(s, perm_view, timestamp);
+            if (timestamp == 0)
+                continue;
             addPerm(plg::string(perm_view), timestamp, user_id);
         }
+
 
         Node::forceRehash(this->user_nodes.nodes);
         Node::forceRehash(this->temp_nodes.nodes);

@@ -41,18 +41,14 @@ void g_GroupExpirationCallback(uint32_t /*timer*/, const plg::vector<plg::any>& 
     uint64_t targetID = plg::get<uint64_t>(userData[1]);
     {
         std::unique_lock lock(users_mtx);
-        Group* g = GetGroup(*group_name);
+        const Group* g = GetGroup(*group_name);
         if (g == nullptr)
             return;
         const auto it = users.find(targetID);
         if (it == users.end())
             return;
-        for (const auto& g_it : it->second._t_groups)
-            if (g_it.group == g)
-            {
-                it->second._t_groups.erase(&g_it);
-                break;
-            }
+        if (!it->second.delGroup(g))
+            return;
     }
 
     std::shared_lock lock(group_expiration_callbacks._lock);
@@ -147,23 +143,13 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string
     if (g == nullptr)
         return Status::GroupNotFound;
 
-    for (const auto gg : v->second._groups)
-    {
-        auto ggg = gg;
-        while (ggg)
-        {
-            if (ggg == g)
-                return Status::PermanentGroup;
-            ggg = ggg->_parent;
-        }
-    }
-    for (const auto gg : v->second._t_groups)
+    for (const auto& gg : v->second._groups)
     {
         auto ggg = gg.group;
         while (ggg)
         {
             if (ggg == g)
-                return Status::TemporalGroup;
+                return gg.timestamp == 0 ? Status::PermanentGroup : Status::TemporalGroup;
             ggg = ggg->_parent;
         }
     }
@@ -186,11 +172,16 @@ extern "C" PLUGIN_API Status GetUserGroups(const uint64_t targetID, plg::vector<
 
     outGroups.clear();
     outGroups.reserve(v->second._groups.size());
-    for (const auto g : v->second._groups)
-        outGroups.push_back(g->_name);
-
-    for (const auto& g : v->second._t_groups)
-        outGroups.push_back(g.group->_name + " " + plg::to_string(g.timestamp));
+    for (const auto& g : v->second._groups)
+    {
+        plg::string s = g.group->_name;
+        if (g.timestamp != 0)
+        {
+            s += ' ';
+            s += plg::to_string(g.timestamp);
+        }
+        outGroups.push_back(std::move(s));
+    }
 
     return Status::Success;
 }
@@ -312,52 +303,30 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
     Group* g = GetGroup(groupName);
     if (g == nullptr)
         return Status::GroupNotFound;
-    // Check array of permanent groups
-    for (const auto gg : v->second._groups)
+
+    for (const auto& gg : v->second._groups)
     {
-        const Group* ggg = gg;
-        while (ggg)
+        const Group* ggg = gg.group;
+        if (ggg == g)
         {
-            if (ggg == g)
-                return Status::GroupAlreadyExist; // Requested group already permanent
-            ggg = ggg->_parent;
-        }
-    }
-    // Not permanent - check temporaries
-    for (auto it = v->second._t_groups.begin(); it != v->second._t_groups.end(); it++)
-    {
-        const Group* ggg = it->group;
-        if (ggg == g) // User already have this group as temporary
-        {
-            if (timestamp != 0)
+            // Reschedule
+            if (gg.timestamp != timestamp)
             {
-                if (it->timestamp == timestamp) // No changes - return error
-                    return Status::GroupAlreadyExist;
-                it->timestamp = timestamp;
-                g_TimerSystem.RescheduleTimer(
-                    it->timer, static_cast<double>(it->timestamp) - static_cast<double>(time(nullptr)));
-                std::shared_lock lock2(user_group_callbacks._lock);
-                for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-                    cb(pluginID, Action::Add, targetID, groupName, timestamp);
-                return Status::Success;
+                v->second.delGroup(ggg);
+                break;
             }
-            // Add group as permanent
-            v->second._t_groups.erase(it);
-            break;
+            return Status::GroupAlreadyExist;
         }
+        ggg = ggg->_parent;
         while (ggg)
         {
             if (ggg == g)
-                return Status::GroupAlreadyExist; // Because requested group is parent
+                return Status::GroupAlreadyExist;
             ggg = ggg->_parent;
         }
     }
 
-    if (timestamp == 0)
-        v->second._groups.push_back(g);
-    else
-        v->second.addTempGroup(g, timestamp, targetID);
-    v->second.sortGroups();
+    v->second.addGroup(g, timestamp, targetID);
 
     if (!dontBroadcast)
     {
@@ -388,27 +357,14 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
     if (g == nullptr)
         return Status::ChildGroupNotFound;
 
-    // Search in temporal groups
-    for (auto it = v->second._t_groups.begin(); it != v->second._t_groups.end(); it++)
+    for (auto it = v->second._groups.begin(); it != v->second._groups.end(); it++)
     {
         if (it->group == g)
         {
             std::shared_lock lock2(user_group_callbacks._lock);
             for (const UserGroupCallback cb : user_group_callbacks._callbacks)
                 cb(pluginID, Action::Remove, targetID, groupName, it->timestamp);
-            v->second._t_groups.erase(it);
-            return Status::Success;
-        }
-    }
-    // Miss - search in permanent groups
-    for (auto it = v->second._groups.begin(); it != v->second._groups.end(); it++)
-    {
-        if (*it == g)
-        {
-            std::shared_lock lock2(user_group_callbacks._lock);
-            for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-                cb(pluginID, Action::Remove, targetID, groupName, 0);
-            v->second._groups.erase(it);
+            v->second.delGroup(it->group);
             return Status::Success;
         }
     }
@@ -435,9 +391,9 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
     if (!found)
     {
         // Check in groups cookies
-        for (Group* g : v->second._groups)
+        for (TempGroup& g : v->second._groups)
         {
-            Group* gg = g;
+            Group* gg = g.group;
             while (gg)
             {
                 val = gg->cookies.find(name);
@@ -515,42 +471,33 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param immunity User immunity (set -1 to return highest group priority).
- * @param groupNames Array of groups to inherit.
- * @param perms Array of permissions
- * @param tempGroups Array of temporal groups ("group timestamp").
- * @param tempPerms Array of temporal permissions (perm.iss.ion timestamp).
+ * @param groupsList Array of groups to inherit ("group timestamp").
+ * @param permsList Array of permissions (perm.iss.ion timestamp) or (perm.iss.ion).
  * @return Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound
  */
-extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t targetID, int immunity,
-                                        const plg::vector<plg::string>& groupNames,
-                                        const plg::vector<plg::string>& perms,
-                                        const plg::vector<plg::string>& tempGroups,
-                                        const plg::vector<plg::string>& tempPerms)
+extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t targetID, const int immunity,
+                                        const plg::vector<plg::string>& groupsList,
+                                        const plg::vector<plg::string>& permsList)
 {
     std::unique_lock lock(users_mtx);
     if (users.contains(targetID))
         return Status::UserAlreadyExist;
 
-    plg::vector<Group*> groupPointers;
-    groupPointers.reserve(groupNames.size());
-    for (auto& name : groupNames)
+    for (auto& name : groupsList)
     {
-        Group* group = GetGroup(name);
+        std::string_view sv = name;
+        if (sv.contains(' '))
+            sv = sv.substr(0, sv.find(' '));
+        const Group* group = GetGroup(sv);
         if (group == nullptr)
             return Status::GroupNotFound;
-        if (std::ranges::find(groupPointers, group) == groupPointers.end())
-            groupPointers.push_back(group);
     }
 
-    for (auto& name : tempGroups)
-        if (GetGroup(name) == nullptr)
-            return Status::ChildGroupNotFound;
-
-    users.try_emplace(targetID, immunity, std::move(groupPointers), perms, tempPerms, tempGroups, targetID);
+    users.try_emplace(targetID, immunity, groupsList, permsList, targetID);
     {
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks)
-            cb(pluginID, targetID, immunity, groupNames, perms);
+            cb(pluginID, targetID, immunity, groupsList, permsList);
     }
     return Status::Success;
 }

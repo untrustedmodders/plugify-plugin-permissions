@@ -15,9 +15,7 @@ inline void GroupManager_Callback(const Group* group)
     // Delete group from all users
     std::unique_lock lock(users_mtx);
     for (auto& value : users | std::views::values)
-    {
-        plg::erase(value._groups, group);
-    }
+        value.delGroup(group);
 }
 
 /**

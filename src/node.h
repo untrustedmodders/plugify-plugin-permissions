@@ -71,7 +71,6 @@ PLUGIFY_FORCE_INLINE void parseTempString(const std::string_view& input, std::st
         }
         ++j;
     }
-    assert (timestamp != 0);
 }
 
 struct Node
