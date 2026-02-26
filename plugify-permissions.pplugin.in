@@ -3287,28 +3287,16 @@
                     "description": "User immunity (set -1 to return highest group priority)."
                 },
                 {
-                    "name": "groupNames",
+                    "name": "groupsList",
                     "type": "string[]",
                     "ref": false,
-                    "description": "Array of groups to inherit."
+                    "description": "Array of groups to inherit (\"group timestamp\")."
                 },
                 {
-                    "name": "perms",
+                    "name": "permsList",
                     "type": "string[]",
                     "ref": false,
-                    "description": "Array of permissions"
-                },
-                {
-                    "name": "tempGroups",
-                    "type": "string[]",
-                    "ref": false,
-                    "description": "Array of temporal groups (\"group timestamp\")."
-                },
-                {
-                    "name": "tempPerms",
-                    "type": "string[]",
-                    "ref": false,
-                    "description": "Array of temporal permissions (perm.iss.ion timestamp)."
+                    "description": "Array of permissions (perm.iss.ion timestamp) or (perm.iss.ion)."
                 }
             ],
             "retType": {
@@ -3889,6 +3877,12 @@
                     "type": "uint64",
                     "ref": false,
                     "description": "PlayerID of the user whose data should be loaded."
+                },
+                {
+                    "name": "username",
+                    "type": "string",
+                    "ref": false,
+                    "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
                 }
             ],
             "retType": {
@@ -3945,6 +3939,12 @@
                                 "type": "uint64",
                                 "ref": false,
                                 "description": "PlayerID of the user whose data should be loaded."
+                            },
+                            {
+                                "name": "username",
+                                "type": "string",
+                                "ref": false,
+                                "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
                             }
                         ],
                         "retType": {
@@ -4061,6 +4061,12 @@
                                 "type": "uint64",
                                 "ref": false,
                                 "description": "PlayerID of the user whose data should be loaded."
+                            },
+                            {
+                                "name": "username",
+                                "type": "string",
+                                "ref": false,
+                                "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
                             }
                         ],
                         "retType": {

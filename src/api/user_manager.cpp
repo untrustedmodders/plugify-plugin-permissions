@@ -551,12 +551,13 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
  *
  * @param pluginID   Identifier of the calling plugin.
  * @param targetID   PlayerID of the user to be loaded.
+ * @param username   The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
  */
-extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID)
+extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID, const plg::string username)
 {
     std::shared_lock lock2(user_load_callbacks._lock);
     for (const UserLoadCallback cb : user_load_callbacks._callbacks)
-        cb(pluginID, targetID);
+        cb(pluginID, targetID, username);
 }
 
 /**

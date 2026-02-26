@@ -100,8 +100,9 @@ using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::stri
  *
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	PlayerID of the user whose data should be loaded.
+ * @param username  The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
  */
-using UserLoadCallback = void(*)(const uint64_t pluginID, const uint64_t targetID);
+using UserLoadCallback = void(*)(const uint64_t pluginID, const uint64_t targetID, const plg::string username);
 
 /**
  * @brief Called when a user's data has been fully loaded.
