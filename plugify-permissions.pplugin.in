@@ -1588,6 +1588,12 @@
                     "type": "string",
                     "ref": false,
                     "description": "Permission line."
+                },
+                {
+                    "name": "recursiveDeletion",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "Delete all nested perms."
                 }
             ],
             "retType": {
@@ -1695,6 +1701,12 @@
                     "type": "string",
                     "ref": false,
                     "description": "Permission line."
+                },
+                {
+                    "name": "recursiveDeletion",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "Delete all nested perms."
                 }
             ],
             "retType": {

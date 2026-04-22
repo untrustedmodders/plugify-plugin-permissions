@@ -223,6 +223,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const p
  * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perm Permission line.
+ * @param recursiveDeletion Delete all nested perms.
  * @return Success, GroupNotFound
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, const plg::string& name,
