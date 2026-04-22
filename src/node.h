@@ -1,5 +1,4 @@
 #pragma once
-#include <queue>
 #include <string_view>
 #include <ranges>
 #include <stack>
@@ -103,10 +102,14 @@ struct Node
             if (current->wildcard) lastWild = current;
         }
 
-        return current->state ? Status::Allow : Status::Disallow;
+        // Check non-intermediate node
+        if (current->end_node)
+            return current->state ? Status::Allow : Status::Disallow;
+        return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
     }
 
-    PLUGIFY_FORCE_INLINE void deletePerm(std::string_view perm)
+    PLUGIFY_FORCE_INLINE bool deletePerm(std::string_view perm, const bool recursive_delete,
+                                         plg::vector<plg::string>& deleted_perms)
     {
         if (perm.starts_with('-'))
             perm = perm.substr(1);
@@ -122,70 +125,116 @@ struct Node
             if (hashes[i - 1] == AllAccess)
                 break;
         }
-        this->deletePerm(names, hashes, i);
+        // deleted_perms.clear();
+        return this->deletePerm(names, hashes, i, recursive_delete, deleted_perms);
     }
 
-    PLUGIFY_FORCE_INLINE void deletePerm(const std::string_view names[], const uint64_t hashes[], const int sz)
+    PLUGIFY_FORCE_INLINE bool deletePerm(const std::string_view names[], const uint64_t hashes[], const int sz,
+                                         const bool recursive_delete, plg::vector<plg::string>& deleted_perms)
     {
-        if (sz < 1) return;
-        if (hashes[0] == AllAccess)
-        {
-            // Reset ROOT node to initial state
-            this->nodes.clear();
-            this->state = this->wildcard = false;
-            return;
-        }
+        if (sz < 1) return false;
 
         const bool hasWildcard = hashes[sz - 1] == AllAccess;
-
+        const int counter = sz - 1;
+        // int count = 0;
         Node* curNode = this;
+        // std::pair<Node*, int> ancestors[64];
 
-        std::pair<Node*, int> ancestors[64];
-        int count = 0;
+        if (hashes[0] == AllAccess)
+        {
+            if (!curNode->wildcard)
+                return false;
+
+            if (curNode->timestamp != 0)
+            {
+                g_TimerSystem.KillTimer(curNode->timer);
+                // Timer has been defused!
+                curNode->timer = 0xFFFFFFFF;
+            }
+
+            if (recursive_delete)
+            {
+                deleted_perms = dumpNode(*curNode, false);
+                destroyAllTimers(*curNode);
+                curNode->nodes.clear();
+            }
+            else
+                deleted_perms.push_back("*");
+            curNode->timestamp = 0;
+            curNode->end_node = curNode->state = curNode->wildcard = false;
+            return true;
+        }
 
         // find pre-last element
-        for (int i = 0; i < sz - 1; ++i)
+        for (int i = 0; i < counter; ++i)
         {
             const auto it = curNode->nodes.find(names[i], hashes[i]);
-            if (it == curNode->nodes.end()) return;
+            if (it == curNode->nodes.end()) return false;
 
-            // ancestors[count] = {parent_node, child_key};
-            ancestors[count] = {curNode, i};
-            ++count;
+            // ancestors[count] = {curNode, count};
+            // ++count;
             curNode = &it->second;
         }
 
-        if (hasWildcard)
+        Node* nodeReset = curNode;
+
+        if (!hasWildcard)
         {
-            for (auto& val : curNode->nodes | std::views::values)
-                destroyAllTimers(val);
-            curNode->nodes.clear();
+            const auto it = curNode->nodes.find(names[counter], hashes[counter]);
+            if (it == curNode->nodes.end()) return false; // Node not found
+            nodeReset = &it->second;
         }
-        // Not wildcard - clear only last
+
+        plg::string base_name = names[0];
+        {
+            for (int i = 1; i < counter; ++i)
+            {
+                base_name += '.';
+                base_name += names[i];
+            }
+            if (!hasWildcard)
+            {
+                base_name += '.';
+                base_name += names[counter];
+            }
+        }
+        if (recursive_delete)
+        {
+            dumpNodes(base_name, *nodeReset, deleted_perms);
+            destroyAllTimers(*nodeReset);
+            nodeReset->nodes.clear();
+        }
         else
         {
-            const auto it = curNode->nodes.find(names[sz - 1], hashes[sz - 1]);
-            if (it == curNode->nodes.end()) return;
-            if (it->second.timer != 0xFFFFFFFF)
-                g_TimerSystem.KillTimer(it->second.timer);
-            for (auto& val : it->second.nodes | std::views::values)
-                destroyAllTimers(val);
-            curNode->nodes.erase(it);
+            deleted_perms.push_back(base_name);
         }
 
-        if (curNode->end_node || !curNode->nodes.empty())
-            return;
-
-        // Delete empty nodes
-        for (int i = (count - 1); i >= 0; --i)
+        if (nodeReset->timestamp != 0)
         {
-            Node* parent = ancestors[i].first;
-            const auto it = parent->nodes.find(names[ancestors[i].second], hashes[ancestors[i].second]);
-            if (it != parent->nodes.end())
-                parent->nodes.erase(it);
-            if (parent->end_node || !parent->nodes.empty()) // This node have state - stop
-                return;
+            g_TimerSystem.KillTimer(nodeReset->timer);
+            nodeReset->timer = 0xFFFFFFFF;
         }
+        nodeReset->timestamp = 0;
+        nodeReset->state = nodeReset->wildcard = nodeReset->end_node = false;
+
+        return true;
+
+        // TODO: Rework cleaning of empty nodes
+        // // Skip non-empty nodes
+        // if (!nodeReset->nodes.empty())
+        //     return true;
+        //
+        // // Delete empty nodes
+        // for (int i = (count - 1); i >= 0; --i)
+        // {
+        //     Node* parent = ancestors[i].first;
+        //     const auto it = parent->nodes.find(names[ancestors[i].second], hashes[ancestors[i].second]);
+        //     if (it != parent->nodes.end())
+        //         parent->nodes.erase(it);
+        //     if (parent->end_node || !parent->nodes.empty()) // This node have state - stop
+        //         break;
+        // }
+        // return true;
     }
 
     PLUGIFY_FORCE_INLINE Node* addPerm(std::string_view perm)
@@ -214,7 +263,10 @@ struct Node
     static void destroyAllTimers(Node& node)
     {
         if (node.timer != 0xFFFFFFFF)
+        {
             g_TimerSystem.KillTimer(node.timer);
+            node.timer = 0xFFFFFFFF;
+        }
         for (auto& val : node.nodes | std::views::values)
             destroyAllTimers(val);
     }
@@ -236,32 +288,36 @@ struct Node
                 stack.push(&v.nodes);
         }
     }
-};
 
-inline void dumpNodes(const plg::string& base_name, const Node& root,
-                      plg::vector<plg::string>& output_perms)
-{
-    if (root.end_node)
+    inline static void dumpNodes(const plg::string& base_name, const Node& root,
+                                 plg::vector<plg::string>& output_perms, const bool preserve_state = true)
     {
-        plg::string s = root.state ? "" : "-";
-        s += base_name;
-        if (root.wildcard)
-            s += ".*";
-        if (root.timestamp > 0)
-            s += " " + plg::to_string(root.timestamp);
-        output_perms.push_back(std::move(s));
+        if (root.end_node)
+        {
+            plg::string s;
+        	if (preserve_state && !root.state)
+        		s += "-";
+            s += base_name;
+            if (root.wildcard)
+                s += ".*";
+            if (root.timestamp > 0)
+                s += " " + plg::to_string(root.timestamp);
+            output_perms.push_back(std::move(s));
+        }
+        for (const auto& [key, val] : root.nodes) dumpNodes(base_name + "." + key, val, output_perms);
     }
-    for (const auto& [key, val] : root.nodes) dumpNodes(base_name + "." + key, val, output_perms);
-}
 
-PLUGIFY_FORCE_INLINE plg::vector<plg::string> dumpNode(const Node& root_node)
-{
-    plg::vector<plg::string> perms;
-    if (root_node.wildcard)
-        perms.push_back(
-            (root_node.state ? "*" : "-*") + (
-                root_node.timestamp > 0 ? (" " + plg::to_string(root_node.timestamp)) : ""));
-    for (const auto& [key, val] : root_node.nodes) dumpNodes(key, val, perms);
+    PLUGIFY_FORCE_INLINE static plg::vector<plg::string> dumpNode(const Node& root_node, const bool preserve_state = true)
+    {
+        plg::vector<plg::string> perms;
+        if (root_node.wildcard) {
+        	plg::string s = root_node.state ? "*" : (preserve_state ? "-*" : "*");
+        	if (root_node.timestamp > 0)
+        		s += " " + plg::to_string(root_node.timestamp);
+	        perms.push_back(s);
+        }
+        for (const auto& [key, val] : root_node.nodes) dumpNodes(key, val, perms, preserve_state);
 
-    return perms;
-}
+        return perms;
+    }
+};

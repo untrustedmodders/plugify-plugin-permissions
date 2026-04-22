@@ -89,7 +89,7 @@ struct User
         return Status::PermNotFound;
     }
 
-    PLUGIFY_FORCE_INLINE bool addPerm(const plg::string& perm, time_t timestamp, uint64_t user_id)
+    PLUGIFY_FORCE_INLINE bool addPerm(const plg::string& perm, const time_t timestamp, const uint64_t user_id)
     {
         uint16_t perm_type;
         const bool denied = perm.starts_with('-');
@@ -113,8 +113,12 @@ struct User
         }
         else // Add permanent permission
         {
-            if (perm_type == 0) // Delete temporal permission anyway
-                temp_nodes.deletePerm(perm);
+            if (perm_type == 0)
+            {
+                plg::vector<plg::string> deleted_perms;
+                // Delete temporal permission anyway
+                temp_nodes.deletePerm(perm, false, deleted_perms);
+            }
             else if (!diff && perm_type != 2) // No difference with group
                 return false;
             user_nodes.addPerm(perm);

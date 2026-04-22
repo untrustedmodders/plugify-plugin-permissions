@@ -23,17 +23,19 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
 {
     const plg::string* perm = &plg::get<plg::string>(userData[0]);
     const uint64_t targetID = plg::get<uint64_t>(userData[1]);
+    plg::vector<plg::string> deleted_perms;
     {
         std::unique_lock lock(users_mtx);
         const auto it = users.find(targetID);
         if (it == users.end())
             return;
-        it->second.temp_nodes.deletePerm(*perm);
+        it->second.temp_nodes.deletePerm(*perm, false, deleted_perms);
     }
 
     std::shared_lock lock(perm_expiration_callbacks._lock);
     for (const auto& callback : perm_expiration_callbacks._callbacks)
-        callback(targetID, *perm);
+        for (const plg::string& s : deleted_perms)
+            callback(targetID, s);
 }
 
 void g_GroupExpirationCallback(uint32_t /*timer*/, const plg::vector<plg::any>& userData)
@@ -79,8 +81,8 @@ extern "C" PLUGIN_API Status DumpPermissions(const uint64_t targetID, plg::vecto
     if (v == users.end())
         return Status::TargetUserNotFound;
 
-    perms = dumpNode(v->second.user_nodes);
-    perms.append_range(dumpNode(v->second.temp_nodes));
+    perms = Node::dumpNode(v->second.user_nodes);
+    perms.append_range(Node::dumpNode(v->second.temp_nodes));
 
     return Status::Success;
 }
@@ -239,6 +241,47 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     if (v == users.end())
         return Status::TargetUserNotFound;
 
+    uint16_t perm_type;
+    const bool denied = perm.starts_with('-');
+    const Status status = v->second.hasPermission(perm, perm_type);
+    const bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
+
+    if (timestamp != 0) // Add temp permission
+    {
+        // Temporal or defined in groups (or not defined at all)
+        if (perm_type != 1)
+        {
+            if (!diff)
+                return Status::PermAlreadyGranted;
+            v->second.addTempPerm(perm, timestamp, targetID);
+        }
+        // perm_type == 1 (permanent permission)
+        else if (!diff)
+            return Status::PermAlreadyGranted;
+        else // Differs from permanent perm by allowance
+            v->second.addTempPerm(perm, timestamp, targetID);
+    }
+    else // Add permanent permission
+    {
+        if (perm_type == 0)
+        {
+            plg::vector<plg::string> deleted_perms;
+            // Delete temporal permission anyway
+
+            v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
+            // {
+            //     const time_t t_timestamp = perm_type == 0 ? 1 : 0;
+            //     std::shared_lock lock2(user_permission_callbacks._lock);
+            //     for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+            //         for (const plg::string& s : deleted_perms)
+            //             cb(pluginID, Action::Remove, targetID, s, t_timestamp);
+            // }
+        }
+        else if (!diff && perm_type != 2) // No difference with group
+            return Status::PermAlreadyGranted;
+        v->second.user_nodes.addPerm(perm);
+    }
+
     if (!v->second.addPerm(perm, timestamp, targetID))
         return Status::PermAlreadyGranted;
 
@@ -251,15 +294,23 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     return Status::Success;
 }
 
+// extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
+//                                            const time_t timestamp, const bool dontBroadcast)
+// {
+//
+// }
+
 /**
  * @brief Remove a permission from a user.
  *
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param perm Permission line.
+ * @param recursiveDeletion Delete all nested perms.
  * @return Success, TargetUserNotFound, PermNotFound
  */
-extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm)
+extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
+                                              const bool recursiveDeletion)
 {
     uint16_t perm_type;
     std::unique_lock lock(users_mtx);
@@ -270,16 +321,20 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
     (void)v->second.hasPermission(perm, perm_type);
     if (perm_type > 1)
         return Status::PermNotFound; // Because this permission is in Groups
+
+    plg::vector<plg::string> deleted_perms;
+    if (perm_type == 1)
+        v->second.user_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+    else
+        v->second.temp_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+
     {
-        const time_t timestamp = perm_type == 0 ? 1 : 0;
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, Action::Remove, targetID, perm, timestamp);
+            for (const plg::string& s : deleted_perms)
+                cb(pluginID, Action::Remove, targetID, s, 0);
     }
-    if (perm_type == 1)
-        v->second.user_nodes.deletePerm(perm);
-    else
-        v->second.temp_nodes.deletePerm(perm);
+
     return Status::Success;
 }
 
@@ -553,7 +608,7 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
  * @param targetID   PlayerID of the user to be loaded.
  * @param username   The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
  */
-extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID, const plg::string username)
+extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID, const plg::string& username)
 {
     std::shared_lock lock2(user_load_callbacks._lock);
     for (const UserLoadCallback cb : user_load_callbacks._callbacks)
@@ -573,9 +628,9 @@ extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targ
  */
 extern "C" PLUGIN_API void LoadedUser(const uint64_t pluginID, const uint64_t targetID)
 {
-	std::shared_lock lock2(user_loaded_callbacks._lock);
-	for (const UserLoadedCallback cb : user_loaded_callbacks._callbacks)
-		cb(pluginID, targetID);
+    std::shared_lock lock2(user_loaded_callbacks._lock);
+    for (const UserLoadedCallback cb : user_loaded_callbacks._callbacks)
+        cb(pluginID, targetID);
 }
 
 /**

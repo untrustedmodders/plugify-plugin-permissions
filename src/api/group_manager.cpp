@@ -86,7 +86,7 @@ extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::
     if (v == groups.end())
         return Status::ChildGroupNotFound;
 
-    perms = dumpNode(v->second->_nodes);
+    perms = Node::dumpNode(v->second->_nodes);
 
     return Status::Success;
 }
@@ -208,7 +208,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const p
  * @return Success, GroupNotFound
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, const plg::string& name,
-                                                   const plg::string& perm)
+                                                   const plg::string& perm, const bool recursiveDeletion)
 {
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::unique_lock lock1(groups_mtx);
@@ -216,13 +216,16 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const uint64_t pluginID, cons
     if (it == groups.end())
         return Status::GroupNotFound;
 
+    plg::vector<plg::string> deleted_perms;
+    it->second->_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+
     std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
     {
         std::shared_lock lock3(group_permission_callbacks._lock);
         for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-            cb(pluginID, Action::Remove, name, perm);
+            for (const plg::string& s : deleted_perms)
+                cb(pluginID, Action::Remove, s, perm);
     }
-    it->second->_nodes.deletePerm(perm);
     return Status::Success;
 }
 
@@ -422,9 +425,9 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
  */
 extern "C" PLUGIN_API void LoadGroups(const uint64_t pluginID)
 {
-	std::shared_lock lock2(load_groups_callbacks._lock);
-	for (const LoadGroupsCallback cb : load_groups_callbacks._callbacks)
-		cb(pluginID);
+    std::shared_lock lock2(load_groups_callbacks._lock);
+    for (const LoadGroupsCallback cb : load_groups_callbacks._callbacks)
+        cb(pluginID);
 }
 
 /**
@@ -435,9 +438,9 @@ extern "C" PLUGIN_API void LoadGroups(const uint64_t pluginID)
  */
 extern "C" PLUGIN_API Status OnLoadGroups_Register(LoadGroupsCallback callback)
 {
-	std::unique_lock lock(load_groups_callbacks._lock);
-	auto ret = load_groups_callbacks._callbacks.insert(callback);
-	return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+    std::unique_lock lock(load_groups_callbacks._lock);
+    auto ret = load_groups_callbacks._callbacks.insert(callback);
+    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
@@ -448,9 +451,9 @@ extern "C" PLUGIN_API Status OnLoadGroups_Register(LoadGroupsCallback callback)
  */
 extern "C" PLUGIN_API Status OnLoadGroups_Unregister(LoadGroupsCallback callback)
 {
-	std::unique_lock lock(load_groups_callbacks._lock);
-	const size_t ret = load_groups_callbacks._callbacks.erase(callback);
-	return ret > 0 ? Status::Success : Status::CallbackNotFound;
+    std::unique_lock lock(load_groups_callbacks._lock);
+    const size_t ret = load_groups_callbacks._callbacks.erase(callback);
+    return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
