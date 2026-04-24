@@ -26,7 +26,7 @@ struct Group
         Node::forceRehash(this->_nodes.nodes);
     }
 
-    [[nodiscard]] Status hasPermission(const plg::string& perm) const
+    [[nodiscard]] Status hasPermission(const plg::string& perm, const bool exact, bool& w_wildcard) const
     {
         std::string_view sv(perm);
         auto ispl = std::views::split(sv, '.');
@@ -42,16 +42,17 @@ struct Group
             ++i;
         }
 
-        return _hasPermission(names, hashes, i);
+        return _hasPermission(names, hashes, i, exact, w_wildcard);
     }
 
-    Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz) const
+    Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz, const bool exact, bool& w_wildcard) const
     {
         const Group* i = this;
 
         while (i)
         {
-            Status temp = i->_nodes._hasPermission(names, hashes, sz);
+            time_t _timestamp;
+            Status temp = i->_nodes._hasPermission(names, hashes, sz, exact, w_wildcard, _timestamp);
             if (temp == Status::PermNotFound) i = i->_parent;
             else return temp;
         }

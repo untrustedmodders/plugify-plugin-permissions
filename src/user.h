@@ -23,6 +23,15 @@ inline bool sortFF(const TempGroup& i, const TempGroup& j)
     return i.group->_priority > j.group->_priority;
 }
 
+enum class PermSource : uint32_t
+{
+    UserTemp = 0,
+    User = 1,
+    GroupTemp = 2,
+    Group = 3,
+    NotFound = 4,
+};
+
 void g_PermExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 void g_GroupExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 
@@ -46,7 +55,7 @@ struct User
         return _immunity;
     }
 
-    [[nodiscard]] Status hasPermission(std::string_view perm, uint16_t& perm_type) const
+    [[nodiscard]] Status hasPermission(std::string_view perm, PermSource& perm_type, const bool exact, bool& w_wildcard, time_t& w_timestamp) const
     {
         if (perm.starts_with('-'))
             perm = perm.substr(1);
@@ -60,74 +69,38 @@ struct User
             hashes[i] = XXH3_64bits(s.data(), s.size());
             names[i] = std::string_view(s);
             ++i;
+            if (hashes[i - 1] == AllAccess)
+                break;
         }
 
-        Status hasPerm = temp_nodes._hasPermission(names, hashes, i);
+        Status hasPerm = temp_nodes._hasPermission(names, hashes, i, exact, w_wildcard, w_timestamp);
         if (hasPerm != Status::PermNotFound) // Check if user defined this permission temporarily
         {
-            perm_type = 0;
+            perm_type = PermSource::UserTemp;
             return hasPerm;
         }
 
-        hasPerm = user_nodes._hasPermission(names, hashes, i);
+        hasPerm = user_nodes._hasPermission(names, hashes, i, exact, w_wildcard, w_timestamp);
         if (hasPerm != Status::PermNotFound) // Check if user defined this permission
         {
-            perm_type = 1;
+            perm_type = PermSource::User;
             return hasPerm;
         }
 
         for (const auto g : _groups)
         {
-            hasPerm = g.group->_hasPermission(names, hashes, i);
+            hasPerm = g.group->_hasPermission(names, hashes, i, exact, w_wildcard);
             if (hasPerm != Status::PermNotFound)
             {
-                perm_type = g.timestamp == 0 ? 3 : 2;
+                perm_type = g.timestamp == 0 ? PermSource::Group : PermSource::GroupTemp;
                 return hasPerm;
             }
         }
-        perm_type = 4;
+        perm_type = PermSource::NotFound;
         return Status::PermNotFound;
     }
 
-    PLUGIFY_FORCE_INLINE bool addPerm(const plg::string& perm, const time_t timestamp, const uint64_t user_id)
-    {
-        uint16_t perm_type;
-        const bool denied = perm.starts_with('-');
-        const Status status = hasPermission(perm, perm_type);
-        const bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
-
-        if (timestamp != 0) // Add temp permission
-        {
-            // Temporal or defined in groups (or not defined at all)
-            if (perm_type != 1)
-            {
-                if (!diff)
-                    return false;
-                addTempPerm(perm, timestamp, user_id);
-            }
-            // perm_type == 1 (permanent permission)
-            else if (!diff)
-                return false;
-            else // Differs from permanent perm by allowance
-                addTempPerm(perm, timestamp, user_id);
-        }
-        else // Add permanent permission
-        {
-            if (perm_type == 0)
-            {
-                plg::vector<plg::string> deleted_perms;
-                // Delete temporal permission anyway
-                temp_nodes.deletePerm(perm, false, deleted_perms);
-            }
-            else if (!diff && perm_type != 2) // No difference with group
-                return false;
-            user_nodes.addPerm(perm);
-        }
-
-        return true;
-    }
-
-    PLUGIFY_FORCE_INLINE void addTempPerm(const plg::string& perm, time_t timestamp, uint64_t user_id)
+    PLUGIFY_FORCE_INLINE void addTempPerm(const std::string_view& perm, time_t timestamp, uint64_t user_id)
     {
         Node* node = temp_nodes.addPerm(perm);
         if (node->timer == 0xFFFFFFFF)
@@ -246,7 +219,7 @@ struct User
             parseTempString(s, perm_view, timestamp);
             if (timestamp != 0)
                 continue;
-            addPerm(plg::string(perm_view), 0, user_id);
+            this->user_nodes.addPerm(perm_view);
         }
         for (const plg::string& s : permsList)
         {
@@ -255,7 +228,7 @@ struct User
             parseTempString(s, perm_view, timestamp);
             if (timestamp == 0)
                 continue;
-            addPerm(plg::string(perm_view), timestamp, user_id);
+            this->addTempPerm(perm_view, timestamp, user_id);
         }
 
 

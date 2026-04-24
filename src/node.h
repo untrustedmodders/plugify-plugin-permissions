@@ -82,16 +82,27 @@ struct Node
     time_t timestamp;
 
     PLUGIFY_FORCE_INLINE Status _hasPermission(const std::string_view names[], const uint64_t hashes[],
-                                               const int sz) const
+                                               const int sz, const bool exact, bool& w_wildcard, time_t& w_timestamp) const
     {
+        w_wildcard = false;
+        const bool l_wildcard = hashes[sz - 1] == AllAccess;
+        const int counter = l_wildcard ? sz - 1 : sz;
+        if (sz == 1 && l_wildcard)
+        {
+            if (this->wildcard)
+                return this->state ? Status::Allow : Status::Disallow;
+            return Status::PermNotFound;
+        }
         const Node* current = this;
         const Node* lastWild = wildcard ? this : nullptr; // save last wildcard position
 
-        for (int i = 0; i < sz; ++i)
+        for (int i = 0; i < counter; ++i)
         {
             auto it = current->nodes.find(names[i], hashes[i]);
             if (it == current->nodes.end())
             {
+                if (exact)
+                    return Status::PermNotFound;
                 // requested node not found - return wildcard status
                 return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
             }
@@ -104,7 +115,14 @@ struct Node
 
         // Check non-intermediate node
         if (current->end_node)
+        {
+            if (exact)
+                w_wildcard = current->wildcard;
+            w_timestamp = current->timestamp;
             return current->state ? Status::Allow : Status::Disallow;
+        }
+        if (exact)
+            return Status::PermNotFound;
         return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
     }
 

@@ -113,16 +113,34 @@ extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups()
  *
  * @param name Group name.
  * @param perm Permission line.
+ * @param exact Checking permission with ignoring wildcards (pass 'false' for default behavior)
  * @return Allow, Disallow, PermNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const plg::string& perm)
+extern "C" PLUGIN_API Status HasPermissionGroupExtended(const plg::string& name, const plg::string& perm, const bool exact)
 {
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::shared_lock lock(groups_mtx);
     const auto it = groups.find(hash);
     if (it == groups.end())
         return Status::GroupNotFound;
-    return it->second->hasPermission(perm);
+
+    bool w_wildcard;
+    Status status = it->second->hasPermission(perm, exact, w_wildcard);
+    if (exact && perm.ends_with('*') != w_wildcard)
+        return Status::PermNotFound;
+    return status;
+}
+
+/**
+ * @brief Check if a group has a specific permission.
+ *
+ * @param name Group name.
+ * @param perm Permission line.
+ * @return Allow, Disallow, PermNotFound, GroupNotFound
+ */
+extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const plg::string& perm)
+{
+    return HasPermissionGroupExtended(name, perm, false);
 }
 
 /**
