@@ -5017,10 +5017,16 @@
                                 "description": "Permission line affected."
                             },
                             {
-                                "name": "timestamp",
+                                "name": "oldTimestamp",
                                 "type": "int64",
                                 "ref": false,
-                                "description": "Permission duration."
+                                "description": "Old permission duration. (-1 if it doesn't exist)."
+                            },
+                            {
+                                "name": "newTimestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "New permission duration."
                             }
                         ],
                         "retType": {
@@ -5302,10 +5308,16 @@
                                 "description": "Permission line affected."
                             },
                             {
-                                "name": "timestamp",
+                                "name": "oldTimestamp",
                                 "type": "int64",
                                 "ref": false,
-                                "description": "Permission duration."
+                                "description": "Old permission duration. (-1 if it doesn't exist)."
+                            },
+                            {
+                                "name": "newTimestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "New permission duration."
                             }
                         ],
                         "retType": {
@@ -6075,10 +6087,16 @@
                                 "description": "Name of the group added or removed."
                             },
                             {
-                                "name": "timestamp",
+                                "name": "oldTimestamp",
                                 "type": "int64",
                                 "ref": false,
-                                "description": "Group duration."
+                                "description": "Old group duration. (-1 if it doesn't exist)."
+                            },
+                            {
+                                "name": "newTimestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "New group duration."
                             }
                         ],
                         "retType": {
@@ -6226,10 +6244,16 @@
                                 "description": "Name of the group added or removed."
                             },
                             {
-                                "name": "timestamp",
+                                "name": "oldTimestamp",
                                 "type": "int64",
                                 "ref": false,
-                                "description": "Group duration."
+                                "description": "Old group duration. (-1 if it doesn't exist)."
+                            },
+                            {
+                                "name": "newTimestamp",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "New group duration."
                             }
                         ],
                         "retType": {
