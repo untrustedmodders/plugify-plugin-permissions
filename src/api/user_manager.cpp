@@ -269,8 +269,8 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     PermSource perm_type;
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
-    time_t _timestamp = 0;
-    const Status status = v->second.hasPermission(perm, perm_type, true, w_wildcard, _timestamp);
+    time_t old_timestamp = -1;
+    const Status status = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
 
     if (status != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
@@ -284,13 +284,16 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
             diff = true;
     }
 
+    Action act = Action::Add;
+
     if (timestamp != 0) // Add temp permission
     {
         switch (perm_type)
         {
         case PermSource::UserTemp:
-            if (_timestamp == timestamp && !diff)
+            if (old_timestamp == timestamp && !diff)
                 return Status::PermAlreadyGranted;
+            act = Action::Replace;
             break;
         case PermSource::User:
             if (!diff)
@@ -304,36 +307,29 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     else // Add permanent permission
     {
         plg::vector<plg::string> deleted_perms;
-        bool call_callback = false;
         switch (perm_type)
         {
         case PermSource::UserTemp:
             // Delete temporal permission anyway
             v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
-            call_callback = true;
+            act = Action::Replace;
             break;
         case PermSource::User:
             if (!diff)
                 return Status::PermAlreadyGranted;
+            act = Action::Replace;
             break;
         default:
             break;
         }
         v->second.user_nodes.addPerm(perm);
-        if (call_callback)
-        {
-            std::shared_lock lock2(user_permission_callbacks._lock);
-            for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-                for (const plg::string& s : deleted_perms)
-                    cb(pluginID, Action::Replace, targetID, s, 0);
-        }
     }
 
     if (!dontBroadcast)
     {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, Action::Add, targetID, perm, timestamp);
+            cb(pluginID, act, targetID, perm, old_timestamp, timestamp);
     }
     return Status::Success;
 }
@@ -357,8 +353,8 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         return Status::TargetUserNotFound;
 
     bool w_wildcard;
-    time_t _timestamp = 0;
-    (void)v->second.hasPermission(perm, perm_type, false, w_wildcard, _timestamp);
+    time_t old_timestamp = -1;
+    (void)v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups
 
@@ -372,7 +368,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, targetID, s, 0);
+                cb(pluginID, Action::Remove, targetID, s, old_timestamp, 0);
     }
 
     return Status::Success;
@@ -400,6 +396,9 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
     if (g == nullptr)
         return Status::GroupNotFound;
 
+    time_t old_timestamp = -1;
+    Action act = Action::Add;
+
     for (const auto& gg : v->second._groups)
     {
         const Group* ggg = gg.group;
@@ -408,7 +407,9 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
             // Reschedule
             if (gg.timestamp != timestamp)
             {
+                old_timestamp = gg.timestamp;
                 v->second.delGroup(ggg);
+                act = Action::Replace;
                 break;
             }
             return Status::GroupAlreadyExist;
@@ -428,7 +429,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
     {
         std::shared_lock lock2(user_group_callbacks._lock);
         for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-            cb(pluginID, Action::Add, targetID, groupName, timestamp);
+            cb(pluginID, act, targetID, groupName, old_timestamp, timestamp);
     }
 
     return Status::Success;
@@ -459,7 +460,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t
         {
             std::shared_lock lock2(user_group_callbacks._lock);
             for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-                cb(pluginID, Action::Remove, targetID, groupName, it->timestamp);
+                cb(pluginID, Action::Remove, targetID, groupName, it->timestamp, 0);
             v->second.delGroup(it->group);
             return Status::Success;
         }

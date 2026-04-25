@@ -123,7 +123,12 @@ struct Node
         }
         if (exact)
             return Status::PermNotFound;
-        return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
+        if (lastWild)
+        {
+            w_timestamp = lastWild->timestamp;
+            return lastWild->state ? Status::Allow : Status::Disallow;
+        }
+        return Status::PermNotFound;
     }
 
     PLUGIFY_FORCE_INLINE bool deletePerm(std::string_view perm, const bool recursive_delete,

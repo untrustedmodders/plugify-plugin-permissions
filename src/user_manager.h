@@ -25,10 +25,11 @@ inline void GroupManager_Callback(const Group* group)
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param perm		Permission line affected.
- * @param timestamp Permission duration.
+ * @param oldTimestamp Old permission duration. (-1 if it doesn't exist).
+ * @param newTimestamp permission duration.
  */
 using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                        const plg::string& perm, const time_t timestamp);
+                                        const plg::string& perm, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
  * @brief Callback invoked when a cookie is set for a user.
@@ -48,10 +49,11 @@ using UserSetCookieCallback = void (*)(const uint64_t pluginID, const uint64_t t
  * @param action	Action performed (Add or Remove).
  * @param targetID	Player ID of the affected user.
  * @param group		Name of the group added or removed.
- * @param timestamp Group duration
+ * @param oldTimestamp Old group duration. (-1 if it doesn't exist).
+ * @param newTimestamp New group duration.
  */
 using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                   const plg::string& group, const time_t timestamp);
+                                   const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
  * @brief Callback invoked after a user is successfully created.
