@@ -1736,7 +1736,7 @@
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, GroupNotFound",
+                "description": "Success, GroupNotFound, PermAlreadyGranted",
                 "enum": {
                     "name": "Status",
                     "values": [
@@ -4688,6 +4688,10 @@
                                         {
                                             "name": "Remove",
                                             "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
                                         }
                                     ]
                                 }
@@ -4847,6 +4851,10 @@
                                         {
                                             "name": "Remove",
                                             "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
                                         }
                                     ]
                                 }
@@ -4988,6 +4996,10 @@
                                         {
                                             "name": "Remove",
                                             "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
                                         }
                                     ]
                                 }
@@ -5269,6 +5281,10 @@
                                         {
                                             "name": "Remove",
                                             "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
                                         }
                                     ]
                                 }
@@ -6038,6 +6054,10 @@
                                         {
                                             "name": "Remove",
                                             "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
                                         }
                                     ]
                                 }
@@ -6185,6 +6205,10 @@
                                         {
                                             "name": "Remove",
                                             "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
                                         }
                                     ]
                                 }
