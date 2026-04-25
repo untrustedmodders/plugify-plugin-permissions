@@ -196,7 +196,7 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perm Permission line.
- * @return Success, GroupNotFound
+ * @return Success, GroupNotFound, PermAlreadyGranted
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const plg::string& name,
                                                 const plg::string& perm)
@@ -206,6 +206,25 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const p
     const auto it = groups.find(hash);
     if (it == groups.end())
         return Status::GroupNotFound;
+
+    const bool denied = perm.starts_with('-');
+    bool w_wildcard;
+    const Status status = it->second->hasPermission(perm, true, w_wildcard);
+    bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
+
+    if (status != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
+    {
+        if (!perm.ends_with('*'))
+        {
+            if (w_wildcard)
+                return Status::PermAlreadyGranted;
+        }
+        else if (!w_wildcard)
+            diff = true;
+    }
+
+    if (!diff)
+        return Status::PermAlreadyGranted;
 
     std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
     it->second->_nodes.addPerm(perm);

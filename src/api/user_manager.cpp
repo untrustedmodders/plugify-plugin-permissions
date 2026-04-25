@@ -121,7 +121,8 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
  * @return Allow, Disallow, PermNotFound, TargetUserNotFound
  *
  */
-extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact, PermSource permSource, time_t& timestamp)
+extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact,
+                                                   PermSource permSource, time_t& timestamp)
 {
     timestamp = -1;
     permSource = PermSource::NotFound;
@@ -268,52 +269,64 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     PermSource perm_type;
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
-    time_t _timestamp;
+    time_t _timestamp = 0;
     const Status status = v->second.hasPermission(perm, perm_type, true, w_wildcard, _timestamp);
-    const bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
+    bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
 
-    bool force_add = false;
-    if (status != Status::PermNotFound)
+    if (status != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
     {
-        if (w_wildcard && !perm.ends_with('*'))
-            return Status::PermAlreadyGranted;
-        force_add = true;
+        if (!perm.ends_with('*'))
+        {
+            if (w_wildcard)
+                return Status::PermAlreadyGranted;
+        }
+        else if (!w_wildcard)
+            diff = true;
     }
 
     if (timestamp != 0) // Add temp permission
     {
-        // Temporal or defined in groups (or not defined at all)
-        if (perm_type != PermSource::User)
+        switch (perm_type)
         {
-            if (!force_add && !diff)
+        case PermSource::UserTemp:
+            if (_timestamp == timestamp && !diff)
                 return Status::PermAlreadyGranted;
-            v->second.addTempPerm(perm, timestamp, targetID);
+            break;
+        case PermSource::User:
+            if (!diff)
+                return Status::PermAlreadyGranted;
+            break;
+        default:
+            break;
         }
-        // perm_type == 1 (permanent permission)
-        else if (!force_add && !diff)
-            return Status::PermAlreadyGranted;
-        else // Differs from permanent perm by allowance
-            v->second.addTempPerm(perm, timestamp, targetID);
+        v->second.addTempPerm(perm, timestamp, targetID);
     }
     else // Add permanent permission
     {
-        if (perm_type == PermSource::UserTemp)
+        plg::vector<plg::string> deleted_perms;
+        bool call_callback = false;
+        switch (perm_type)
         {
-            plg::vector<plg::string> deleted_perms;
+        case PermSource::UserTemp:
             // Delete temporal permission anyway
-
             v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
-            // {
-            //     const time_t t_timestamp = perm_type == 0 ? 1 : 0;
-            //     std::shared_lock lock2(user_permission_callbacks._lock);
-            //     for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            //         for (const plg::string& s : deleted_perms)
-            //             cb(pluginID, Action::Remove, targetID, s, t_timestamp);
-            // }
+            call_callback = true;
+            break;
+        case PermSource::User:
+            if (!diff)
+                return Status::PermAlreadyGranted;
+            break;
+        default:
+            break;
         }
-        else if (!force_add && !diff && perm_type != PermSource::GroupTemp) // No difference with group
-            return Status::PermAlreadyGranted;
         v->second.user_nodes.addPerm(perm);
+        if (call_callback)
+        {
+            std::shared_lock lock2(user_permission_callbacks._lock);
+            for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+                for (const plg::string& s : deleted_perms)
+                    cb(pluginID, Action::Replace, targetID, s, 0);
+        }
     }
 
     if (!dontBroadcast)
@@ -344,7 +357,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         return Status::TargetUserNotFound;
 
     bool w_wildcard;
-    time_t _timestamp;
+    time_t _timestamp = 0;
     (void)v->second.hasPermission(perm, perm_type, false, w_wildcard, _timestamp);
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups

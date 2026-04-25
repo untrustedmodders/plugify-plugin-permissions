@@ -8,5 +8,5 @@ enum class Action : int32_t
 {
     Add = 0,
     Remove = 1,
-    Set = 2
+    Replace = 2
 };
