@@ -229,7 +229,9 @@ struct Node
         }
         else
         {
-            base_name.insert(0, "-");
+            if (!nodeReset->state)
+                base_name.insert(0, "-");
+
             deleted_perms.push_back(base_name);
         }
 
