@@ -5017,6 +5017,89 @@
                                 "description": "Permission line affected."
                             },
                             {
+                                "name": "oldStatus",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Status before the change (or status of the removed permission).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Success",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        },
+                                        {
+                                            "name": "CookieNotFound",
+                                            "value": 4
+                                        },
+                                        {
+                                            "name": "GroupNotFound",
+                                            "value": 5
+                                        },
+                                        {
+                                            "name": "ChildGroupNotFound",
+                                            "value": 6
+                                        },
+                                        {
+                                            "name": "ParentGroupNotFound",
+                                            "value": 7
+                                        },
+                                        {
+                                            "name": "ActorUserNotFound",
+                                            "value": 8
+                                        },
+                                        {
+                                            "name": "TargetUserNotFound",
+                                            "value": 9
+                                        },
+                                        {
+                                            "name": "GroupAlreadyExist",
+                                            "value": 10
+                                        },
+                                        {
+                                            "name": "UserAlreadyExist",
+                                            "value": 11
+                                        },
+                                        {
+                                            "name": "CallbackAlreadyExist",
+                                            "value": 12
+                                        },
+                                        {
+                                            "name": "CallbackNotFound",
+                                            "value": 13
+                                        },
+                                        {
+                                            "name": "PermAlreadyGranted",
+                                            "value": 14
+                                        },
+                                        {
+                                            "name": "TemporalGroup",
+                                            "value": 15
+                                        },
+                                        {
+                                            "name": "PermanentGroup",
+                                            "value": 16
+                                        },
+                                        {
+                                            "name": "GroupNotDefined",
+                                            "value": 17
+                                        }
+                                    ]
+                                }
+                            },
+                            {
                                 "name": "oldTimestamp",
                                 "type": "int64",
                                 "ref": false,
@@ -5306,6 +5389,89 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Permission line affected."
+                            },
+                            {
+                                "name": "oldStatus",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Status before the change (or status of the removed permission).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Success",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        },
+                                        {
+                                            "name": "CookieNotFound",
+                                            "value": 4
+                                        },
+                                        {
+                                            "name": "GroupNotFound",
+                                            "value": 5
+                                        },
+                                        {
+                                            "name": "ChildGroupNotFound",
+                                            "value": 6
+                                        },
+                                        {
+                                            "name": "ParentGroupNotFound",
+                                            "value": 7
+                                        },
+                                        {
+                                            "name": "ActorUserNotFound",
+                                            "value": 8
+                                        },
+                                        {
+                                            "name": "TargetUserNotFound",
+                                            "value": 9
+                                        },
+                                        {
+                                            "name": "GroupAlreadyExist",
+                                            "value": 10
+                                        },
+                                        {
+                                            "name": "UserAlreadyExist",
+                                            "value": 11
+                                        },
+                                        {
+                                            "name": "CallbackAlreadyExist",
+                                            "value": 12
+                                        },
+                                        {
+                                            "name": "CallbackNotFound",
+                                            "value": 13
+                                        },
+                                        {
+                                            "name": "PermAlreadyGranted",
+                                            "value": 14
+                                        },
+                                        {
+                                            "name": "TemporalGroup",
+                                            "value": 15
+                                        },
+                                        {
+                                            "name": "PermanentGroup",
+                                            "value": 16
+                                        },
+                                        {
+                                            "name": "GroupNotDefined",
+                                            "value": 17
+                                        }
+                                    ]
+                                }
                             },
                             {
                                 "name": "oldTimestamp",

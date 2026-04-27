@@ -21,15 +21,16 @@ inline void GroupManager_Callback(const Group* group)
 /**
  * @brief Callback invoked when a permission is added or removed for a user.
  *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param targetID	Player ID of the affected user.
- * @param perm		Permission line affected.
- * @param oldTimestamp Old permission duration. (-1 if it doesn't exist).
- * @param newTimestamp permission duration.
+ * @param pluginID      Identifier of the plugin that initiated the call.
+ * @param action        Action performed (Add or Remove).
+ * @param targetID      Player ID of the affected user.
+ * @param perm		    Permission line affected.
+ * @param oldStatus     Status before the change (or status of the removed permission).
+ * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
+ * @param newTimestamp  New permission duration.
  */
 using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                        const plg::string& perm, const time_t oldTimestamp, const time_t newTimestamp);
+                                        const plg::string& perm, const Status oldStatus, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
  * @brief Callback invoked when a cookie is set for a user.
@@ -45,12 +46,12 @@ using UserSetCookieCallback = void (*)(const uint64_t pluginID, const uint64_t t
 /**
  * @brief Callback invoked when a group is added or removed from a user.
  *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param targetID	Player ID of the affected user.
- * @param group		Name of the group added or removed.
- * @param oldTimestamp Old group duration. (-1 if it doesn't exist).
- * @param newTimestamp New group duration.
+ * @param pluginID	    Identifier of the plugin that initiated the call.
+ * @param action	    Action performed (Add or Remove).
+ * @param targetID	    Player ID of the affected user.
+ * @param group		    Name of the group added or removed.
+ * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
+ * @param newTimestamp  New group duration.
  */
 using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
@@ -70,7 +71,7 @@ using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targ
 /**
  * @brief Callback invoked before a user is deleted.
  *
- * @param pluginID		Identifier of the plugin that initiated the call.
+ * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
  */
 using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targetID);
@@ -78,16 +79,16 @@ using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targ
 /**
  * @brief Callback invoked when a permission in user has been expired.
  *
- * @param targetID Player ID of the user whose permission has expired.
- * @param perm Permission line affected.
+ * @param targetID  Player ID of the user whose permission has expired.
+ * @param perm      Permission line affected.
  */
 using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::string& perm);
 
 /**
  * @brief Callback invoked when a group in user has been expired.
  *
- * @param targetID PlayerID of the user whose group has expired.
- * @param group		Name of the group expiration.
+ * @param targetID  PlayerID of the user whose group has expired.
+ * @param group     Name of the group expiration.
  */
 using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& group);
 

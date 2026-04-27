@@ -329,7 +329,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, perm, old_timestamp, timestamp);
+            cb(pluginID, act, targetID, perm, status, old_timestamp, timestamp);
     }
     return Status::Success;
 }
@@ -354,7 +354,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
 
     bool w_wildcard;
     time_t old_timestamp = -1;
-    (void)v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
+    const auto status = v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups
 
@@ -368,7 +368,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, targetID, s, old_timestamp, 0);
+                cb(pluginID, Action::Remove, targetID, s, status, old_timestamp, 0);
     }
 
     return Status::Success;
