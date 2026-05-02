@@ -182,7 +182,8 @@ struct Node
                 curNode->nodes.clear();
             }
             else
-                deleted_perms.push_back(curNode->state ? "*" : "-*");
+                deleted_perms.push_back("*");
+                //deleted_perms.push_back(curNode->state ? "*" : "-*");
             curNode->timestamp = 0;
             curNode->end_node = curNode->state = curNode->wildcard = false;
             return true;
@@ -229,8 +230,8 @@ struct Node
         }
         else
         {
-            if (!nodeReset->state)
-                base_name.insert(0, "-");
+            // if (!nodeReset->state)
+            //     base_name.insert(0, "-");
 
             deleted_perms.push_back(base_name);
         }

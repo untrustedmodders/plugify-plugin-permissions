@@ -4973,7 +4973,7 @@
                     "prototype": {
                         "name": "UserPermissionCallback",
                         "funcName": "UserPermissionCallback",
-                        "description": "Callback invoked when a permission is added or removed for a user.",
+                        "description": "Callback invoked when a permission is added, removed, or replaced for a user.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -4985,7 +4985,7 @@
                                 "name": "action",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Action performed (Add or Remove).",
+                                "description": "Action performed (Add, Remove, or Replace).",
                                 "enum": {
                                     "name": "Action",
                                     "values": [
@@ -5020,14 +5020,10 @@
                                 "name": "oldStatus",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Status before the change (or status of the removed permission).",
+                                "description": "Status before the change (the status being replaced or removed).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
-                                        {
-                                            "name": "Success",
-                                            "value": 0
-                                        },
                                         {
                                             "name": "Allow",
                                             "value": 1
@@ -5039,62 +5035,29 @@
                                         {
                                             "name": "PermNotFound",
                                             "value": 3
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "newStatus",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Current status after the change (the newly assigned status).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
                                         },
                                         {
-                                            "name": "CookieNotFound",
-                                            "value": 4
+                                            "name": "Disallow",
+                                            "value": 2
                                         },
                                         {
-                                            "name": "GroupNotFound",
-                                            "value": 5
-                                        },
-                                        {
-                                            "name": "ChildGroupNotFound",
-                                            "value": 6
-                                        },
-                                        {
-                                            "name": "ParentGroupNotFound",
-                                            "value": 7
-                                        },
-                                        {
-                                            "name": "ActorUserNotFound",
-                                            "value": 8
-                                        },
-                                        {
-                                            "name": "TargetUserNotFound",
-                                            "value": 9
-                                        },
-                                        {
-                                            "name": "GroupAlreadyExist",
-                                            "value": 10
-                                        },
-                                        {
-                                            "name": "UserAlreadyExist",
-                                            "value": 11
-                                        },
-                                        {
-                                            "name": "CallbackAlreadyExist",
-                                            "value": 12
-                                        },
-                                        {
-                                            "name": "CallbackNotFound",
-                                            "value": 13
-                                        },
-                                        {
-                                            "name": "PermAlreadyGranted",
-                                            "value": 14
-                                        },
-                                        {
-                                            "name": "TemporalGroup",
-                                            "value": 15
-                                        },
-                                        {
-                                            "name": "PermanentGroup",
-                                            "value": 16
-                                        },
-                                        {
-                                            "name": "GroupNotDefined",
-                                            "value": 17
+                                            "name": "PermNotFound",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -5109,7 +5072,7 @@
                                 "name": "newTimestamp",
                                 "type": "int64",
                                 "ref": false,
-                                "description": "New permission duration."
+                                "description": "New duration (timestamp) assigned to the permission."
                             }
                         ],
                         "retType": {
@@ -5347,7 +5310,7 @@
                     "prototype": {
                         "name": "UserPermissionCallback",
                         "funcName": "UserPermissionCallback",
-                        "description": "Callback invoked when a permission is added or removed for a user.",
+                        "description": "Callback invoked when a permission is added, removed, or replaced for a user.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -5359,7 +5322,7 @@
                                 "name": "action",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Action performed (Add or Remove).",
+                                "description": "Action performed (Add, Remove, or Replace).",
                                 "enum": {
                                     "name": "Action",
                                     "values": [
@@ -5394,14 +5357,10 @@
                                 "name": "oldStatus",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Status before the change (or status of the removed permission).",
+                                "description": "Status before the change (the status being replaced or removed).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
-                                        {
-                                            "name": "Success",
-                                            "value": 0
-                                        },
                                         {
                                             "name": "Allow",
                                             "value": 1
@@ -5413,62 +5372,29 @@
                                         {
                                             "name": "PermNotFound",
                                             "value": 3
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "newStatus",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Current status after the change (the newly assigned status).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
                                         },
                                         {
-                                            "name": "CookieNotFound",
-                                            "value": 4
+                                            "name": "Disallow",
+                                            "value": 2
                                         },
                                         {
-                                            "name": "GroupNotFound",
-                                            "value": 5
-                                        },
-                                        {
-                                            "name": "ChildGroupNotFound",
-                                            "value": 6
-                                        },
-                                        {
-                                            "name": "ParentGroupNotFound",
-                                            "value": 7
-                                        },
-                                        {
-                                            "name": "ActorUserNotFound",
-                                            "value": 8
-                                        },
-                                        {
-                                            "name": "TargetUserNotFound",
-                                            "value": 9
-                                        },
-                                        {
-                                            "name": "GroupAlreadyExist",
-                                            "value": 10
-                                        },
-                                        {
-                                            "name": "UserAlreadyExist",
-                                            "value": 11
-                                        },
-                                        {
-                                            "name": "CallbackAlreadyExist",
-                                            "value": 12
-                                        },
-                                        {
-                                            "name": "CallbackNotFound",
-                                            "value": 13
-                                        },
-                                        {
-                                            "name": "PermAlreadyGranted",
-                                            "value": 14
-                                        },
-                                        {
-                                            "name": "TemporalGroup",
-                                            "value": 15
-                                        },
-                                        {
-                                            "name": "PermanentGroup",
-                                            "value": 16
-                                        },
-                                        {
-                                            "name": "GroupNotDefined",
-                                            "value": 17
+                                            "name": "PermNotFound",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -5483,7 +5409,7 @@
                                 "name": "newTimestamp",
                                 "type": "int64",
                                 "ref": false,
-                                "description": "New permission duration."
+                                "description": "New duration (timestamp) assigned to the permission."
                             }
                         ],
                         "retType": {
@@ -7036,6 +6962,29 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Permission line affected."
+                            },
+                            {
+                                "name": "status",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "The state of the permission before expiration (Allowed or Disallowed).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
                             }
                         ],
                         "retType": {
@@ -7152,6 +7101,29 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "Permission line affected."
+                            },
+                            {
+                                "name": "status",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "The state of the permission before expiration (Allowed or Disallowed).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
                             }
                         ],
                         "retType": {

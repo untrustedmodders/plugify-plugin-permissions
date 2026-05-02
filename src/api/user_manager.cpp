@@ -22,7 +22,8 @@ UserLoadedCallbacks user_loaded_callbacks;
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
 {
     const plg::string* perm = &plg::get<plg::string>(userData[0]);
-    const uint64_t targetID = plg::get<uint64_t>(userData[1]);
+    const bool state = plg::get<bool>(userData[1]);
+    const uint64_t targetID = plg::get<uint64_t>(userData[2]);
     plg::vector<plg::string> deleted_perms;
     {
         std::unique_lock lock(users_mtx);
@@ -35,7 +36,7 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
     std::shared_lock lock(perm_expiration_callbacks._lock);
     for (const auto& callback : perm_expiration_callbacks._callbacks)
         for (const plg::string& s : deleted_perms)
-            callback(targetID, s);
+            callback(targetID, s, state ? Status::Allow : Status::Disallow);
 }
 
 void g_GroupExpirationCallback(uint32_t /*timer*/, const plg::vector<plg::any>& userData)
@@ -270,10 +271,10 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const Status status = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
-    bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
+    const Status oldStatus = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
+    bool diff = !((denied && oldStatus == Status::Disallow) || (!denied && oldStatus == Status::Allow));
 
-    if (status != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
+    if (oldStatus != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
     {
         if (!perm.ends_with('*'))
         {
@@ -329,7 +330,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, perm, status, old_timestamp, timestamp);
+            cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldStatus, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
     }
     return Status::Success;
 }
@@ -354,7 +355,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
 
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const auto status = v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
+    const auto oldStatus = v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups
 
@@ -368,7 +369,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, targetID, s, status, old_timestamp, 0);
+                cb(pluginID, Action::Remove, targetID, s, oldStatus, Status::PermNotFound, old_timestamp, 0);
     }
 
     return Status::Success;
