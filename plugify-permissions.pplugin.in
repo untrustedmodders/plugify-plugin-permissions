@@ -5017,10 +5017,10 @@
                                 "description": "Permission line affected."
                             },
                             {
-                                "name": "oldStatus",
+                                "name": "oldState",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Status before the change (the status being replaced or removed).",
+                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -5040,10 +5040,10 @@
                                 }
                             },
                             {
-                                "name": "newStatus",
+                                "name": "newState",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Current status after the change (the newly assigned status).",
+                                "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -5354,10 +5354,10 @@
                                 "description": "Permission line affected."
                             },
                             {
-                                "name": "oldStatus",
+                                "name": "oldState",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Status before the change (the status being replaced or removed).",
+                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -5377,10 +5377,10 @@
                                 }
                             },
                             {
-                                "name": "newStatus",
+                                "name": "newState",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "Current status after the change (the newly assigned status).",
+                                "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -6964,10 +6964,10 @@
                                 "description": "Permission line affected."
                             },
                             {
-                                "name": "status",
+                                "name": "state",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "The state of the permission before expiration (Allowed or Disallowed).",
+                                "description": "The state of the permission before expiration (Allow or Disallow).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -7103,10 +7103,10 @@
                                 "description": "Permission line affected."
                             },
                             {
-                                "name": "status",
+                                "name": "state",
                                 "type": "int32",
                                 "ref": false,
-                                "description": "The state of the permission before expiration (Allowed or Disallowed).",
+                                "description": "The state of the permission before expiration (Allow or Disallow).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [

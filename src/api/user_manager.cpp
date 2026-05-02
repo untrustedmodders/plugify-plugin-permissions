@@ -271,10 +271,10 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const Status oldStatus = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
-    bool diff = !((denied && oldStatus == Status::Disallow) || (!denied && oldStatus == Status::Allow));
+    const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
+    bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
-    if (oldStatus != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
+    if (oldState != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
     {
         if (!perm.ends_with('*'))
         {
@@ -330,7 +330,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     {
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldStatus, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+            cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
     }
     return Status::Success;
 }
@@ -355,7 +355,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
 
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const auto oldStatus = v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
+    const auto oldState = v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups
 
@@ -369,7 +369,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, targetID, s, oldStatus, Status::PermNotFound, old_timestamp, 0);
+                cb(pluginID, Action::Remove, targetID, s, oldState, Status::PermNotFound, old_timestamp, 0);
     }
 
     return Status::Success;

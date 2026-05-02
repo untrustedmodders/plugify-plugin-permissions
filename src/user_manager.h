@@ -25,13 +25,13 @@ inline void GroupManager_Callback(const Group* group)
  * @param action        Action performed (Add, Remove, or Replace).
  * @param targetID      Player ID of the affected user.
  * @param perm          Permission line affected.
- * @param oldStatus     Status before the change (the status being replaced or removed).
- * @param newStatus     Current status after the change (the newly assigned status).
+ * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
+ * @param newState      Current state after the change (the newly assigned state).
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New duration (timestamp) assigned to the permission.
  */
 using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
-                                        const plg::string& perm, const Status oldStatus, const Status newStatus, const time_t oldTimestamp, const time_t newTimestamp);
+                                        const plg::string& perm, const Status oldState, const Status newState, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
  * @brief Callback invoked when a cookie is set for a user.
@@ -82,9 +82,9 @@ using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targ
  *
  * @param targetID  Player ID of the user whose permission has expired.
  * @param perm      Permission line affected.
- * @param status    The state of the permission before expiration (Allowed or Disallowed).
+ * @param state     The state of the permission before expiration (Allow or Disallow).
  */
-using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::string& perm, const Status status);
+using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::string& perm, const Status state);
 
 /**
  * @brief Callback invoked when a group in user has been expired.
