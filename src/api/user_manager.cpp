@@ -120,7 +120,6 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
  * @param permSource Permission source
  * @param timestamp Permission timestamp
  * @return Allow, Disallow, PermNotFound, TargetUserNotFound
- *
  */
 extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact,
                                                    PermSource& permSource, time_t& timestamp)
@@ -145,7 +144,6 @@ extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, cons
  * @param targetID Player ID.
  * @param perm Permission line.
  * @return Allow, Disallow, PermNotFound, TargetUserNotFound
- *
  */
 extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::string& perm)
 {
