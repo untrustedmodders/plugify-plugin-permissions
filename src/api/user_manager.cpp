@@ -123,7 +123,7 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
  *
  */
 extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact,
-                                                   PermSource permSource, time_t& timestamp)
+                                                   PermSource& permSource, time_t& timestamp)
 {
     timestamp = -1;
     permSource = PermSource::NotFound;
@@ -133,7 +133,7 @@ extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, cons
         return Status::TargetUserNotFound;
 
     bool w_wildcard;
-    Status status = v->second.hasPermission(perm, permSource, exact, w_wildcard, timestamp);
+    const Status status = v->second.hasPermission(perm, permSource, exact, w_wildcard, timestamp);
     if (exact && perm.ends_with('*') != w_wildcard)
         return Status::PermNotFound;
     return status;
@@ -172,14 +172,14 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string
     if (g == nullptr)
         return Status::GroupNotFound;
 
-    for (const auto& gg : v->second._groups)
+    for (const auto& temp_group : v->second._groups)
     {
-        auto ggg = gg.group;
-        while (ggg)
+        const Group* parent = temp_group.group;
+        while (parent)
         {
-            if (ggg == g)
-                return gg.timestamp == 0 ? Status::PermanentGroup : Status::TemporalGroup;
-            ggg = ggg->_parent;
+            if (parent == g)
+                return temp_group.timestamp == 0 ? Status::PermanentGroup : Status::TemporalGroup;
+            parent = parent->_parent;
         }
     }
     return Status::GroupNotDefined;
@@ -274,7 +274,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
-    if (oldState != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
+    if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
     {
         if (!perm.ends_with('*'))
         {
@@ -393,38 +393,38 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
     if (v == users.end())
         return Status::TargetUserNotFound;
 
-    Group* g = GetGroup(groupName);
-    if (g == nullptr)
+    Group* req_group = GetGroup(groupName);
+    if (req_group == nullptr)
         return Status::GroupNotFound;
 
     time_t old_timestamp = -1;
     Action act = Action::Add;
 
-    for (const auto& gg : v->second._groups)
+    for (const auto& temp_group : v->second._groups)
     {
-        const Group* ggg = gg.group;
-        if (ggg == g)
+        const Group* parent = temp_group.group;
+        if (parent == req_group)
         {
             // Reschedule
-            if (gg.timestamp != timestamp)
+            if (temp_group.timestamp != timestamp)
             {
-                old_timestamp = gg.timestamp;
-                v->second.delGroup(ggg);
+                old_timestamp = temp_group.timestamp;
+                v->second.delGroup(parent);
                 act = Action::Replace;
                 break;
             }
             return Status::GroupAlreadyExist;
         }
-        ggg = ggg->_parent;
-        while (ggg)
+        parent = parent->_parent;
+        while (parent)
         {
-            if (ggg == g)
+            if (parent == req_group)
                 return Status::GroupAlreadyExist;
-            ggg = ggg->_parent;
+            parent = parent->_parent;
         }
     }
 
-    v->second.addGroup(g, timestamp, targetID);
+    v->second.addGroup(req_group, timestamp, targetID);
 
     if (!dontBroadcast)
     {
@@ -491,14 +491,14 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
         // Check in groups cookies
         for (TempGroup& g : v->second._groups)
         {
-            Group* gg = g.group;
-            while (gg)
+            Group* parent = g.group;
+            while (parent)
             {
-                val = gg->cookies.find(name);
-                found = val != gg->cookies.end();
+                val = parent->cookies.find(name);
+                found = val != parent->cookies.end();
                 if (found)
                     break;
-                gg = gg->_parent;
+                parent = parent->_parent;
             }
         }
     }

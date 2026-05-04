@@ -412,26 +412,26 @@ extern "C" PLUGIN_API Status DeleteGroup(const uint64_t pluginID, const plg::str
         for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks)
             cb(pluginID, name);
     }
-    const Group* gg = it->second;
+    const Group* req_group = it->second;
     groups.erase(it);
 
     // Cleanup parent references in other groups
     for (Group* value : groups | std::views::values)
     {
-        Group* g = value;
-        while (g)
+        Group* cur_group = value;
+        while (cur_group)
         {
-            if (g->_parent == gg)
+            if (cur_group->_parent == req_group)
             {
-                g->_parent = nullptr;
+                cur_group->_parent = nullptr;
                 break;
             }
-            g = g->_parent;
+            cur_group = cur_group->_parent;
         }
     }
 
-    GroupManager_Callback(gg); // Delete group in users
-    delete gg;
+    GroupManager_Callback(req_group); // Delete group in users
+    delete req_group;
     return Status::Success;
 }
 
