@@ -267,7 +267,6 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
 
     PermSource perm_type;
     const bool denied = perm.starts_with('-');
-    const Status newState = denied ? Status::Disallow : Status::Allow;
     bool w_wildcard;
     time_t old_timestamp = -1;
     const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
