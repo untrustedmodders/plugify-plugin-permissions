@@ -82,7 +82,8 @@ struct Node
     time_t timestamp;
 
     PLUGIFY_FORCE_INLINE Status _hasPermission(const std::string_view names[], const uint64_t hashes[],
-                                               const int sz, const bool exact, bool& w_wildcard, time_t& w_timestamp) const
+                                               const int sz, const bool exact, bool& w_wildcard,
+                                               time_t& w_timestamp) const
     {
         w_wildcard = false;
         const bool l_wildcard = hashes[sz - 1] == AllAccess;
@@ -90,7 +91,10 @@ struct Node
         if (sz == 1 && l_wildcard)
         {
             if (this->wildcard)
+            {
+                w_wildcard = true;
                 return this->state ? Status::Allow : Status::Disallow;
+            }
             return Status::PermNotFound;
         }
         const Node* current = this;
@@ -104,6 +108,7 @@ struct Node
                 if (exact)
                     return Status::PermNotFound;
                 // requested node not found - return wildcard status
+                w_wildcard = lastWild != nullptr;
                 return lastWild ? (lastWild->state ? Status::Allow : Status::Disallow) : Status::PermNotFound;
             }
 
@@ -116,15 +121,17 @@ struct Node
         // Check non-intermediate node
         if (current->end_node)
         {
-            if (exact)
-                w_wildcard = current->wildcard;
+            w_wildcard = current->wildcard;
             w_timestamp = current->timestamp;
             return current->state ? Status::Allow : Status::Disallow;
         }
+
+        // Node found, but isn't marked as end - MR64 forgot to clean dead nodes
         if (exact)
             return Status::PermNotFound;
         if (lastWild)
         {
+            w_wildcard = true;
             w_timestamp = lastWild->timestamp;
             return lastWild->state ? Status::Allow : Status::Disallow;
         }
@@ -183,7 +190,7 @@ struct Node
             }
             else
                 deleted_perms.push_back("*");
-                //deleted_perms.push_back(curNode->state ? "*" : "-*");
+            //deleted_perms.push_back(curNode->state ? "*" : "-*");
             curNode->timestamp = 0;
             curNode->end_node = curNode->state = curNode->wildcard = false;
             return true;
@@ -322,8 +329,8 @@ struct Node
         if (root.end_node)
         {
             plg::string s;
-        	if (preserve_state && !root.state)
-        		s += "-";
+            if (preserve_state && !root.state)
+                s += "-";
             s += base_name;
             if (root.wildcard)
                 s += ".*";
@@ -334,14 +341,16 @@ struct Node
         for (const auto& [key, val] : root.nodes) dumpNodes(base_name + "." + key, val, output_perms);
     }
 
-    PLUGIFY_FORCE_INLINE static plg::vector<plg::string> dumpNode(const Node& root_node, const bool preserve_state = true)
+    PLUGIFY_FORCE_INLINE static plg::vector<plg::string> dumpNode(const Node& root_node,
+                                                                  const bool preserve_state = true)
     {
         plg::vector<plg::string> perms;
-        if (root_node.wildcard) {
-        	plg::string s = root_node.state ? "*" : (preserve_state ? "-*" : "*");
-        	if (root_node.timestamp > 0)
-        		s += " " + plg::to_string(root_node.timestamp);
-	        perms.push_back(s);
+        if (root_node.wildcard)
+        {
+            plg::string s = root_node.state ? "*" : (preserve_state ? "-*" : "*");
+            if (root_node.timestamp > 0)
+                s += " " + plg::to_string(root_node.timestamp);
+            perms.push_back(s);
         }
         for (const auto& [key, val] : root_node.nodes) dumpNodes(key, val, perms, preserve_state);
 
