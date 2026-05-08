@@ -21,6 +21,7 @@
         SetImmunity;
         GetCookieGroup;
         AddPermission;
+        SetPermission;
         SetCookieGroup;
         GetAllCookiesGroup;
         RemovePermission;

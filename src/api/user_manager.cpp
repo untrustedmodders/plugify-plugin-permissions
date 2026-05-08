@@ -267,6 +267,85 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
 
     PermSource perm_type;
     const bool denied = perm.starts_with('-');
+    const Status newState = denied ? Status::Disallow : Status::Allow;
+    bool w_wildcard;
+    time_t old_timestamp = -1;
+    const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
+    bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
+
+    Action act = Action::Add;
+
+    if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
+    {
+        if (diff)
+            return Status::PermAlreadyGranted;
+
+        if (w_wildcard && !perm.ends_with('*'))
+        {
+            if (timestamp == 0 && old_timestamp == 0)
+                return Status::PermAlreadyGranted;
+        }
+
+        if (timestamp != 0)
+        {
+            if (old_timestamp == 0 || timestamp <= old_timestamp)
+                return Status::PermAlreadyGranted;
+        }
+        else
+        {
+            if (old_timestamp == 0)
+            {
+                if (!(perm.ends_with('*') && !w_wildcard))
+                    return Status::PermAlreadyGranted;
+            }
+        }
+
+        act = Action::Replace;
+    }
+
+    if (timestamp != 0)
+    {
+        v->second.addTempPerm(perm, timestamp, targetID);
+    }
+    else
+    {
+        if (perm_type == PermSource::UserTemp)
+        {
+            plg::vector<plg::string> deleted_perms;
+            v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
+        }
+        v->second.user_nodes.addPerm(perm);
+    }
+
+    if (!dontBroadcast)
+    {
+        std::shared_lock lock2(user_permission_callbacks._lock);
+        for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+            cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+    }
+    return Status::Success;
+}
+
+/**
+ * @brief Set a permission to a user.
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param targetID Player ID.
+ * @param perm Permission line.
+ * @param timestamp Permission duration
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
+ * @return Success, TargetUserNotFound, PermAlreadyGranted
+ */
+extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
+                                           const time_t timestamp, const bool dontBroadcast)
+{
+    std::unique_lock lock(users_mtx);
+    const auto v = users.find(targetID);
+    if (v == users.end())
+        return Status::TargetUserNotFound;
+
+    PermSource perm_type;
+    const bool denied = perm.starts_with('-');
     bool w_wildcard;
     time_t old_timestamp = -1;
     const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
@@ -285,44 +364,35 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
 
     Action act = Action::Add;
 
-    if (timestamp != 0) // Add temp permission
+    plg::vector<plg::string> deleted_perms;
+    switch (perm_type)
     {
-        switch (perm_type)
-        {
         case PermSource::UserTemp:
             if (old_timestamp == timestamp && !diff)
                 return Status::PermAlreadyGranted;
+
+            if (timestamp == 0)
+                v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
+
             act = Action::Replace;
             break;
         case PermSource::User:
-            if (!diff)
+            if (timestamp == 0 && !diff)
                 return Status::PermAlreadyGranted;
+
+            if (timestamp != 0)
+                v->second.user_nodes.deletePerm(perm, false, deleted_perms);
+
+            act = Action::Replace;
             break;
         default:
             break;
-        }
+    }
+
+    if (timestamp != 0)
         v->second.addTempPerm(perm, timestamp, targetID);
-    }
-    else // Add permanent permission
-    {
-        plg::vector<plg::string> deleted_perms;
-        switch (perm_type)
-        {
-        case PermSource::UserTemp:
-            // Delete temporal permission anyway
-            v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
-            act = Action::Replace;
-            break;
-        case PermSource::User:
-            if (!diff)
-                return Status::PermAlreadyGranted;
-            act = Action::Replace;
-            break;
-        default:
-            break;
-        }
+    else
         v->second.user_nodes.addPerm(perm);
-    }
 
     if (!dontBroadcast)
     {

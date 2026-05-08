@@ -1611,6 +1611,125 @@
             "description": "Add a permission to a user."
         },
         {
+            "name": "SetPermission",
+            "funcName": "SetPermission",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
+                },
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "perm",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Permission line."
+                },
+                {
+                    "name": "timestamp",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Permission duration."
+                },
+                {
+                    "name": "dontBroadcast",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "Success, TargetUserNotFound, PermAlreadyGranted",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Set a permission to a user."
+        },
+        {
             "name": "GetPriorityGroup",
             "funcName": "GetPriorityGroup",
             "paramTypes": [

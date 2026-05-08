@@ -22,6 +22,7 @@ _RemovePermissionGroup
 _SetImmunity
 _GetCookieGroup
 _AddPermission
+_SetPermission
 _SetCookieGroup
 _GetAllCookiesGroup
 _RemovePermission
