@@ -55,6 +55,15 @@ struct string_hash
     }
 };
 
+PLUGIFY_FORCE_INLINE bool isWildcard(std::string_view perm)
+{
+    if (perm.starts_with('-'))
+        perm = perm.substr(1);
+    if (perm == "*")
+        return true;
+    return perm.ends_with(".*");
+}
+
 PLUGIFY_FORCE_INLINE void parseTempString(const std::string_view& input, std::string_view& output, time_t& timestamp)
 {
     int j = 0;
@@ -274,7 +283,7 @@ struct Node
     PLUGIFY_FORCE_INLINE Node* addPerm(std::string_view perm)
     {
         const bool allow = !perm.starts_with('-');
-        const bool hasWildcard = perm.ends_with('*');
+        bool hasWildcard = false;
         auto spl = std::views::split(perm, '.');
 
         Node* node = this;
@@ -282,7 +291,11 @@ struct Node
         {
             auto ss = std::string_view(s);
             if (ss.starts_with('-')) ss = ss.substr(1);
-            if (ss == "*") break;
+            if (ss == "*")
+            {
+                hasWildcard = true;
+                break;
+            }
             node = &(node->nodes.try_emplace(plg::string(ss), phmap::flat_hash_map<plg::string, Node, string_hash>(),
                                              0xFFFFFFFF,
                                              false, false, false, 0).first->second);

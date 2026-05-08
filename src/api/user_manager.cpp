@@ -133,7 +133,7 @@ extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, cons
 
     bool w_wildcard;
     const Status status = v->second.hasPermission(perm, permSource, exact, w_wildcard, timestamp);
-    if (exact && perm.ends_with('*') != w_wildcard)
+    if (exact && isWildcard(perm) != w_wildcard)
         return Status::PermNotFound;
     return status;
 }
@@ -279,7 +279,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
         if (diff)
             return Status::PermAlreadyGranted;
 
-        if (w_wildcard && !perm.ends_with('*'))
+        if (w_wildcard && !isWildcard(perm))
         {
             if (timestamp == 0 && old_timestamp == 0)
                 return Status::PermAlreadyGranted;
@@ -294,7 +294,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
         {
             if (old_timestamp == 0)
             {
-                if (!(perm.ends_with('*') && !w_wildcard))
+                if (!(isWildcard(perm) && !w_wildcard))
                     return Status::PermAlreadyGranted;
             }
         }
@@ -352,7 +352,7 @@ extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64
 
     if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
     {
-        if (!perm.ends_with('*'))
+        if (!isWildcard(perm))
         {
             if (w_wildcard)
                 return Status::PermAlreadyGranted;
@@ -422,9 +422,9 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
 
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const auto oldState = v->second.hasPermission(perm, perm_type, false, w_wildcard, old_timestamp);
+    const auto oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     if (perm_type > PermSource::User)
-        return Status::PermNotFound; // Because this permission is in Groups
+        return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
     plg::vector<plg::string> deleted_perms;
     if (perm_type == PermSource::User)

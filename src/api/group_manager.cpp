@@ -126,7 +126,7 @@ extern "C" PLUGIN_API Status HasPermissionGroupExtended(const plg::string& name,
 
     bool w_wildcard;
     Status status = it->second->hasPermission(perm, exact, w_wildcard);
-    if (exact && perm.ends_with('*') != w_wildcard)
+    if (exact && isWildcard(perm) != w_wildcard)
         return Status::PermNotFound;
     return status;
 }
@@ -214,7 +214,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const uint64_t pluginID, const p
 
     if (status != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
     {
-        if (!perm.ends_with('*'))
+        if (!isWildcard(perm))
         {
             if (w_wildcard)
                 return Status::PermAlreadyGranted;
