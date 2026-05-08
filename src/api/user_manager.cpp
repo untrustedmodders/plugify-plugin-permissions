@@ -272,6 +272,8 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
+    bool replaceToWC = false;
+
     Action act = Action::Add;
 
     if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
@@ -279,25 +281,23 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
         if (diff)
             return Status::PermAlreadyGranted;
 
-        if (w_wildcard && !isWildcard(perm))
+        if (!isWildcard(perm))
         {
-            if (timestamp == 0 && old_timestamp == 0)
+            if (w_wildcard)
                 return Status::PermAlreadyGranted;
+        }
+        else if (!w_wildcard)
+        {
+            replaceToWC = true;
         }
 
         if (timestamp != 0)
         {
-            if (old_timestamp == 0 || timestamp <= old_timestamp)
+            if (timestamp <= old_timestamp)
                 return Status::PermAlreadyGranted;
         }
-        else
-        {
-            if (old_timestamp == 0)
-            {
-                if (!(isWildcard(perm) && !w_wildcard))
-                    return Status::PermAlreadyGranted;
-            }
-        }
+        else if (old_timestamp == 0)
+            return Status::PermAlreadyGranted;
 
         act = Action::Replace;
     }
@@ -318,6 +318,8 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
 
     if (!dontBroadcast)
     {
+        if (replaceToWC)
+            act = Action::ReplaceToWC;
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
@@ -350,6 +352,8 @@ extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64
     const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
+    bool replaceToWC = false;
+
     if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
     {
         if (!isWildcard(perm))
@@ -358,7 +362,10 @@ extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64
                 return Status::PermAlreadyGranted;
         }
         else if (!w_wildcard)
+        {
+            replaceToWC = true;
             diff = true;
+        }
     }
 
     Action act = Action::Add;
@@ -395,6 +402,8 @@ extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64
 
     if (!dontBroadcast)
     {
+        if (replaceToWC)
+            act = Action::ReplaceToWC;
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
