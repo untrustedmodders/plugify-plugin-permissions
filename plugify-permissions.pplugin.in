@@ -4811,6 +4811,10 @@
                                         {
                                             "name": "Replace",
                                             "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -4974,6 +4978,10 @@
                                         {
                                             "name": "Replace",
                                             "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -5119,6 +5127,10 @@
                                         {
                                             "name": "Replace",
                                             "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -5456,6 +5468,10 @@
                                         {
                                             "name": "Replace",
                                             "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -6281,6 +6297,10 @@
                                         {
                                             "name": "Replace",
                                             "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
                                         }
                                     ]
                                 }
@@ -6438,6 +6458,10 @@
                                         {
                                             "name": "Replace",
                                             "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
                                         }
                                     ]
                                 }
