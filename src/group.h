@@ -26,10 +26,11 @@ struct Group
         Node::forceRehash(this->_nodes.nodes);
     }
 
-    [[nodiscard]] Status hasPermission(const plg::string& perm, const bool exact, bool& w_wildcard) const
+    [[nodiscard]] Status hasPermission(std::string_view perm, const bool exact, bool& w_wildcard) const
     {
-        std::string_view sv(perm);
-        auto ispl = std::views::split(sv, '.');
+    	if (perm.starts_with('-'))
+    		perm = perm.substr(1);
+        auto ispl = std::views::split(perm, '.');
         uint64_t hashes[64];
         std::string_view names[64];
         int i = 0;

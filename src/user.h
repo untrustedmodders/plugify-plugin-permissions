@@ -151,8 +151,7 @@ struct User
         std::ranges::sort(this->_groups, sortFF);
     }
 
-    User(const int immunity, const plg::vector<plg::string>& groupsList, const plg::vector<plg::string>& permsList,
-         const uint64_t user_id)
+    User(const int immunity, const plg::vector<plg::string>& groupsList, const uint64_t user_id)
     {
         this->_immunity = immunity;
         for (const plg::string& s : groupsList)
@@ -180,7 +179,7 @@ struct User
                 }
             }
             if (!found)
-                addGroup(g, 0, user_id);
+                this->addGroup(g, timestamp, user_id);
         }
         for (const plg::string& s : groupsList)
         {
@@ -212,26 +211,6 @@ struct User
         sortGroups();
         this->user_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
         this->temp_nodes = {phmap::flat_hash_map<plg::string, Node, string_hash>(), 0xFFFFFFFF, false, false, true, 0};
-
-        for (const plg::string& s : permsList)
-        {
-            std::string_view perm_view;
-            time_t timestamp = 0;
-            parseTempString(s, perm_view, timestamp);
-            if (timestamp != 0)
-                continue;
-            this->user_nodes.addPerm(perm_view);
-        }
-        for (const plg::string& s : permsList)
-        {
-            std::string_view perm_view;
-            time_t timestamp = 0;
-            parseTempString(s, perm_view, timestamp);
-            if (timestamp == 0)
-                continue;
-            this->addTempPerm(perm_view, timestamp, user_id);
-        }
-
 
         Node::forceRehash(this->user_nodes.nodes);
         Node::forceRehash(this->temp_nodes.nodes);

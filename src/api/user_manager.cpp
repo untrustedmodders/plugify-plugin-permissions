@@ -646,12 +646,10 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
  * @param targetID Player ID.
  * @param immunity User immunity (set -1 to return highest group priority).
  * @param groupsList Array of groups to inherit ("group timestamp").
- * @param permsList Array of permissions (perm.iss.ion timestamp) or (perm.iss.ion).
  * @return Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound
  */
 extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t targetID, const int immunity,
-                                        const plg::vector<plg::string>& groupsList,
-                                        const plg::vector<plg::string>& permsList)
+                                        const plg::vector<plg::string>& groupsList)
 {
     std::unique_lock lock(users_mtx);
     if (users.contains(targetID))
@@ -667,11 +665,11 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t 
             return Status::GroupNotFound;
     }
 
-    users.try_emplace(targetID, immunity, groupsList, permsList, targetID);
+    users.try_emplace(targetID, immunity, groupsList, targetID);
     {
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks)
-            cb(pluginID, targetID, immunity, groupsList, permsList);
+            cb(pluginID, targetID, immunity, groupsList);
     }
     return Status::Success;
 }

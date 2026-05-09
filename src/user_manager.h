@@ -64,10 +64,9 @@ using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action,
  * @param targetID		Player ID of the created user.
  * @param immunity		User immunity value passed to CreateUser (may be -1 if highest group priority was requested).
  * @param groupNames	Array of groups inherited by the user.
- * @param perms			Array of permissions assigned to the user.
  */
 using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targetID, int immunity,
-                                    const plg::vector<plg::string>& groupNames, const plg::vector<plg::string>& perms);
+                                    const plg::vector<plg::string>& groupNames);
 
 /**
  * @brief Callback invoked before a user is deleted.
