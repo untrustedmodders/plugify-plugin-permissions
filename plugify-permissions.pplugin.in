@@ -175,7 +175,81 @@
                 "type": "int32",
                 "description": "Allow, Disallow, PermNotFound, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -202,7 +276,81 @@
                 "type": "int32",
                 "description": "PermanentGroup, TemporalGroup, GroupNotDefined, TargetUserNotFound, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -229,7 +377,81 @@
                 "type": "int32",
                 "description": "Allow, Disallow, ActorUserNotFound, or TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -256,7 +478,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -283,7 +579,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -311,7 +681,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -356,7 +800,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -389,7 +907,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -435,7 +1027,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound, PermAlreadyGranted",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -480,7 +1146,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound, PermAlreadyGranted",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -519,7 +1259,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -546,7 +1360,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -580,7 +1468,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound, CookieNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -625,7 +1587,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -658,7 +1694,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -716,7 +1826,81 @@
                 "type": "int32",
                 "description": "Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -795,7 +1979,81 @@
                 "type": "int32",
                 "description": "Success, TargetUserNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserManager",
@@ -836,7 +2094,81 @@
                 "type": "int32",
                 "description": "Success, ChildGroupNotFound, ParentGroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -869,7 +2201,81 @@
                 "type": "int32",
                 "description": "Success, ChildGroupNotFound, ParentGroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -896,7 +2302,81 @@
                 "type": "int32",
                 "description": "Allow, Disallow, ChildGroupNotFound, ParentGroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -923,7 +2403,81 @@
                 "type": "int32",
                 "description": "Success, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -951,7 +2505,81 @@
                 "type": "int32",
                 "description": "Allow, Disallow, PermNotFound, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -984,7 +2612,81 @@
                 "type": "int32",
                 "description": "Allow, Disallow, PermNotFound, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1018,7 +2720,81 @@
                 "type": "int32",
                 "description": "Success, GroupNotFound, PermAlreadyGranted",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1057,7 +2833,81 @@
                 "type": "int32",
                 "description": "Success, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1084,7 +2934,81 @@
                 "type": "int32",
                 "description": "Success, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1118,7 +3042,81 @@
                 "type": "int32",
                 "description": "Success, CookieNotFound, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1157,7 +3155,81 @@
                 "type": "int32",
                 "description": "Success, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1190,7 +3262,81 @@
                 "type": "int32",
                 "description": "Success, GroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1254,7 +3400,81 @@
                 "type": "int32",
                 "description": "Success, GroupAlreadyExist, ParentGroupNotFound",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1298,7 +3518,81 @@
                 "type": "int32",
                 "description": "Success if deleted; GroupNotFound if group not found.",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupManager",
@@ -1349,7 +3643,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1397,7 +3765,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1439,7 +3881,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1481,7 +3997,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1536,7 +4126,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1590,7 +4254,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1632,7 +4370,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1674,7 +4486,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1783,6 +4669,80 @@
                     "name": "Status",
                     "values": [
                         {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ],
+                    "values": [
+                        {
                             "name": "Add",
                             "value": 0
                         },
@@ -1830,7 +4790,25 @@
                                 "ref": false,
                                 "description": "Action performed (Add, Remove, or Replace).",
                                 "enum": {
-                                    "name": "Action"
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -1885,7 +4863,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1918,7 +4970,25 @@
                                 "ref": false,
                                 "description": "Action performed (Add or Remove).",
                                 "enum": {
-                                    "name": "Action"
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -1955,7 +5025,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -1987,7 +5131,25 @@
                                 "ref": false,
                                 "description": "Action performed (Add or Remove).",
                                 "enum": {
-                                    "name": "Action"
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -2024,7 +5186,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2076,7 +5312,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2127,7 +5437,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2169,7 +5553,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2211,7 +5669,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2266,7 +5798,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2320,7 +5926,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "UserListeners",
@@ -2359,7 +6039,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2395,7 +6149,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2456,7 +6284,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2516,7 +6418,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2558,7 +6534,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2600,7 +6650,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2649,7 +6773,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2697,7 +6895,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2730,7 +7002,25 @@
                                 "ref": false,
                                 "description": "Action performed (Add or Remove).",
                                 "enum": {
-                                    "name": "Action"
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -2755,7 +7045,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2787,7 +7151,25 @@
                                 "ref": false,
                                 "description": "Action performed (Add or Remove).",
                                 "enum": {
-                                    "name": "Action"
+                                    "name": "Action",
+                                    "values": [
+                                        {
+                                            "name": "Add",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Remove",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Replace",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "ReplaceToWC",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -2812,7 +7194,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2866,7 +7322,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
@@ -2920,7 +7450,81 @@
             "retType": {
                 "type": "int32",
                 "enum": {
-                    "name": "Status"
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
                 }
             },
             "group": "GroupListeners",
