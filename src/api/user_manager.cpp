@@ -278,26 +278,28 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
 
     if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
     {
-        if (diff)
+		if (diff)
             return Status::PermAlreadyGranted;
 
-        if (!isWildcard(perm))
+		if (!isWildcard(perm))
         {
             if (w_wildcard)
                 return Status::PermAlreadyGranted;
         }
-        else if (!w_wildcard)
+		else if (!w_wildcard)
         {
             replaceToWC = true;
         }
-
-        if (timestamp != 0)
-        {
-            if (timestamp <= old_timestamp)
-                return Status::PermAlreadyGranted;
-        }
-        else if (old_timestamp == 0)
-            return Status::PermAlreadyGranted;
+		else
+    	{
+    		if (timestamp != 0)
+    		{
+    			if (timestamp <= old_timestamp)
+    				return Status::PermAlreadyGranted;
+    		}
+    		else if (old_timestamp == 0)
+    			return Status::PermAlreadyGranted;
+    	}
 
         act = Action::Replace;
     }
