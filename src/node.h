@@ -175,9 +175,9 @@ struct Node
 
         const bool hasWildcard = hashes[sz - 1] == AllAccess;
         const int counter = sz - 1;
-        // int count = 0;
+        int count = 0;
         Node* curNode = this;
-        // std::pair<Node*, int> ancestors[64];
+        std::pair<Node*, int> ancestors[64];
 
         if (hashes[0] == AllAccess)
         {
@@ -211,8 +211,8 @@ struct Node
             const auto it = curNode->nodes.find(names[i], hashes[i]);
             if (it == curNode->nodes.end()) return false;
 
-            // ancestors[count] = {curNode, count};
-            // ++count;
+            ancestors[count] = {curNode, count};
+            ++count;
             curNode = &it->second;
         }
 
@@ -222,6 +222,8 @@ struct Node
         {
             const auto it = curNode->nodes.find(names[counter], hashes[counter]);
             if (it == curNode->nodes.end()) return false; // Node not found
+        	ancestors[count] = {curNode, count};
+        	++count;
             nodeReset = &it->second;
         }
 
@@ -235,11 +237,13 @@ struct Node
                 base_name += '.';
                 base_name += names[i];
             }
-            if (!hasWildcard)
+			if (!hasWildcard)
             {
                 base_name += '.';
                 base_name += names[counter];
             }
+			else if (!recursive_delete)
+        		base_name += ".*";
         }
         if (recursive_delete)
         {
@@ -263,24 +267,23 @@ struct Node
         nodeReset->timestamp = 0;
         nodeReset->state = nodeReset->wildcard = nodeReset->end_node = false;
 
-        return true;
-
-        // TODO: Rework cleaning of empty nodes
-        // // Skip non-empty nodes
-        // if (!nodeReset->nodes.empty())
-        //     return true;
-        //
-        // // Delete empty nodes
-        // for (int i = (count - 1); i >= 0; --i)
-        // {
-        //     Node* parent = ancestors[i].first;
-        //     const auto it = parent->nodes.find(names[ancestors[i].second], hashes[ancestors[i].second]);
-        //     if (it != parent->nodes.end())
-        //         parent->nodes.erase(it);
-        //     if (parent->end_node || !parent->nodes.empty()) // This node have state - stop
-        //         break;
-        // }
         // return true;
+
+        // Skip non-empty nodes
+        if (!nodeReset->nodes.empty())
+            return true;
+
+        // Delete empty nodes
+        for (int i = (count - 1); i >= 0; --i)
+        {
+            Node* parent = ancestors[i].first;
+            const auto it = parent->nodes.find(names[ancestors[i].second], hashes[ancestors[i].second]);
+            if (it != parent->nodes.end())
+                parent->nodes.erase(it);
+            if (parent->end_node || !parent->nodes.empty()) // This node have state - stop
+                break;
+        }
+        return true;
     }
 
     PLUGIFY_FORCE_INLINE Node* addPerm(std::string_view perm)
