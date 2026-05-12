@@ -436,10 +436,13 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
     plg::vector<plg::string> deleted_perms;
+	bool ret;
     if (perm_type == PermSource::User)
-        v->second.user_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+        ret = v->second.user_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
     else
-        v->second.temp_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+        ret = v->second.temp_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+	if (!ret)
+		return Status::PermNotFound;
 
     {
         std::shared_lock lock2(user_permission_callbacks._lock);

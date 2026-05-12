@@ -225,6 +225,9 @@ struct Node
             nodeReset = &it->second;
         }
 
+    	if (!nodeReset->end_node || nodeReset->wildcard != hasWildcard)
+    		return false; // Mark as "Not found"
+
         plg::string base_name = names[0];
         {
             for (int i = 1; i < counter; ++i)
