@@ -290,16 +290,14 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
         {
             replaceToWC = true;
         }
-		else
-    	{
-    		if (timestamp != 0)
-    		{
-    			if (timestamp <= old_timestamp)
-    				return Status::PermAlreadyGranted;
-    		}
-    		else if (old_timestamp == 0)
-    			return Status::PermAlreadyGranted;
-    	}
+
+        if (timestamp != 0)
+        {
+            if (timestamp <= old_timestamp)
+                return Status::PermAlreadyGranted;
+        }
+        else if (old_timestamp == 0 && !replaceToWC)
+            return Status::PermAlreadyGranted;
 
         act = Action::Replace;
     }
