@@ -116,9 +116,9 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
  *
  * @param targetID Player ID.
  * @param perm Permission line.
- * @param exact Checking permission with ignoring wildcards (pass 'false' for default behavior)
- * @param permSource Permission source
- * @param timestamp Permission timestamp
+ * @param exact Checking permission with ignoring wildcards (pass 'false' for default behavior).
+ * @param permSource Permission source.
+ * @param timestamp Permission timestamp.
  * @return Allow, Disallow, PermNotFound, TargetUserNotFound
  */
 extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact,
@@ -157,10 +157,12 @@ extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::s
  *
  * @param targetID Player ID.
  * @param groupName Group name.
+ * @param timestamp Group timestamp.
  * @return PermanentGroup, TemporalGroup, GroupNotDefined, TargetUserNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string& groupName)
+extern "C" PLUGIN_API Status HasGroupExtended(const uint64_t targetID, const plg::string& groupName, time_t& timestamp)
 {
+    timestamp = -1;
     std::shared_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
@@ -175,12 +177,28 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string
         const Group* parent = temp_group.group;
         while (parent)
         {
-            if (parent == g)
-                return temp_group.timestamp == 0 ? Status::PermanentGroup : Status::TemporalGroup;
+            if (parent == g) {
+                timestamp = temp_group.timestamp;
+                return timestamp == 0 ? Status::PermanentGroup : Status::TemporalGroup;
+            }
+
             parent = parent->_parent;
         }
     }
     return Status::GroupNotDefined;
+}
+
+/**
+ * @brief Check if a user belongs to a specific group (directly or via parent groups).
+ *
+ * @param targetID Player ID.
+ * @param groupName Group name.
+ * @return PermanentGroup, TemporalGroup, GroupNotDefined, TargetUserNotFound, GroupNotFound
+ */
+extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string& groupName)
+{
+    time_t timestamp;
+    return HasGroupExtended(targetID, groupName, timestamp);
 }
 
 /**
