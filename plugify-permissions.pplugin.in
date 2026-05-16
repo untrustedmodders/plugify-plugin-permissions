@@ -131,13 +131,13 @@
                     "name": "exact",
                     "type": "bool",
                     "ref": false,
-                    "description": "Checking permission with ignoring wildcards (pass 'false' for default behavior)"
+                    "description": "Checking permission with ignoring wildcards (pass 'false' for default behavior)."
                 },
                 {
                     "name": "permSource",
                     "type": "uint32",
                     "ref": true,
-                    "description": "Permission source",
+                    "description": "Permission source.",
                     "enum": {
                         "name": "PermSource",
                         "values": [
@@ -168,7 +168,7 @@
                     "name": "timestamp",
                     "type": "int64",
                     "ref": true,
-                    "description": "Permission timestamp"
+                    "description": "Permission timestamp."
                 }
             ],
             "retType": {
@@ -270,6 +270,113 @@
                     "type": "string",
                     "ref": false,
                     "description": "Group name."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "description": "PermanentGroup, TemporalGroup, GroupNotDefined, TargetUserNotFound, GroupNotFound",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        }
+                    ]
+                }
+            },
+            "group": "UserManager",
+            "description": "Check if a user belongs to a specific group (directly or via parent groups)."
+        },
+        {
+            "name": "HasGroupExtended",
+            "funcName": "HasGroupExtended",
+            "paramTypes": [
+                {
+                    "name": "targetID",
+                    "type": "uint64",
+                    "ref": false,
+                    "description": "Player ID."
+                },
+                {
+                    "name": "groupName",
+                    "type": "string",
+                    "ref": false,
+                    "description": "Group name."
+                },
+                {
+                    "name": "timestamp",
+                    "type": "int64",
+                    "ref": true,
+                    "description": "Group timestamp."
                 }
             ],
             "retType": {
