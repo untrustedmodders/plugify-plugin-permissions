@@ -302,6 +302,8 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
         act = Action::Replace;
     }
 
+	plg::vector<plg::string> deleted_perms;
+
     if (timestamp != 0)
     {
         v->second.addTempPerm(perm, timestamp, targetID);
@@ -310,7 +312,6 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
     {
         if (perm_type == PermSource::UserTemp)
         {
-            plg::vector<plg::string> deleted_perms;
             v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
         }
         v->second.user_nodes.addPerm(perm);
@@ -318,8 +319,13 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
 
     if (!dontBroadcast)
     {
-        if (replaceToWC)
-            act = Action::ReplaceToWC;
+        if (replaceToWC) {
+	        act = Action::ReplaceToWC;
+        	if (timestamp != old_timestamp && timestamp == 0)
+        	{
+        		v->second.temp_nodes.deletePerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
+        	}
+        }
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
             cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
