@@ -4,23 +4,26 @@
 #include <plugin_export.h>
 #include "timer_system.h"
 
-class PlugifyPermissions final : public plg::IPluginEntry
+class PlugifyPermissions final : public plg::Plugin
 {
 public:
-    void OnPluginStart() override
+    plg::PluginResult OnPluginStart() override
     {
         std::println("Permissions core initialized");
+		return {};
     }
 
-    void OnPluginEnd() override
+    plg::PluginResult OnPluginEnd() override
     {
         std::println("Permissions core stopped");
+		return {};
     }
 
-    void OnPluginUpdate(std::chrono::milliseconds) override
+    plg::PluginResult OnPluginUpdate(std::chrono::milliseconds) override
     {
         g_TimerSystem.RunFrame();
+		return {};
     }
 } g_permissionsPlugin;
 
-EXPOSE_PLUGIN(PLUGIN_API, PlugifyPermissions, &g_permissionsPlugin)
+PLUGIFY_PLUGIN(PLUGIN_API, &g_permissionsPlugin)
