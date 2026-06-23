@@ -47,6 +47,7 @@ struct User
     phmap::flat_hash_map<plg::string, plg::any, string_hash, std::equal_to<>> cookies;
     plg::vector<TempGroup> _groups; // groups that player belongs to
     int _immunity;
+    bool _offline;
 
     [[nodiscard]] PLUGIFY_FORCE_INLINE int getImmunity() const
     {
@@ -151,8 +152,9 @@ struct User
         std::ranges::sort(this->_groups, sortFF);
     }
 
-    User(const int immunity, const plg::vector<plg::string>& groupsList, const uint64_t user_id)
+    User(const int immunity, const plg::vector<plg::string>& groupsList, const uint64_t user_id, bool offline)
     {
+        this->_offline = offline;
         this->_immunity = immunity;
         for (const plg::string& s : groupsList)
         {

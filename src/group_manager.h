@@ -24,7 +24,7 @@ PLUGIFY_FORCE_INLINE Group* GetGroup(const std::string_view& name)
  * @param childName		Name of the child group.
  * @param parentName	Name of the parent group being assigned.
  */
-using SetParentCallback = void (*)(const uint64_t pluginID, const plg::string& childName,
+using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& childName,
                                    const plg::string& parentName);
 
 /**
@@ -35,7 +35,7 @@ using SetParentCallback = void (*)(const uint64_t pluginID, const plg::string& c
  * @param cookieName	Name of the cookie being set.
  * @param value			Value of the cookie.
  */
-using SetCookieGroupCallback = void (*)(const uint64_t pluginID, const plg::string& groupName,
+using SetCookieGroupCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
                                         const plg::string& cookieName, const plg::any& value);
 
 /**
@@ -46,7 +46,7 @@ using SetCookieGroupCallback = void (*)(const uint64_t pluginID, const plg::stri
  * @param name		Name of the group.
  * @param groupName	Permission affected or related group name (depending on context).
  */
-using GroupPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const plg::string& name,
+using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& name,
                                          const plg::string& groupName);
 
 /**
@@ -58,7 +58,7 @@ using GroupPermissionCallback = void (*)(const uint64_t pluginID, const Action a
  * @param priority	Priority of the group.
  * @param parent	Name of the parent group (empty if none).
  */
-using GroupCreateCallback = void (*)(const uint64_t pluginID, const plg::string& name,
+using GroupCreateCallback = void (*)(const int64_t pluginID, const plg::string& name,
                                      const plg::vector<plg::string>& perms, const int priority,
                                      const plg::string& parent);
 
@@ -68,7 +68,7 @@ using GroupCreateCallback = void (*)(const uint64_t pluginID, const plg::string&
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param name		Name of the group being deleted.
  */
-using GroupDeleteCallback = void (*)(const uint64_t pluginID, const plg::string& name);
+using GroupDeleteCallback = void (*)(const int64_t pluginID, const plg::string& name);
 
 /**
  * @brief Called when the core requests loading of server groups.
@@ -80,7 +80,7 @@ using GroupDeleteCallback = void (*)(const uint64_t pluginID, const plg::string&
  *
  * @param pluginID Identifier of the plugin that initiated the call.
  */
-using LoadGroupsCallback = void(*)(const uint64_t pluginID);
+using LoadGroupsCallback = void(*)(const int64_t pluginID);
 
 
 struct SetParentCallbacks

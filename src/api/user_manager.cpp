@@ -17,7 +17,7 @@ PermExpirationCallbacks perm_expiration_callbacks;
 GroupExpirationCallbacks group_expiration_callbacks;
 
 UserLoadCallbacks user_load_callbacks;
-UserLoadedCallbacks user_loaded_callbacks;
+// UserLoadedCallbacks user_loaded_callbacks;
 
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
 {
@@ -275,7 +275,7 @@ extern "C" PLUGIN_API Status SetImmunity(const uint64_t targetID, const int immu
  * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
  * @return Success, TargetUserNotFound, PermAlreadyGranted
  */
-extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
+extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
     std::unique_lock lock(users_mtx);
@@ -361,7 +361,7 @@ extern "C" PLUGIN_API Status AddPermission(const uint64_t pluginID, const uint64
  * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
  * @return Success, TargetUserNotFound, PermAlreadyGranted
  */
-extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
+extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
     std::unique_lock lock(users_mtx);
@@ -444,7 +444,7 @@ extern "C" PLUGIN_API Status SetPermission(const uint64_t pluginID, const uint64
  * @param recursiveDeletion Delete all nested perms.
  * @return Success, TargetUserNotFound, PermNotFound
  */
-extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uint64_t targetID, const plg::string& perm,
+extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                               const bool recursiveDeletion)
 {
     PermSource perm_type;
@@ -488,7 +488,7 @@ extern "C" PLUGIN_API Status RemovePermission(const uint64_t pluginID, const uin
  * @param dontBroadcast If set to `true`, suppresses dispatching of the group change event to registered UserGroup listeners. The group is still applied internally.
  * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
  */
-extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName,
+extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName,
                                       const time_t timestamp, const bool dontBroadcast)
 {
     std::unique_lock lock(users_mtx);
@@ -547,7 +547,7 @@ extern "C" PLUGIN_API Status AddGroup(const uint64_t pluginID, const uint64_t ta
  * @param groupName Group name.
  * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status RemoveGroup(const uint64_t pluginID, const uint64_t targetID, const plg::string& groupName)
+extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -620,7 +620,7 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
  * @param dontBroadcast If set to `true`, suppresses dispatching of the cookie change event to registered UserSetCookie listeners. The cookie is still applied internally.
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status SetCookie(const uint64_t pluginID, const uint64_t targetID, const plg::string& name,
+extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie, const bool dontBroadcast)
 {
     std::unique_lock lock(users_mtx);
@@ -672,11 +672,12 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param immunity User immunity (set -1 to return highest group priority).
+ * @param offline Create as fake player.
  * @param groupsList Array of groups to inherit ("group timestamp").
  * @return Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound
  */
-extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t targetID, const int immunity,
-                                        const plg::vector<plg::string>& groupsList)
+extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t targetID, const int immunity,
+                                        const bool offline, const plg::vector<plg::string>& groupsList)
 {
     std::unique_lock lock(users_mtx);
     if (users.contains(targetID))
@@ -692,11 +693,11 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t 
             return Status::GroupNotFound;
     }
 
-    users.try_emplace(targetID, immunity, groupsList, targetID);
+    users.try_emplace(targetID, immunity, groupsList, targetID, offline);
     {
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks)
-            cb(pluginID, targetID, immunity, groupsList);
+            cb(pluginID, targetID, immunity, offline, groupsList);
     }
     return Status::Success;
 }
@@ -708,7 +709,7 @@ extern "C" PLUGIN_API Status CreateUser(const uint64_t pluginID, const uint64_t 
  * @param targetID Player ID.
  * @return Success, TargetUserNotFound
  */
-extern "C" PLUGIN_API Status DeleteUser(const uint64_t pluginID, const uint64_t targetID)
+extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t targetID)
 {
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -729,13 +730,24 @@ extern "C" PLUGIN_API Status DeleteUser(const uint64_t pluginID, const uint64_t 
  * @brief Check if a user exists.
  *
  * @param targetID Player ID.
- * @return True if user exists, false otherwise.
+ * @return PlayerState::NotFound, PlayerState::Online, PlayerState::Offline
  */
-extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
+extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
 {
     std::shared_lock lock(users_mtx);
     const auto v = users.find(targetID);
-    return v != users.end();
+    if (v != users.end()) {
+        return v->second._offline ? PlayerState::Offline : PlayerState::Online;
+    }
+    return PlayerState::NotFound;
+}
+
+extern "C" PLUGIN_API bool DumpUsersList(plg::vector<uint64_t>& usersList)
+{
+    std::shared_lock lock(users_mtx);
+
+
+    return false;
 }
 
 /**
@@ -750,31 +762,33 @@ extern "C" PLUGIN_API bool UserExists(const uint64_t targetID)
  * @param pluginID   Identifier of the calling plugin.
  * @param targetID   PlayerID of the user to be loaded.
  * @param username   The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
+ * @param offline    Indicates whether the user's data was loaded without user presence on server.
+ * @param callback   Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.
  */
-extern "C" PLUGIN_API void LoadUser(const uint64_t pluginID, const uint64_t targetID, const plg::string& username)
+extern "C" PLUGIN_API void LoadUser(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, UserLoadedCallback callback)
 {
     std::shared_lock lock2(user_load_callbacks._lock);
-    for (const UserLoadCallback cb : user_load_callbacks._callbacks)
-        cb(pluginID, targetID, username);
+    for (const UserRequestCallback cb : user_load_callbacks._callbacks)
+        cb(pluginID, targetID, username, offline, callback);
 }
 
-/**
- * @brief Dispatches a user-loaded event.
- *
- * Invoked by a storage provider to indicate that the requested
- * user data loading process has completed successfully.
- *
- * After this call, the user is considered fully initialized.
- *
- * @param pluginID Identifier of the storage plugin reporting completion.
- * @param targetID PlayerID of the loaded user.
- */
-extern "C" PLUGIN_API void LoadedUser(const uint64_t pluginID, const uint64_t targetID)
-{
-    std::shared_lock lock2(user_loaded_callbacks._lock);
-    for (const UserLoadedCallback cb : user_loaded_callbacks._callbacks)
-        cb(pluginID, targetID);
-}
+// /**
+//  * @brief Dispatches a user-loaded event.
+//  *
+//  * Invoked by a storage provider to indicate that the requested
+//  * user data loading process has completed successfully.
+//  *
+//  * After this call, the user is considered fully initialized.
+//  *
+//  * @param pluginID Identifier of the storage plugin reporting completion.
+//  * @param targetID PlayerID of the loaded user.
+//  */
+// extern "C" PLUGIN_API void LoadedUser(const int64_t pluginID, const uint64_t targetID)
+// {
+//     std::shared_lock lock2(user_loaded_callbacks._lock);
+//     for (const UserLoadedCallback cb : user_loaded_callbacks._callbacks)
+//         cb(pluginID, targetID);
+// }
 
 /**
  * @brief Register listener on LoadUser event.
@@ -782,7 +796,7 @@ extern "C" PLUGIN_API void LoadedUser(const uint64_t pluginID, const uint64_t ta
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnLoadUser_Register(UserLoadCallback callback)
+extern "C" PLUGIN_API Status OnLoadUser_Register(UserRequestCallback callback)
 {
     std::unique_lock lock(user_load_callbacks._lock);
     auto ret = user_load_callbacks._callbacks.insert(callback);
@@ -795,38 +809,38 @@ extern "C" PLUGIN_API Status OnLoadUser_Register(UserLoadCallback callback)
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserLoadCallback callback)
+extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserRequestCallback callback)
 {
     std::unique_lock lock(user_load_callbacks._lock);
     const size_t ret = user_load_callbacks._callbacks.erase(callback);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
-/**
- * @brief Register listener on LoadedUser event.
- *
- * @param callback Function callback.
- * @return
- */
-extern "C" PLUGIN_API Status OnLoadedUser_Register(UserLoadedCallback callback)
-{
-    std::unique_lock lock(user_loaded_callbacks._lock);
-    auto ret = user_loaded_callbacks._callbacks.insert(callback);
-    return ret.second ? Status::Success : Status::CallbackAlreadyExist;
-}
-
-/**
- * @brief Unregister listener on LoadedUser event.
- *
- * @param callback Function callback.
- * @return
- */
-extern "C" PLUGIN_API Status OnLoadedUser_Unregister(UserLoadedCallback callback)
-{
-    std::unique_lock lock(user_loaded_callbacks._lock);
-    const size_t ret = user_loaded_callbacks._callbacks.erase(callback);
-    return ret > 0 ? Status::Success : Status::CallbackNotFound;
-}
+// /**
+//  * @brief Register listener on LoadedUser event.
+//  *
+//  * @param callback Function callback.
+//  * @return
+//  */
+// extern "C" PLUGIN_API Status OnLoadedUser_Register(UserLoadedCallback callback)
+// {
+//     std::unique_lock lock(user_loaded_callbacks._lock);
+//     auto ret = user_loaded_callbacks._callbacks.insert(callback);
+//     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
+// }
+//
+// /**
+//  * @brief Unregister listener on LoadedUser event.
+//  *
+//  * @param callback Function callback.
+//  * @return
+//  */
+// extern "C" PLUGIN_API Status OnLoadedUser_Unregister(UserLoadedCallback callback)
+// {
+//     std::unique_lock lock(user_loaded_callbacks._lock);
+//     const size_t ret = user_loaded_callbacks._callbacks.erase(callback);
+//     return ret > 0 ? Status::Success : Status::CallbackNotFound;
+// }
 
 /**
  * @brief Register listener on user permission add/remove

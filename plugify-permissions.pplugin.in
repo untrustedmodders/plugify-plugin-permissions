@@ -874,7 +874,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -993,7 +993,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -1101,7 +1101,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -1220,7 +1220,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -1339,7 +1339,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -1661,7 +1661,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -1894,8 +1894,25 @@
                 }
             ],
             "retType": {
-                "type": "bool",
-                "description": "True if user exists, false otherwise."
+                "type": "uint32",
+                "description": "PlayerState::NotFound, PlayerState::Online, PlayerState::Offline",
+                "enum": {
+                    "name": "PlayerState",
+                    "values": [
+                        {
+                            "name": "NotFound",
+                            "value": 0
+                        },
+                        {
+                            "name": "Online",
+                            "value": 1
+                        },
+                        {
+                            "name": "Offline",
+                            "value": 2
+                        }
+                    ]
+                }
             },
             "group": "UserManager",
             "description": "Check if a user exists."
@@ -1906,7 +1923,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -2019,7 +2036,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -2034,6 +2051,62 @@
                     "type": "string",
                     "ref": false,
                     "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
+                },
+                {
+                    "name": "offline",
+                    "type": "bool",
+                    "ref": false,
+                    "description": "Indicates whether the user's data was loaded without user presence on server."
+                },
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "description": "Function callback.",
+                    "prototype": {
+                        "name": "UserLoadedCallback",
+                        "funcName": "UserLoadedCallback",
+                        "description": "Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that reports the completion of the loading process."
+                            },
+                            {
+                                "name": "targetID",
+                                "type": "uint64",
+                                "ref": false,
+                                "description": "PlayerID of the user whose data has been loaded."
+                            },
+                            {
+                                "name": "playerState",
+                                "type": "uint32",
+                                "ref": false,
+                                "enum": {
+                                    "name": "PlayerState",
+                                    "values": [
+                                        {
+                                            "name": "NotFound",
+                                            "value": 0
+                                        },
+                                        {
+                                            "name": "Online",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Offline",
+                                            "value": 2
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    }
                 }
             ],
             "retType": {
@@ -2043,35 +2116,12 @@
             "description": "Dispatches a request to load user data. Notifies all registered listeners that the specified user's data should be loaded from an external storage provider. This function does not perform any storage operations by itself. It only broadcasts the load request event."
         },
         {
-            "name": "LoadedUser",
-            "funcName": "LoadedUser",
-            "paramTypes": [
-                {
-                    "name": "pluginID",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "Identifier of the storage plugin reporting completion."
-                },
-                {
-                    "name": "targetID",
-                    "type": "uint64",
-                    "ref": false,
-                    "description": "PlayerID of the loaded user."
-                }
-            ],
-            "retType": {
-                "type": "void"
-            },
-            "group": "UserManager",
-            "description": "Dispatches a user-loaded event. Invoked by a storage provider to indicate that the requested user data loading process has completed successfully. After this call, the user is considered fully initialized."
-        },
-        {
             "name": "DeleteUser",
             "funcName": "DeleteUser",
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -2287,7 +2337,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -2806,7 +2856,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -2913,7 +2963,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -3235,7 +3285,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -3474,7 +3524,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -3593,7 +3643,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 }
@@ -3610,7 +3660,7 @@
             "paramTypes": [
                 {
                     "name": "pluginID",
-                    "type": "uint64",
+                    "type": "int64",
                     "ref": false,
                     "description": "Identifier of the plugin that calls the method."
                 },
@@ -3718,13 +3768,13 @@
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "UserLoadCallback",
-                        "funcName": "UserLoadCallback",
+                        "name": "UserRequestCallback",
+                        "funcName": "UserRequestCallback",
                         "description": "Called when a user data load is requested. This callback is triggered by the core when it requires user data to be loaded from an external storage (e.g. database). Extensions can subscribe to this event to perform the actual loading process and initialize the user in memory. This event does NOT guarantee that the user object already exists in memory.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -3739,6 +3789,62 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
+                            },
+                            {
+                                "name": "offline",
+                                "type": "bool",
+                                "ref": false,
+                                "description": "Indicates whether the user's data was loaded without user presence on server."
+                            },
+                            {
+                                "name": "callback",
+                                "type": "function",
+                                "ref": false,
+                                "description": "Function callback.",
+                                "prototype": {
+                                    "name": "UserLoadedCallback",
+                                    "funcName": "UserLoadedCallback",
+                                    "description": "Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.",
+                                    "paramTypes": [
+                                        {
+                                            "name": "pluginID",
+                                            "type": "int64",
+                                            "ref": false,
+                                            "description": "Identifier of the plugin that reports the completion of the loading process."
+                                        },
+                                        {
+                                            "name": "targetID",
+                                            "type": "uint64",
+                                            "ref": false,
+                                            "description": "PlayerID of the user whose data has been loaded."
+                                        },
+                                        {
+                                            "name": "playerState",
+                                            "type": "uint32",
+                                            "ref": false,
+                                            "enum": {
+                                                "name": "PlayerState",
+                                                "values": [
+                                                    {
+                                                        "name": "NotFound",
+                                                        "value": 0
+                                                    },
+                                                    {
+                                                        "name": "Online",
+                                                        "value": 1
+                                                    },
+                                                    {
+                                                        "name": "Offline",
+                                                        "value": 2
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "retType": {
+                                        "type": "void"
+                                    }
+                                }
                             }
                         ],
                         "retType": {
@@ -3840,13 +3946,13 @@
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "UserLoadCallback",
-                        "funcName": "UserLoadCallback",
+                        "name": "UserRequestCallback",
+                        "funcName": "UserRequestCallback",
                         "description": "Called when a user data load is requested. This callback is triggered by the core when it requires user data to be loaded from an external storage (e.g. database). Extensions can subscribe to this event to perform the actual loading process and initialize the user in memory. This event does NOT guarantee that the user object already exists in memory.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -3861,6 +3967,62 @@
                                 "type": "string",
                                 "ref": false,
                                 "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
+                            },
+                            {
+                                "name": "offline",
+                                "type": "bool",
+                                "ref": false,
+                                "description": "Indicates whether the user's data was loaded without user presence on server."
+                            },
+                            {
+                                "name": "callback",
+                                "type": "function",
+                                "ref": false,
+                                "description": "Function callback.",
+                                "prototype": {
+                                    "name": "UserLoadedCallback",
+                                    "funcName": "UserLoadedCallback",
+                                    "description": "Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.",
+                                    "paramTypes": [
+                                        {
+                                            "name": "pluginID",
+                                            "type": "int64",
+                                            "ref": false,
+                                            "description": "Identifier of the plugin that reports the completion of the loading process."
+                                        },
+                                        {
+                                            "name": "targetID",
+                                            "type": "uint64",
+                                            "ref": false,
+                                            "description": "PlayerID of the user whose data has been loaded."
+                                        },
+                                        {
+                                            "name": "playerState",
+                                            "type": "uint32",
+                                            "ref": false,
+                                            "enum": {
+                                                "name": "PlayerState",
+                                                "values": [
+                                                    {
+                                                        "name": "NotFound",
+                                                        "value": 0
+                                                    },
+                                                    {
+                                                        "name": "Online",
+                                                        "value": 1
+                                                    },
+                                                    {
+                                                        "name": "Offline",
+                                                        "value": 2
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "retType": {
+                                        "type": "void"
+                                    }
+                                }
                             }
                         ],
                         "retType": {
@@ -3953,239 +4115,6 @@
             "description": "Unregister listener on LoadUser event."
         },
         {
-            "name": "OnLoadedUser_Register",
-            "funcName": "OnLoadedUser_Register",
-            "paramTypes": [
-                {
-                    "name": "callback",
-                    "type": "function",
-                    "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserLoadedCallback",
-                        "funcName": "UserLoadedCallback",
-                        "description": "Called when a user's data has been fully loaded. This callback is triggered after a storage extension has completed loading and applying the user's persistent data (e.g. groups, permissions, metadata). At this stage, the user is considered fully initialized and ready for normal operation within the system.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that reports the completion of the loading process."
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "PlayerID of the user whose data has been loaded."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        },
-                        {
-                            "name": "PermAlreadyGranted",
-                            "value": 14
-                        },
-                        {
-                            "name": "TemporalGroup",
-                            "value": 15
-                        },
-                        {
-                            "name": "PermanentGroup",
-                            "value": 16
-                        },
-                        {
-                            "name": "GroupNotDefined",
-                            "value": 17
-                        }
-                    ]
-                }
-            },
-            "group": "UserListeners",
-            "description": "Register listener on LoadedUser event."
-        },
-        {
-            "name": "OnLoadedUser_Unregister",
-            "funcName": "OnLoadedUser_Unregister",
-            "paramTypes": [
-                {
-                    "name": "callback",
-                    "type": "function",
-                    "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserLoadedCallback",
-                        "funcName": "UserLoadedCallback",
-                        "description": "Called when a user's data has been fully loaded. This callback is triggered after a storage extension has completed loading and applying the user's persistent data (e.g. groups, permissions, metadata). At this stage, the user is considered fully initialized and ready for normal operation within the system.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that reports the completion of the loading process."
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "PlayerID of the user whose data has been loaded."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        },
-                        {
-                            "name": "PermAlreadyGranted",
-                            "value": 14
-                        },
-                        {
-                            "name": "TemporalGroup",
-                            "value": 15
-                        },
-                        {
-                            "name": "PermanentGroup",
-                            "value": 16
-                        },
-                        {
-                            "name": "GroupNotDefined",
-                            "value": 17
-                        }
-                    ]
-                }
-            },
-            "group": "UserListeners",
-            "description": "Unregister listener on LoadedUser event."
-        },
-
-        {
             "name": "OnUserCreate_Register",
             "funcName": "OnUserCreate_Register",
             "paramTypes": [
@@ -4201,7 +4130,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -4329,7 +4258,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -4457,7 +4386,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -4573,7 +4502,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -4690,7 +4619,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -4887,7 +4816,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -5067,7 +4996,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -5228,7 +5157,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -5873,7 +5802,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6001,7 +5930,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6132,7 +6061,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             }
@@ -6242,7 +6171,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             }
@@ -6353,7 +6282,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6487,7 +6416,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6621,7 +6550,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6737,7 +6666,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6854,7 +6783,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -6976,7 +6905,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -7099,7 +7028,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -7248,7 +7177,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -7397,7 +7326,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },
@@ -7525,7 +7454,7 @@
                         "paramTypes": [
                             {
                                 "name": "pluginID",
-                                "type": "uint64",
+                                "type": "int64",
                                 "ref": false,
                                 "description": "Identifier of the plugin that initiated the call."
                             },

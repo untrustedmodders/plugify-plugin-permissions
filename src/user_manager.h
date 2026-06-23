@@ -18,6 +18,12 @@ inline void GroupManager_Callback(const Group* group)
         value.delGroup(group);
 }
 
+enum class PlayerState : uint32_t {
+    NotFound = 0,
+    Online = 1,
+    Offline = 2,
+};
+
 /**
  * @brief Callback invoked when a permission is added, removed, or replaced for a user.
  *
@@ -30,7 +36,7 @@ inline void GroupManager_Callback(const Group* group)
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New duration (timestamp) assigned to the permission.
  */
-using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
+using UserPermissionCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                         const plg::string& perm, const Status oldState, const Status newState, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
@@ -41,7 +47,7 @@ using UserPermissionCallback = void (*)(const uint64_t pluginID, const Action ac
  * @param name		Name of the cookie.
  * @param cookie	Value of the cookie.
  */
-using UserSetCookieCallback = void (*)(const uint64_t pluginID, const uint64_t targetID, const plg::string& name,
+using UserSetCookieCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie);
 
 /**
@@ -54,7 +60,7 @@ using UserSetCookieCallback = void (*)(const uint64_t pluginID, const uint64_t t
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New group duration.
  */
-using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action, const uint64_t targetID,
+using UserGroupCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
@@ -63,10 +69,11 @@ using UserGroupCallback = void (*)(const uint64_t pluginID, const Action action,
  * @param pluginID		Identifier of the plugin that initiated the call.
  * @param targetID		Player ID of the created user.
  * @param immunity		User immunity value passed to CreateUser (may be -1 if highest group priority was requested).
+ * @param offline       Indicates whether the user's data was loaded without user presence on server.
  * @param groupNames	Array of groups inherited by the user.
  */
-using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targetID, int immunity,
-                                    const plg::vector<plg::string>& groupNames);
+using UserCreateCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
+                                    const bool offline, const plg::vector<plg::string>& groupNames);
 
 /**
  * @brief Callback invoked before a user is deleted.
@@ -74,7 +81,7 @@ using UserCreateCallback = void (*)(const uint64_t pluginID, const uint64_t targ
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
  */
-using UserDeleteCallback = void (*)(const uint64_t pluginID, const uint64_t targetID);
+using UserDeleteCallback = void (*)(const int64_t pluginID, const uint64_t targetID);
 
 /**
  * @brief Callback invoked when a permission in user has been expired.
@@ -94,21 +101,6 @@ using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::strin
 using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& group);
 
 /**
- * @brief Called when a user data load is requested.
- *
- * This callback is triggered by the core when it requires
- * user data to be loaded from an external storage (e.g. database).
- * Extensions can subscribe to this event to perform the actual
- * loading process and initialize the user in memory.
- * This event does NOT guarantee that the user object already exists in memory.
- *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param targetID	PlayerID of the user whose data should be loaded.
- * @param username  The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
- */
-using UserLoadCallback = void(*)(const uint64_t pluginID, const uint64_t targetID, const plg::string username);
-
-/**
  * @brief Called when a user's data has been fully loaded.
  *
  * This callback is triggered after a storage extension has completed
@@ -120,8 +112,26 @@ using UserLoadCallback = void(*)(const uint64_t pluginID, const uint64_t targetI
  *
  * @param pluginID Identifier of the plugin that reports the completion of the loading process.
  * @param targetID PlayerID of the user whose data has been loaded.
+ * @param playerState  Indicates whether the user's data was loaded without user presence on server.
  */
-using UserLoadedCallback = void(*)(const uint64_t pluginID, const uint64_t targetID);
+using UserLoadedCallback = void(*)(const int64_t pluginID, const uint64_t targetID, const PlayerState playerState);
+
+/**
+ * @brief Called when a user data load is requested.
+ *
+ * This callback is triggered by the core when it requires
+ * user data to be loaded from an external storage (e.g. database).
+ * Extensions can subscribe to this event to perform the actual
+ * loading process and initialize the user in memory.
+ * This event does NOT guarantee that the user object already exists in memory.
+ *
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param targetID	PlayerID of the user whose data should be loaded.
+ * @param username  The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
+ * @param offline   Insdicates whether the user's data was loaded without user presence on server.
+ * @param callback  Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.
+ */
+using UserRequestCallback = void(*)(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, UserLoadedCallback callback);
 
 struct UserPermissionCallbacks
 {
@@ -175,7 +185,7 @@ struct GroupExpirationCallbacks
 struct UserLoadCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserLoadCallback> _callbacks;
+    phmap::flat_hash_set<UserRequestCallback> _callbacks;
     std::atomic_int _counter;
 };
 
