@@ -131,6 +131,10 @@ extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, cons
     if (v == users.end())
         return Status::TargetUserNotFound;
 
+    if (perm.empty()) {
+        return Status::Allow;
+    }
+
     bool w_wildcard;
     const Status status = v->second.hasPermission(perm, permSource, exact, w_wildcard, timestamp);
     if (exact && isWildcard(perm) != w_wildcard)
@@ -745,16 +749,14 @@ extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
 }
 
 /**
- * @brief Get list of loaded players
+ * @brief Returns a list of IDs for all players registered in the core.
  *
- * @return Array of player IDs
+ * @return A vector containing all registered player IDs.
  */
 extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
 {
-    std::shared_lock lock(users_mtx);
-
-	auto keys_view = std::views::keys(users);
-	return {keys_view.begin(), keys_view.end()};
+    auto keys_view = std::views::keys(users);
+    return {keys_view.begin(), keys_view.end()};
 }
 
 /**
