@@ -20,6 +20,7 @@ _GetCookie
 _SetCookie
 _GetAllCookies
 _UserExists
+_DumpUsersList
 _CreateUser
 _LoadUser
 _LoadedUser

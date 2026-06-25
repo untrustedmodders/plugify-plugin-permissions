@@ -19,6 +19,7 @@
         SetCookie;
         GetAllCookies;
         UserExists;
+        DumpUsersList;
         CreateUser;
         LoadUser;
         LoadedUser;

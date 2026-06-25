@@ -1918,6 +1918,17 @@
             "description": "Check if a user exists."
         },
         {
+            "name": "DumpUsersList",
+            "funcName": "DumpUsersList",
+            "paramTypes": [],
+            "retType": {
+                "type": "uint64[]",
+                "description": "A vector containing all registered player IDs."
+            },
+            "group": "UserManager",
+            "description": "Returns a list of IDs for all players registered in the core."
+        },
+        {
             "name": "CreateUser",
             "funcName": "CreateUser",
             "paramTypes": [
