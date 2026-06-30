@@ -4,7 +4,7 @@ phmap::flat_hash_map<uint64_t, Group*> groups;
 std::shared_mutex groups_mtx;
 
 SetParentCallbacks set_parent_callbacks;
-SetOptionGroupCallbacks set_cookie_group_callbacks;
+SetOptionGroupCallbacks set_option_group_callbacks;
 GroupPermissionCallbacks group_permission_callbacks;
 GroupCreateCallbacks group_create_callbacks;
 GroupDeleteCallbacks group_delete_callbacks;
@@ -348,7 +348,7 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
  * @param groupName Group name
  * @param optionName Option name
  * @param value Option value
- * @return Success, CookieNotFound, GroupNotFound
+ * @return Success, OptionNotFound, GroupNotFound
  */
 extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const plg::string& optionName,
                                             plg::any& value)
@@ -362,8 +362,8 @@ extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const 
     Group* g = v->second;
     while (g != nullptr)
     {
-        const auto val = g->cookies.find(optionName);
-        if (val == g->cookies.end())
+        const auto val = g->options.find(optionName);
+        if (val == g->options.end())
         {
             g = g->_parent;
             continue;
@@ -371,7 +371,7 @@ extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const 
         value = val->second;
         return Status::Success;
     }
-    return Status::CookieNotFound;
+    return Status::OptionNotFound;
 }
 
 /**
@@ -394,16 +394,16 @@ extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::s
 
     std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
     {
-        std::shared_lock lock3(set_cookie_group_callbacks._lock);
-        for (const SetOptionGroupCallback cb : set_cookie_group_callbacks._callbacks)
+        std::shared_lock lock3(set_option_group_callbacks._lock);
+        for (const SetOptionGroupCallback cb : set_option_group_callbacks._callbacks)
             cb(pluginID, groupName, optionName, value);
     }
-    v->second->cookies[optionName] = value;
+    v->second->options[optionName] = value;
     return Status::Success;
 }
 
 /**
- * @brief Get all optiuons from group.
+ * @brief Get all options from group.
  *
  * @param groupName Group name
  * @param optionNames Array of option names
@@ -423,7 +423,7 @@ extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, pl
     optionNames.clear();
     values.clear();
 
-    for (const auto& [kv, vv] : v->second->cookies)
+    for (const auto& [kv, vv] : v->second->options)
     {
         optionNames.push_back(kv);
         values.push_back(vv);
@@ -603,8 +603,8 @@ extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(SetParentCallback callb
  */
 extern "C" PLUGIN_API Status OnGroupSetOption_Register(SetOptionGroupCallback callback)
 {
-    std::unique_lock lock(set_cookie_group_callbacks._lock);
-    auto ret = set_cookie_group_callbacks._callbacks.insert(callback);
+    std::unique_lock lock(set_option_group_callbacks._lock);
+    auto ret = set_option_group_callbacks._callbacks.insert(callback);
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
@@ -616,8 +616,8 @@ extern "C" PLUGIN_API Status OnGroupSetOption_Register(SetOptionGroupCallback ca
  */
 extern "C" PLUGIN_API Status OnGroupSetOption_Unregister(SetOptionGroupCallback callback)
 {
-    std::unique_lock lock(set_cookie_group_callbacks._lock);
-    const size_t ret = set_cookie_group_callbacks._callbacks.erase(callback);
+    std::unique_lock lock(set_option_group_callbacks._lock);
+    const size_t ret = set_option_group_callbacks._callbacks.erase(callback);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 

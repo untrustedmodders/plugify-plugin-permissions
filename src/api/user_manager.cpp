@@ -597,14 +597,14 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
     bool found = val != v->second.cookies.end();
     if (!found)
     {
-        // Check in groups cookies
+        // Check in groups options
         for (TempGroup& g : v->second._groups)
         {
             Group* parent = g.group;
             while (parent)
             {
-                val = parent->cookies.find(name);
-                found = val != parent->cookies.end();
+                val = parent->options.find(name);
+                found = val != parent->options.end();
                 if (found)
                     break;
                 parent = parent->_parent;
