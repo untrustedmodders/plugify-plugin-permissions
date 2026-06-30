@@ -7378,6 +7378,7 @@
                                 "name": "oldState",
                                 "type": "int32",
                                 "ref": false,
+                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -7400,6 +7401,7 @@
                                 "name": "newState",
                                 "type": "int32",
                                 "ref": false,
+                                "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -7575,6 +7577,7 @@
                                 "name": "oldState",
                                 "type": "int32",
                                 "ref": false,
+                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
@@ -7597,6 +7600,7 @@
                                 "name": "newState",
                                 "type": "int32",
                                 "ref": false,
+                                "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
                                     "name": "Status",
                                     "values": [
