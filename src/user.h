@@ -61,8 +61,8 @@ struct User
         if (perm.starts_with('-'))
             perm = perm.substr(1);
         auto ispl = std::views::split(perm, '.');
-        uint64_t hashes[64];
-        std::string_view names[64];
+        uint64_t hashes[256];
+        std::string_view names[256];
         int i = 0;
         for (auto&& s : ispl)
         {

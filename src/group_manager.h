@@ -35,7 +35,7 @@ using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& ch
  * @param cookieName	Name of the cookie being set.
  * @param value			Value of the cookie.
  */
-using SetCookieGroupCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
+using SetOptionGroupCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
                                         const plg::string& cookieName, const plg::any& value);
 
 /**
@@ -44,10 +44,12 @@ using SetCookieGroupCallback = void (*)(const int64_t pluginID, const plg::strin
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param action	Action performed (Add or Remove).
  * @param name		Name of the group.
- * @param groupName	Permission affected or related group name (depending on context).
+ * @param permName	Permission affected or related group name (depending on context).
+ * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
+ * @param newState      Current state after the change (the newly assigned state).
  */
 using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& name,
-                                         const plg::string& groupName);
+                                         const plg::string& permName, const Status oldState, const Status newState);
 
 /**
  * @brief Callback invoked after a group is successfully created.
@@ -90,10 +92,10 @@ struct SetParentCallbacks
     std::atomic_int _counter;
 };
 
-struct SetCookieGroupCallbacks
+struct SetOptionGroupCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<SetCookieGroupCallback> _callbacks;
+    phmap::flat_hash_set<SetOptionGroupCallback> _callbacks;
     std::atomic_int _counter;
 };
 

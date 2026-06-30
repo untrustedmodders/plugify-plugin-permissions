@@ -153,8 +153,8 @@ struct Node
         if (perm.starts_with('-'))
             perm = perm.substr(1);
         auto ispl = std::views::split(perm, '.');
-        uint64_t hashes[64];
-        std::string_view names[64];
+        uint64_t hashes[256];
+        std::string_view names[256];
         int i = 0;
         for (const auto&& s : ispl)
         {
@@ -177,7 +177,7 @@ struct Node
         const int counter = sz - 1;
         int count = 0;
         Node* curNode = this;
-        std::pair<Node*, int> ancestors[64];
+        std::pair<Node*, int> ancestors[256];
 
         if (hashes[0] == AllAccess)
         {

@@ -4,7 +4,7 @@ phmap::flat_hash_map<uint64_t, Group*> groups;
 std::shared_mutex groups_mtx;
 
 SetParentCallbacks set_parent_callbacks;
-SetCookieGroupCallbacks set_cookie_group_callbacks;
+SetOptionGroupCallbacks set_cookie_group_callbacks;
 GroupPermissionCallbacks group_permission_callbacks;
 GroupCreateCallbacks group_create_callbacks;
 GroupDeleteCallbacks group_delete_callbacks;
@@ -36,12 +36,14 @@ extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string
     const auto it1 = groups.find(hash1);
     const auto it2 = groups.find(hash2);
 
-    if (it1 == groups.end())
-        return Status::ChildGroupNotFound;
+	const bool empty_group = childName.empty();
+
+    if (it1 == groups.end() && !empty_group)
+    	return Status::ChildGroupNotFound;
     if (it2 == groups.end())
         return Status::ParentGroupNotFound;
 
-    it1->second->_parent = it2->second;
+    it1->second->_parent = empty_group ? nullptr : it2->second;
     {
         std::shared_lock lock2(set_parent_callbacks._lock);
         for (const SetParentCallback cb : set_parent_callbacks._callbacks)
@@ -196,10 +198,11 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perm Permission line.
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered GroupPermission listeners. The permission is still applied internally.
  * @return Success, GroupNotFound, PermAlreadyGranted
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const plg::string& name,
-                                                const plg::string& perm)
+                                                const plg::string& perm, const bool dontBroadcast)
 {
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::unique_lock lock1(groups_mtx);
@@ -209,31 +212,95 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
-    const Status status = it->second->hasPermission(perm, true, w_wildcard);
-    bool diff = !((denied && status == Status::Disallow) || (!denied && status == Status::Allow));
+    const Status oldState = it->second->hasPermission(perm, true, w_wildcard);
+    const bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
-    if (status != Status::PermNotFound) // Node is exist - check if user want to rewrite wildcard
+	bool replaceToWC = false;
+	Action act = Action::Add;
+
+    if (oldState != Status::PermNotFound) // Node is existed - check if user want to rewrite wildcard
     {
-        if (!isWildcard(perm))
-        {
-            if (w_wildcard)
-                return Status::PermAlreadyGranted;
-        }
-        else if (!w_wildcard)
-            diff = true;
+    	if (diff)
+    		return Status::PermAlreadyGranted;
+
+    	if (!isWildcard(perm))
+    	{
+    		if (w_wildcard)
+    			return Status::PermAlreadyGranted;
+    	}
+    	else if (!w_wildcard)
+    	{
+    		replaceToWC = true;
+    	}
+
+    	act = Action::Replace;
     }
 
-    if (!diff)
-        return Status::PermAlreadyGranted;
+	plg::vector<plg::string> deleted_perms;
 
-    std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-    it->second->_nodes.addPerm(perm);
-    {
-        std::shared_lock lock3(group_permission_callbacks._lock);
-        for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-            cb(pluginID, Action::Add, name, perm);
-    }
+	if (!dontBroadcast) {
+		if (replaceToWC)
+			act = Action::ReplaceToWC;
+		const plg::string prm = denied ? perm.substr(1) : perm;
+		std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+		it->second->_nodes.addPerm(perm);
+		{
+			std::shared_lock lock3(group_permission_callbacks._lock);
+			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
+				cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
+		}
+	}
     return Status::Success;
+}
+
+extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const plg::string& name,
+												const plg::string& perm, const bool dontBroadcast)
+{
+	const uint64_t hash = XXH3_64bits(name.data(), name.size());
+	std::unique_lock lock1(groups_mtx);
+	const auto it = groups.find(hash);
+	if (it == groups.end())
+		return Status::GroupNotFound;
+
+	const bool denied = perm.starts_with('-');
+	bool w_wildcard;
+	const Status oldState = it->second->hasPermission(perm, true, w_wildcard);
+	bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
+
+	bool replaceToWC = false;
+	Action act = Action::Add;
+	if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
+	{
+		if (!isWildcard(perm))
+		{
+			if (w_wildcard)
+				return Status::PermAlreadyGranted;
+		}
+		else if (!w_wildcard)
+		{
+			replaceToWC = true;
+			diff = true;
+		}
+		act = Action::Replace;
+	}
+
+	if (!diff)
+		return Status::PermAlreadyGranted;
+
+	if (!dontBroadcast) {
+		if (replaceToWC)
+			act = Action::ReplaceToWC;
+		const plg::string prm = denied ? perm.substr(1) : perm;
+		std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+		it->second->_nodes.addPerm(perm);
+		{
+			std::shared_lock lock3(group_permission_callbacks._lock);
+			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
+				cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
+		}
+	}
+
+	return Status::Success;
 }
 
 /**
@@ -243,7 +310,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
  * @param name Group name.
  * @param perm Permission line.
  * @param recursiveDeletion Delete all nested perms.
- * @return Success, GroupNotFound
+ * @return Success, GroupNotFound, PermNotFound
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const plg::string& name,
                                                    const plg::string& perm, const bool recursiveDeletion)
@@ -254,28 +321,36 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
     if (it == groups.end())
         return Status::GroupNotFound;
 
+	bool w_wildcard;
+	const auto oldState = it->second->hasPermission(perm, true, w_wildcard);
+	if (oldState == Status::PermNotFound)
+		return Status::PermNotFound;
+
     plg::vector<plg::string> deleted_perms;
-    it->second->_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
 
     std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+
+	const bool ret = it->second->_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+	if (!ret)
+		return Status::PermNotFound;
     {
         std::shared_lock lock3(group_permission_callbacks._lock);
         for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
             for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, s, perm);
+                cb(pluginID, Action::Remove, s, perm, oldState, Status::PermNotFound);
     }
     return Status::Success;
 }
 
 /**
- * @brief Get a cookie value for a group.
+ * @brief Get an option value for a group.
  *
  * @param groupName Group name
- * @param cookieName Cookie name
- * @param value Cookie value
+ * @param optionName Option name
+ * @param value Option value
  * @return Success, CookieNotFound, GroupNotFound
  */
-extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const plg::string& cookieName,
+extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const plg::string& optionName,
                                             plg::any& value)
 {
     const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
@@ -287,7 +362,7 @@ extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const 
     Group* g = v->second;
     while (g != nullptr)
     {
-        const auto val = g->cookies.find(cookieName);
+        const auto val = g->cookies.find(optionName);
         if (val == g->cookies.end())
         {
             g = g->_parent;
@@ -300,16 +375,16 @@ extern "C" PLUGIN_API Status GetCookieGroup(const plg::string& groupName, const 
 }
 
 /**
- * @brief Set a cookie value for a group.
+ * @brief Set an option value for a group.
  *
  * @param pluginID Identifier of the plugin that calls the method.
  * @param groupName Group name
- * @param cookieName Cookie name
- * @param value Cookie value.
+ * @param optionName Option name
+ * @param value Option value.
  * @return Success, GroupNotFound
  */
-extern "C" PLUGIN_API Status SetCookieGroup(const int64_t pluginID, const plg::string& groupName,
-                                            const plg::string& cookieName, const plg::any& value)
+extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::string& groupName,
+                                            const plg::string& optionName, const plg::any& value)
 {
     const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
     std::unique_lock lock(groups_mtx);
@@ -320,23 +395,23 @@ extern "C" PLUGIN_API Status SetCookieGroup(const int64_t pluginID, const plg::s
     std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
     {
         std::shared_lock lock3(set_cookie_group_callbacks._lock);
-        for (const SetCookieGroupCallback cb : set_cookie_group_callbacks._callbacks)
-            cb(pluginID, groupName, cookieName, value);
+        for (const SetOptionGroupCallback cb : set_cookie_group_callbacks._callbacks)
+            cb(pluginID, groupName, optionName, value);
     }
-    v->second->cookies[cookieName] = value;
+    v->second->cookies[optionName] = value;
     return Status::Success;
 }
 
 /**
- * @brief Get all cookies from group.
+ * @brief Get all optiuons from group.
  *
  * @param groupName Group name
- * @param cookieNames Array of cookie names
- * @param values Array of cookie values
+ * @param optionNames Array of option names
+ * @param values Array of option values
  * @return Success, GroupNotFound
  */
 
-extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, plg::vector<plg::string>& cookieNames,
+extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, plg::vector<plg::string>& optionNames,
                                                 plg::vector<plg::any>& values)
 {
     const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
@@ -345,12 +420,12 @@ extern "C" PLUGIN_API Status GetAllCookiesGroup(const plg::string& groupName, pl
     if (v == groups.end())
         return Status::GroupNotFound;
 
-    cookieNames.clear();
+    optionNames.clear();
     values.clear();
 
     for (const auto& [kv, vv] : v->second->cookies)
     {
-        cookieNames.push_back(kv);
+        optionNames.push_back(kv);
         values.push_back(vv);
     }
 
@@ -521,12 +596,12 @@ extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(SetParentCallback callb
 }
 
 /**
- * @brief Register listener on group cookie sets
+ * @brief Register listener on group option sets
  *
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetCookie_Register(SetCookieGroupCallback callback)
+extern "C" PLUGIN_API Status OnGroupSetOption_Register(SetOptionGroupCallback callback)
 {
     std::unique_lock lock(set_cookie_group_callbacks._lock);
     auto ret = set_cookie_group_callbacks._callbacks.insert(callback);
@@ -534,12 +609,12 @@ extern "C" PLUGIN_API Status OnGroupSetCookie_Register(SetCookieGroupCallback ca
 }
 
 /**
- * @brief Unregister listener on group cookie sets
+ * @brief Unregister listener on group option sets
  *
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetCookie_Unregister(SetCookieGroupCallback callback)
+extern "C" PLUGIN_API Status OnGroupSetOption_Unregister(SetOptionGroupCallback callback)
 {
     std::unique_lock lock(set_cookie_group_callbacks._lock);
     const size_t ret = set_cookie_group_callbacks._callbacks.erase(callback);

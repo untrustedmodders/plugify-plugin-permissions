@@ -344,9 +344,10 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
         		v->second.temp_nodes.deletePerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
         	}
         }
+    	const plg::string prm = denied ? perm.substr(1) : perm;
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+            cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
     }
     return Status::Success;
 }
@@ -428,9 +429,10 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
     {
         if (replaceToWC)
             act = Action::ReplaceToWC;
+    	const plg::string prm = denied ? perm.substr(1) : perm;
         std::shared_lock lock2(user_permission_callbacks._lock);
         for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, denied ? perm.substr(1) : perm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+            cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
     }
     return Status::Success;
 }
@@ -742,12 +744,17 @@ extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
     return PlayerState::NotFound;
 }
 
-extern "C" PLUGIN_API bool DumpUsersList(plg::vector<uint64_t>& usersList)
+/**
+ * @brief Get list of loaded players
+ *
+ * @return Array of player IDs
+ */
+extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
 {
     std::shared_lock lock(users_mtx);
 
-
-    return false;
+	auto keys_view = std::views::keys(users);
+	return {keys_view.begin(), keys_view.end()};
 }
 
 /**
