@@ -7363,16 +7363,60 @@
                                 }
                             },
                             {
-                                "name": "name",
+                                "name": "groupName",
                                 "type": "string",
                                 "ref": false,
                                 "description": "Name of the group."
                             },
                             {
-                                "name": "groupName",
+                                "name": "perm",
                                 "type": "string",
                                 "ref": false,
-                                "description": "Permission affected or related group name (depending on context)."
+                                "description": "Permission line affected."
+                            },
+                            {
+                                "name": "oldState",
+                                "type": "int32",
+                                "ref": false,
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "newState",
+                                "type": "int32",
+                                "ref": false,
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
                             }
                         ],
                         "retType": {
@@ -7516,16 +7560,60 @@
                                 }
                             },
                             {
-                                "name": "name",
+                                "name": "groupName",
                                 "type": "string",
                                 "ref": false,
                                 "description": "Name of the group."
                             },
                             {
-                                "name": "groupName",
+                                "name": "perm",
                                 "type": "string",
                                 "ref": false,
-                                "description": "Permission affected or related group name (depending on context)."
+                                "description": "Permission line affected."
+                            },
+                            {
+                                "name": "oldState",
+                                "type": "int32",
+                                "ref": false,
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "newState",
+                                "type": "int32",
+                                "ref": false,
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
                             }
                         ],
                         "retType": {
