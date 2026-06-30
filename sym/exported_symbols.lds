@@ -33,6 +33,7 @@ _GetPriorityGroup
 _HasPermissionGroup
 _HasPermissionGroupExtended
 _AddPermissionGroup
+_SetPermissionGroup
 _RemovePermissionGroup
 _DumpPermissionsGroup
 _GetCookieGroup

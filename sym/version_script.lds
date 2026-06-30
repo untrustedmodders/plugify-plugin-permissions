@@ -32,6 +32,7 @@
         HasPermissionGroup;
         HasPermissionGroupExtended;
         AddPermissionGroup;
+        SetPermissionGroup;
         RemovePermissionGroup;
         DumpPermissionsGroup;
         GetCookieGroup;
