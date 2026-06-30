@@ -7751,7 +7751,7 @@
                 }
             },
             "group": "GroupListeners",
-            "description": "Register listener on group cookie sets"
+            "description": "Register listener on group option sets"
         },
         {
             "name": "OnGroupSetOption_Unregister",
@@ -7883,7 +7883,7 @@
                 }
             },
             "group": "GroupListeners",
-            "description": "Unregister listener on group cookie sets"
+            "description": "Unregister listener on group option sets"
         }
     ]
 }
