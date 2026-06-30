@@ -4981,7 +4981,7 @@
                             "name": "GroupNotDefined",
                             "value": 17
                         }
-                    ],
+                    ]
                 }
             },
             "group": "UserListeners",
