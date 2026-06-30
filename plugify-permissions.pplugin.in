@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify/refs/heads/main/schemas/plugin.schema.json",
 	"version": "${PLUGIN_VERSION}",
 	"name": "permissions",
 	"description": "Minimalistic permissions core",
@@ -1949,6 +1950,11 @@
                     "type": "int32",
                     "ref": false,
                     "description": "User immunity (set -1 to return highest group priority)."
+                },
+                {
+                    "name": "offline",
+                    "type": "bool",
+                    "ref": false
                 },
                 {
                     "name": "groupsList",
@@ -4679,7 +4685,21 @@
                                 "ref": false,
                                 "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4688,7 +4708,21 @@
                                 "ref": false,
                                 "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4788,24 +4822,6 @@
                             "value": 17
                         }
                     ],
-                    "values": [
-                        {
-                            "name": "Add",
-                            "value": 0
-                        },
-                        {
-                            "name": "Remove",
-                            "value": 1
-                        },
-                        {
-                            "name": "Replace",
-                            "value": 2
-                        },
-                        {
-                            "name": "ReplaceToWC",
-                            "value": 3
-                        }
-                    ]
                 }
             },
             "group": "UserListeners",
@@ -4876,7 +4892,21 @@
                                 "ref": false,
                                 "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4885,7 +4915,21 @@
                                 "ref": false,
                                 "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -5346,7 +5390,17 @@
                                 "ref": false,
                                 "description": "The state of the permission before expiration (Allow or Disallow).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        }
+                                    ]
                                 }
                             }
                         ],
@@ -5471,7 +5525,17 @@
                                 "ref": false,
                                 "description": "The state of the permission before expiration (Allow or Disallow).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        }
+                                    ]
                                 }
                             }
                         ],
