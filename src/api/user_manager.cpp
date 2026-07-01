@@ -133,6 +133,10 @@ extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, cons
     if (v == users.end())
         return Status::TargetUserNotFound;
 
+    if (perm.empty()) {
+        return Status::Allow;
+    }
+
     bool w_wildcard;
     const Status status = v->second.hasPermission(perm, permSource, exact, w_wildcard, timestamp);
     if (exact && isWildcard(perm) != w_wildcard)
@@ -607,14 +611,14 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
     bool found = val != v->second.cookies.end();
     if (!found)
     {
-        // Check in groups cookies
+        // Check in groups options
         for (TempGroup& g : v->second._groups)
         {
             Group* parent = g.group;
             while (parent)
             {
-                val = parent->cookies.find(name);
-                found = val != parent->cookies.end();
+                val = parent->options.find(name);
+                found = val != parent->options.end();
                 if (found)
                     break;
                 parent = parent->_parent;
@@ -761,16 +765,14 @@ extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
 }
 
 /**
- * @brief Get list of loaded players
+ * @brief Returns a list of IDs for all players registered in the core.
  *
- * @return Array of player IDs
+ * @return A vector containing all registered player IDs.
  */
 extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
 {
-    std::shared_lock lock(users_mtx);
-
-	auto keys_view = std::views::keys(users);
-	return {keys_view.begin(), keys_view.end()};
+    auto keys_view = std::views::keys(users);
+    return {keys_view.begin(), keys_view.end()};
 }
 
 /**

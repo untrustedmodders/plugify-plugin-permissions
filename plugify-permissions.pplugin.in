@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify/refs/heads/main/schemas/plugin.schema.json",
 	"version": "${PLUGIN_VERSION}",
 	"name": "permissions",
 	"description": "Minimalistic permissions core",
@@ -51,6 +52,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -198,6 +203,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -296,6 +305,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -406,6 +419,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -504,6 +521,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -608,6 +629,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -706,6 +731,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -808,6 +837,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -930,6 +963,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -1034,6 +1071,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -1157,6 +1198,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -1276,6 +1321,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -1389,6 +1438,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -1487,6 +1540,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -1595,6 +1652,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -1717,6 +1778,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -1824,6 +1889,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -1918,6 +1987,17 @@
             "description": "Check if a user exists."
         },
         {
+            "name": "DumpUsersList",
+            "funcName": "DumpUsersList",
+            "paramTypes": [],
+            "retType": {
+                "type": "uint64[]",
+                "description": "A vector containing all registered player IDs."
+            },
+            "group": "UserManager",
+            "description": "Returns a list of IDs for all players registered in the core."
+        },
+        {
             "name": "CreateUser",
             "funcName": "CreateUser",
             "paramTypes": [
@@ -1938,6 +2018,11 @@
                     "type": "int32",
                     "ref": false,
                     "description": "User immunity (set -1 to return highest group priority)."
+                },
+                {
+                    "name": "offline",
+                    "type": "bool",
+                    "ref": false
                 },
                 {
                     "name": "groupsList",
@@ -1970,6 +2055,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -2159,6 +2248,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -2274,6 +2367,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -2381,6 +2478,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -2479,6 +2580,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -2583,6 +2688,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -2682,6 +2791,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -2792,6 +2905,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -2897,6 +3014,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -3013,6 +3134,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -3114,6 +3239,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -3173,8 +3302,8 @@
         },
 
         {
-            "name": "GetCookieGroup",
-            "funcName": "GetCookieGroup",
+            "name": "GetOptionGroup",
+            "funcName": "GetOptionGroup",
             "paramTypes": [
                 {
                     "name": "groupName",
@@ -3183,21 +3312,21 @@
                     "description": "Group name"
                 },
                 {
-                    "name": "cookieName",
+                    "name": "optionName",
                     "type": "string",
                     "ref": false,
-                    "description": "Cookie name"
+                    "description": "Option name"
                 },
                 {
                     "name": "value",
                     "type": "any",
                     "ref": true,
-                    "description": "Cookie value"
+                    "description": "Option value"
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, CookieNotFound, GroupNotFound",
+                "description": "Success, OptionNotFound, GroupNotFound",
                 "enum": {
                     "name": "Status",
                     "values": [
@@ -3219,6 +3348,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -3277,11 +3410,11 @@
                 }
             },
             "group": "GroupManager",
-            "description": "Get a cookie value for a group."
+            "description": "Get a option value for a group."
         },
         {
-            "name": "SetCookieGroup",
-            "funcName": "SetCookieGroup",
+            "name": "SetOptionGroup",
+            "funcName": "SetOptionGroup",
             "paramTypes": [
                 {
                     "name": "pluginID",
@@ -3296,16 +3429,16 @@
                     "description": "Group name"
                 },
                 {
-                    "name": "cookieName",
+                    "name": "optionName",
                     "type": "string",
                     "ref": false,
-                    "description": "Cookie name"
+                    "description": "Option name"
                 },
                 {
                     "name": "value",
                     "type": "any",
                     "ref": false,
-                    "description": "Cookie value."
+                    "description": "Option value."
                 }
             ],
             "retType": {
@@ -3332,6 +3465,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -3390,11 +3527,11 @@
                 }
             },
             "group": "GroupManager",
-            "description": "Set a cookie value for a group."
+            "description": "Set a option value for a group."
         },
         {
-            "name": "GetAllCookiesGroup",
-            "funcName": "GetAllCookiesGroup",
+            "name": "GetAllOptionsGroup",
+            "funcName": "GetAllOptionsGroup",
             "paramTypes": [
                 {
                     "name": "groupName",
@@ -3403,16 +3540,16 @@
                     "description": "Group name"
                 },
                 {
-                    "name": "cookieNames",
+                    "name": "optionNames",
                     "type": "string[]",
                     "ref": true,
-                    "description": "Array of cookie names"
+                    "description": "Array of option names"
                 },
                 {
                     "name": "values",
                     "type": "any[]",
                     "ref": true,
-                    "description": "Array of cookie values"
+                    "description": "Array of option values"
                 }
             ],
             "retType": {
@@ -3439,6 +3576,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -3497,7 +3638,7 @@
                 }
             },
             "group": "GroupManager",
-            "description": "Get all cookies from group."
+            "description": "Get all options from group."
         },
 
         {
@@ -3577,6 +3718,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -3695,6 +3840,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -3879,6 +4028,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -4057,6 +4210,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -4182,6 +4339,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -4313,6 +4474,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -4429,6 +4594,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -4542,6 +4711,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -4668,7 +4841,21 @@
                                 "ref": false,
                                 "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4677,7 +4864,21 @@
                                 "ref": false,
                                 "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4722,6 +4923,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -4775,24 +4980,6 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
-                        }
-                    ],
-                    "values": [
-                        {
-                            "name": "Add",
-                            "value": 0
-                        },
-                        {
-                            "name": "Remove",
-                            "value": 1
-                        },
-                        {
-                            "name": "Replace",
-                            "value": 2
-                        },
-                        {
-                            "name": "ReplaceToWC",
-                            "value": 3
                         }
                     ]
                 }
@@ -4865,7 +5052,21 @@
                                 "ref": false,
                                 "description": "State before the change (Allow, Disallow, or PermNotFound).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4874,7 +5075,21 @@
                                 "ref": false,
                                 "description": "Current state after the change (the newly assigned state).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
                                 }
                             },
                             {
@@ -4919,6 +5134,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -5084,6 +5303,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -5245,6 +5468,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -5335,7 +5562,17 @@
                                 "ref": false,
                                 "description": "The state of the permission before expiration (Allow or Disallow).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        }
+                                    ]
                                 }
                             }
                         ],
@@ -5368,6 +5605,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -5460,7 +5701,17 @@
                                 "ref": false,
                                 "description": "The state of the permission before expiration (Allow or Disallow).",
                                 "enum": {
-                                    "name": "Status"
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        }
+                                    ]
                                 }
                             }
                         ],
@@ -5493,6 +5744,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -5612,6 +5867,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -5725,6 +5984,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -5857,6 +6120,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -5985,6 +6252,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -6098,6 +6369,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -6205,6 +6480,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -6343,6 +6622,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -6477,6 +6760,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -6593,6 +6880,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -6706,6 +6997,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -6832,6 +7127,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -6954,6 +7253,10 @@
                             "value": 4
                         },
                         {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
                             "name": "GroupNotFound",
                             "value": 5
                         },
@@ -7060,16 +7363,62 @@
                                 }
                             },
                             {
-                                "name": "name",
+                                "name": "groupName",
                                 "type": "string",
                                 "ref": false,
                                 "description": "Name of the group."
                             },
                             {
-                                "name": "groupName",
+                                "name": "perm",
                                 "type": "string",
                                 "ref": false,
-                                "description": "Permission affected or related group name (depending on context)."
+                                "description": "Permission line affected."
+                            },
+                            {
+                                "name": "oldState",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "newState",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Current state after the change (the newly assigned state).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
                             }
                         ],
                         "retType": {
@@ -7101,6 +7450,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -7209,16 +7562,62 @@
                                 }
                             },
                             {
-                                "name": "name",
+                                "name": "groupName",
                                 "type": "string",
                                 "ref": false,
                                 "description": "Name of the group."
                             },
                             {
-                                "name": "groupName",
+                                "name": "perm",
                                 "type": "string",
                                 "ref": false,
-                                "description": "Permission affected or related group name (depending on context)."
+                                "description": "Permission line affected."
+                            },
+                            {
+                                "name": "oldState",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "newState",
+                                "type": "int32",
+                                "ref": false,
+                                "description": "Current state after the change (the newly assigned state).",
+                                "enum": {
+                                    "name": "Status",
+                                    "values": [
+                                        {
+                                            "name": "Allow",
+                                            "value": 1
+                                        },
+                                        {
+                                            "name": "Disallow",
+                                            "value": 2
+                                        },
+                                        {
+                                            "name": "PermNotFound",
+                                            "value": 3
+                                        }
+                                    ]
+                                }
                             }
                         ],
                         "retType": {
@@ -7250,6 +7649,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -7311,8 +7714,8 @@
             "description": "Unregister listener on group permissions add/remove"
         },
         {
-            "name": "OnGroupSetCookie_Register",
-            "funcName": "OnGroupSetCookie_Register",
+            "name": "OnGroupSetOption_Register",
+            "funcName": "OnGroupSetOption_Register",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -7320,9 +7723,9 @@
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "SetCookieGroupCallback",
-                        "funcName": "SetCookieGroupCallback",
-                        "description": "Callback invoked when a cookie value is set for a group.",
+                        "name": "SetOptionGroupCallback",
+                        "funcName": "SetOptionGroupCallback",
+                        "description": "Callback invoked when a option value is set for a group.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -7337,16 +7740,16 @@
                                 "description": "Name of the group."
                             },
                             {
-                                "name": "cookieName",
+                                "name": "optionName",
                                 "type": "string",
                                 "ref": false,
-                                "description": "Name of the cookie being set."
+                                "description": "Name of the option being set."
                             },
                             {
                                 "name": "value",
                                 "type": "any",
                                 "ref": false,
-                                "description": "Value of the cookie."
+                                "description": "Value of the option."
                             }
                         ],
                         "retType": {
@@ -7378,6 +7781,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -7436,11 +7843,11 @@
                 }
             },
             "group": "GroupListeners",
-            "description": "Register listener on group cookie sets"
+            "description": "Register listener on group option sets"
         },
         {
-            "name": "OnGroupSetCookie_Unregister",
-            "funcName": "OnGroupSetCookie_Unregister",
+            "name": "OnGroupSetOption_Unregister",
+            "funcName": "OnGroupSetOption_Unregister",
             "paramTypes": [
                 {
                     "name": "callback",
@@ -7448,9 +7855,9 @@
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "SetCookieGroupCallback",
-                        "funcName": "SetCookieGroupCallback",
-                        "description": "Callback invoked when a cookie value is set for a group.",
+                        "name": "SetOptionGroupCallback",
+                        "funcName": "SetOptionGroupCallback",
+                        "description": "Callback invoked when a option value is set for a group.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -7465,16 +7872,16 @@
                                 "description": "Name of the group."
                             },
                             {
-                                "name": "cookieName",
+                                "name": "optionName",
                                 "type": "string",
                                 "ref": false,
-                                "description": "Name of the cookie being set."
+                                "description": "Name of the option being set."
                             },
                             {
                                 "name": "value",
                                 "type": "any",
                                 "ref": false,
-                                "description": "Value of the cookie."
+                                "description": "Value of the option."
                             }
                         ],
                         "retType": {
@@ -7506,6 +7913,10 @@
                         },
                         {
                             "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
                             "value": 4
                         },
                         {
@@ -7564,7 +7975,7 @@
                 }
             },
             "group": "GroupListeners",
-            "description": "Unregister listener on group cookie sets"
+            "description": "Unregister listener on group option sets"
         }
     ]
 }

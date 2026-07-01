@@ -20,6 +20,7 @@ _GetCookie
 _SetCookie
 _GetAllCookies
 _UserExists
+_DumpUsersList
 _CreateUser
 _LoadUser
 _LoadedUser
@@ -32,6 +33,7 @@ _GetPriorityGroup
 _HasPermissionGroup
 _HasPermissionGroupExtended
 _AddPermissionGroup
+_SetPermissionGroup
 _RemovePermissionGroup
 _DumpPermissionsGroup
 _GetCookieGroup

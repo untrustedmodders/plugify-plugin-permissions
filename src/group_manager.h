@@ -28,28 +28,28 @@ using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& ch
                                    const plg::string& parentName);
 
 /**
- * @brief Callback invoked when a cookie value is set for a group.
+ * @brief Callback invoked when a option value is set for a group.
  *
  * @param pluginID		Identifier of the plugin that initiated the call.
  * @param groupName		Name of the group.
- * @param cookieName	Name of the cookie being set.
- * @param value			Value of the cookie.
+ * @param optionName	Name of the option being set.
+ * @param value			Value of the option.
  */
 using SetOptionGroupCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
-                                        const plg::string& cookieName, const plg::any& value);
+                                        const plg::string& optionName, const plg::any& value);
 
 /**
  * @brief Callback invoked when a permission is added or removed from a group.
  *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param action	Action performed (Add or Remove).
- * @param name		Name of the group.
- * @param permName	Permission affected or related group name (depending on context).
+ * @param pluginID      Identifier of the plugin that initiated the call.
+ * @param action        Action performed (Add or Remove).
+ * @param groupName 	Name of the group.
+ * @param perm	        Permission line affected.
  * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
  * @param newState      Current state after the change (the newly assigned state).
  */
-using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& name,
-                                         const plg::string& permName, const Status oldState, const Status newState);
+using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
+                                         const plg::string& perm, const Status oldState, const Status newState);
 
 /**
  * @brief Callback invoked after a group is successfully created.

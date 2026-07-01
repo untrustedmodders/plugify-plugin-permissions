@@ -19,6 +19,7 @@
         SetCookie;
         GetAllCookies;
         UserExists;
+        DumpUsersList;
         CreateUser;
         LoadUser;
         LoadedUser;
@@ -31,6 +32,7 @@
         HasPermissionGroup;
         HasPermissionGroupExtended;
         AddPermissionGroup;
+        SetPermissionGroup;
         RemovePermissionGroup;
         DumpPermissionsGroup;
         GetCookieGroup;

@@ -21,6 +21,7 @@ enum class Status : int32_t
     Disallow = 2,
     PermNotFound = 3,
     CookieNotFound = 4,
+    OptionNotFound = CookieNotFound,
     GroupNotFound = 5,
     ChildGroupNotFound = 6,
     ParentGroupNotFound = 7,
