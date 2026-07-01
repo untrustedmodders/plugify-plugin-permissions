@@ -33,7 +33,8 @@ enum class Status : int32_t
     PermAlreadyGranted = 14,
     TemporalGroup = 15,
     PermanentGroup = 16,
-    GroupNotDefined = 17
+    GroupNotDefined = 17,
+	Error = 18
 };
 
 struct string_hash

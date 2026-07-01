@@ -120,6 +120,8 @@ extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups()
  */
 extern "C" PLUGIN_API Status HasPermissionGroupExtended(const plg::string& name, const plg::string& perm, const bool exact)
 {
+	if (perm.empty())
+		return Status::Error;
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::shared_lock lock(groups_mtx);
     const auto it = groups.find(hash);
@@ -204,6 +206,8 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
 extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const plg::string& name,
                                                 const plg::string& perm, const bool dontBroadcast)
 {
+	if (perm.empty())
+		return Status::Error;
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::unique_lock lock1(groups_mtx);
     const auto it = groups.find(hash);
@@ -242,8 +246,10 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 		if (replaceToWC)
 			act = Action::ReplaceToWC;
 		const plg::string prm = denied ? perm.substr(1) : perm;
-		std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-		it->second->_nodes.addPerm(perm);
+		{
+			std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+			it->second->_nodes.addPerm(perm);
+		}
 		{
 			std::shared_lock lock3(group_permission_callbacks._lock);
 			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
@@ -256,6 +262,8 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const plg::string& name,
 												const plg::string& perm, const bool dontBroadcast)
 {
+	if (perm.empty())
+		return Status::Error;
 	const uint64_t hash = XXH3_64bits(name.data(), name.size());
 	std::unique_lock lock1(groups_mtx);
 	const auto it = groups.find(hash);
@@ -291,8 +299,10 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 		if (replaceToWC)
 			act = Action::ReplaceToWC;
 		const plg::string prm = denied ? perm.substr(1) : perm;
-		std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-		it->second->_nodes.addPerm(perm);
+		{
+			std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+			it->second->_nodes.addPerm(perm);
+		}
 		{
 			std::shared_lock lock3(group_permission_callbacks._lock);
 			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
@@ -315,6 +325,8 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const plg::string& name,
                                                    const plg::string& perm, const bool recursiveDeletion)
 {
+	if (perm.empty())
+		return Status::Error;
     const uint64_t hash = XXH3_64bits(name.data(), name.size());
     std::unique_lock lock1(groups_mtx);
     const auto it = groups.find(hash);
@@ -328,11 +340,12 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 
     plg::vector<plg::string> deleted_perms;
 
-    std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-
-	const bool ret = it->second->_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
-	if (!ret)
-		return Status::PermNotFound;
+	{
+		std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
+    	const bool ret = it->second->_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+    	if (!ret)
+    		return Status::PermNotFound;
+	}
     {
         std::shared_lock lock3(group_permission_callbacks._lock);
         for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
@@ -453,7 +466,9 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
     Group* parentGroup = nullptr;
     if (!parent.empty())
     {
-        parentGroup = GetGroup(parent);
+    	const uint64_t p_hash = XXH3_64bits(name.data(), name.size());
+    	const auto it = groups.find(hash);
+        parentGroup = it == groups.end() ? nullptr : it->second;
         if (!parentGroup) return Status::ParentGroupNotFound;
     }
 

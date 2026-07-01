@@ -124,6 +124,8 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
 extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact,
                                                    PermSource& permSource, time_t& timestamp)
 {
+	if (perm.empty())
+		return Status::Error;
     timestamp = -1;
     permSource = PermSource::NotFound;
     std::shared_lock lock(users_mtx);
@@ -278,6 +280,8 @@ extern "C" PLUGIN_API Status SetImmunity(const uint64_t targetID, const int immu
 extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
+	if (perm.empty())
+		return Status::Error;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
@@ -365,6 +369,8 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
 extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
+	if (perm.empty())
+		return Status::Error;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
@@ -449,6 +455,8 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                               const bool recursiveDeletion)
 {
+	if (perm.empty())
+		return Status::Error;
     PermSource perm_type;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
@@ -493,6 +501,8 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
 extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName,
                                       const time_t timestamp, const bool dontBroadcast)
 {
+	if (groupName.empty())
+		return Status::Error;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
@@ -551,6 +561,8 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
  */
 extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName)
 {
+	if (groupName.empty())
+		return Status::Error;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
@@ -584,6 +596,8 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
  */
 extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::string& name, plg::any& value)
 {
+	if (name.empty())
+		return Status::Error;
     std::shared_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
@@ -625,6 +639,8 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
 extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie, const bool dontBroadcast)
 {
+	if (name.empty())
+		return Status::Error;
     std::unique_lock lock(users_mtx);
     const auto v = users.find(targetID);
     if (v == users.end())
