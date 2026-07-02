@@ -8,15 +8,49 @@
 #include <plugin_export.h>
 #include <set>
 
-extern phmap::flat_hash_map<uint64_t, User> users;
+struct UserManager {
+private:
+	phmap::flat_hash_map<uint64_t, std::shared_ptr<User>> _users;
+	std::shared_mutex _lock;
+public:
+	std::shared_ptr<User> Get(const uint64_t targetID) {
+		std::shared_lock lock(_lock);
 
-inline void GroupManager_Callback(const Group* group)
-{
-    // Delete group from all users
-    std::unique_lock lock(users_mtx);
-    for (auto& value : users | std::views::values)
-        value.delGroup(group);
-}
+		const auto it = _users.find(targetID);
+		return it == _users.end() ? nullptr : it->second;
+	}
+
+	bool Exists(const uint64_t targetID) {
+		std::shared_lock lock(_lock);
+
+		return _users.contains(targetID);
+	}
+
+	bool Add(const uint64_t targetID, const int immunity, const bool offline, const plg::vector<plg::string>& groupsList) {
+		std::unique_lock lock(_lock);
+
+		if (_users.contains(targetID))
+			return false;
+
+		_users.emplace(targetID, std::make_shared<User>(immunity, groupsList, targetID, offline));
+		return true;
+	}
+
+	bool Delete(const uint64_t targetID) {
+		std::unique_lock lock(_lock);
+
+		return _users.erase(targetID) > 0;
+	}
+
+	plg::vector<uint64_t> DumpAllUsers()
+	{
+		std::shared_lock lock(_lock);
+		auto keys_view = std::views::keys(_users);
+		return {keys_view.begin(), keys_view.end()};
+	}
+};
+
+extern UserManager g_UserManager;
 
 enum class PlayerState : uint32_t {
     NotFound = 0,

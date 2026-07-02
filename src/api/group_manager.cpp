@@ -1,5 +1,8 @@
 #include "group_manager.h"
-phmap::flat_hash_map<uint64_t, Group*> groups;
+
+GroupManager g_GroupManager;
+
+// phmap::flat_hash_map<uint64_t, Group*> groups;
 
 std::shared_mutex groups_mtx;
 
@@ -30,20 +33,17 @@ PLUGIFY_WARN_IGNORE (4190)
 extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string& childName,
                                        const plg::string& parentName)
 {
-    const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
-    const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
-    std::unique_lock lock(groups_mtx);
-    const auto it1 = groups.find(hash1);
-    const auto it2 = groups.find(hash2);
+    Group* it1 = g_GroupManager.Get(childName);
+    Group* it2 = g_GroupManager.Get(parentName);
 
 	const bool empty_group = childName.empty();
 
-    if (it1 == groups.end() && !empty_group)
+    if (!it1 && !empty_group)
     	return Status::ChildGroupNotFound;
-    if (it2 == groups.end())
+    if (!it2)
         return Status::ParentGroupNotFound;
 
-    it1->second->_parent = empty_group ? nullptr : it2->second;
+    it1->_parent.store(empty_group ? nullptr : it2);
     {
         std::shared_lock lock2(set_parent_callbacks._lock);
         for (const SetParentCallback cb : set_parent_callbacks._callbacks)
@@ -61,15 +61,14 @@ extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string
  */
 extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string& parentName)
 {
-    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-    std::shared_lock lock(groups_mtx);
-    const auto it = groups.find(hash);
+    const Group* it = g_GroupManager.Get(groupName);
 
-    if (it == groups.end())
+    if (!it)
         return Status::ChildGroupNotFound;
-    if (!it->second->_parent)
+	const Group* g = it->_parent.load();
+    if (!g)
         return Status::ParentGroupNotFound;
-    parentName = it->second->_parent->_name;
+    parentName = g->_name;
     return Status::Success;
 }
 
@@ -82,13 +81,9 @@ extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string
  */
 extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::vector<plg::string>& perms)
 {
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::shared_lock lock(groups_mtx);
-    const auto v = groups.find(hash);
-    if (v == groups.end())
-        return Status::ChildGroupNotFound;
+	Group* it = g_GroupManager.Get(name);
 
-    perms = Node::dumpNode(v->second->_nodes);
+    perms = it->dumpPerms();
 
     return Status::Success;
 }
@@ -100,14 +95,7 @@ extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::
  */
 extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups()
 {
-    std::shared_lock lock(groups_mtx);
-
-    plg::vector<plg::string> lgroups;
-    lgroups.reserve(groups.size());
-    for (const auto& [kv, vv] : groups)
-        lgroups.push_back(vv->_name);
-
-    return lgroups;
+    return g_GroupManager.DumpAllGroups();
 }
 
 /**
@@ -120,16 +108,15 @@ extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups()
  */
 extern "C" PLUGIN_API Status HasPermissionGroupExtended(const plg::string& name, const plg::string& perm, const bool exact)
 {
+	Group* it = g_GroupManager.Get(name);
+	if (!it)
+		return Status::GroupNotFound;
+
 	if (perm.empty())
-		return Status::Error;
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::shared_lock lock(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end())
-        return Status::GroupNotFound;
+		return Status::Allow;
 
     bool w_wildcard;
-    Status status = it->second->hasPermission(perm, exact, w_wildcard);
+    Status status = it->hasPermission(perm, exact, w_wildcard);
     if (exact && isWildcard(perm) != w_wildcard)
         return Status::PermNotFound;
     return status;
@@ -156,23 +143,15 @@ extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const p
  */
 extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const plg::string& parentName)
 {
-    const uint64_t hash1 = XXH3_64bits(childName.data(), childName.size());
-    const uint64_t hash2 = XXH3_64bits(parentName.data(), parentName.size());
-    std::shared_lock lock(groups_mtx);
-    const auto it1 = groups.find(hash1);
-    const auto it2 = groups.find(hash2);
-    if (it1 == groups.end())
+	Group* it1 = g_GroupManager.Get(childName);
+	Group* it2 = g_GroupManager.Get(parentName);
+    if (!it1)
         return Status::ChildGroupNotFound;
-    if (it2 == groups.end())
+    if (!it2)
         return Status::ParentGroupNotFound;
 
-    const Group* g1 = it1->second;
-    const Group* g2 = it2->second;
-    while (g1)
-    {
-        if (g1->_parent == g2) return Status::Allow;
-        g1 = g1->_parent;
-    }
+    if (it1->hasParent(it2))
+    	return Status::Allow;
     return Status::Disallow;
 }
 
@@ -185,12 +164,10 @@ extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const 
  */
 extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int& priority)
 {
-    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-    std::shared_lock lock(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end())
-        return Status::GroupNotFound;
-    priority = it->second->_priority;
+	Group* it = g_GroupManager.Get(groupName);
+	if (!it)
+		return Status::GroupNotFound;
+    priority = it->_priority;
     return Status::Success;
 }
 
@@ -208,15 +185,13 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 {
 	if (perm.empty())
 		return Status::Error;
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::unique_lock lock1(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end())
-        return Status::GroupNotFound;
+	Group* it = g_GroupManager.Get(name);
+	if (!it)
+		return Status::GroupNotFound;
 
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
-    const Status oldState = it->second->hasPermission(perm, true, w_wildcard);
+    const Status oldState = it->hasPermission(perm, true, w_wildcard);
     const bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
 	bool replaceToWC = false;
@@ -240,17 +215,15 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
     	act = Action::Replace;
     }
 
+	it->addPerm(perm);
+
 	plg::vector<plg::string> deleted_perms;
 
 	if (!dontBroadcast) {
 		if (replaceToWC)
 			act = Action::ReplaceToWC;
-		const plg::string prm = denied ? perm.substr(1) : perm;
 		{
-			std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-			it->second->_nodes.addPerm(perm);
-		}
-		{
+			const plg::string prm = denied ? perm.substr(1) : perm;
 			std::shared_lock lock3(group_permission_callbacks._lock);
 			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
 				cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
@@ -264,15 +237,13 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 {
 	if (perm.empty())
 		return Status::Error;
-	const uint64_t hash = XXH3_64bits(name.data(), name.size());
-	std::unique_lock lock1(groups_mtx);
-	const auto it = groups.find(hash);
-	if (it == groups.end())
+	Group* it = g_GroupManager.Get(name);
+	if (!it)
 		return Status::GroupNotFound;
 
 	const bool denied = perm.starts_with('-');
 	bool w_wildcard;
-	const Status oldState = it->second->hasPermission(perm, true, w_wildcard);
+	const Status oldState = it->hasPermission(perm, true, w_wildcard);
 	bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
 	bool replaceToWC = false;
@@ -295,14 +266,12 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 	if (!diff)
 		return Status::PermAlreadyGranted;
 
+	it->addPerm(perm);
+
 	if (!dontBroadcast) {
 		if (replaceToWC)
 			act = Action::ReplaceToWC;
 		const plg::string prm = denied ? perm.substr(1) : perm;
-		{
-			std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-			it->second->_nodes.addPerm(perm);
-		}
 		{
 			std::shared_lock lock3(group_permission_callbacks._lock);
 			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
@@ -327,25 +296,20 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 {
 	if (perm.empty())
 		return Status::Error;
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::unique_lock lock1(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end())
-        return Status::GroupNotFound;
+	Group* it = g_GroupManager.Get(name);
+	if (!it)
+		return Status::GroupNotFound;
 
 	bool w_wildcard;
-	const auto oldState = it->second->hasPermission(perm, true, w_wildcard);
+	const auto oldState = it->hasPermission(perm, true, w_wildcard);
 	if (oldState == Status::PermNotFound)
 		return Status::PermNotFound;
 
     plg::vector<plg::string> deleted_perms;
+	const bool ret = it->delPerm(perm, recursiveDeletion, deleted_perms);
+	if (!ret)
+		return Status::PermNotFound;
 
-	{
-		std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-    	const bool ret = it->second->_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
-    	if (!ret)
-    		return Status::PermNotFound;
-	}
     {
         std::shared_lock lock3(group_permission_callbacks._lock);
         for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
@@ -366,25 +330,11 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const plg::string& optionName,
                                             plg::any& value)
 {
-    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-    std::shared_lock lock(groups_mtx);
-    const auto v = groups.find(hash);
-    if (v == groups.end())
-        return Status::GroupNotFound;
+	Group* it = g_GroupManager.Get(groupName);
+	if (!it)
+		return Status::GroupNotFound;
 
-    Group* g = v->second;
-    while (g != nullptr)
-    {
-        const auto val = g->options.find(optionName);
-        if (val == g->options.end())
-        {
-            g = g->_parent;
-            continue;
-        }
-        value = val->second;
-        return Status::Success;
-    }
-    return Status::OptionNotFound;
+    return it->getCookie(optionName, value) ? Status::Success : Status::OptionNotFound;
 }
 
 /**
@@ -399,19 +349,17 @@ extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const 
 extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::string& groupName,
                                             const plg::string& optionName, const plg::any& value)
 {
-    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-    std::unique_lock lock(groups_mtx);
-    const auto v = groups.find(hash);
-    if (v == groups.end())
-        return Status::GroupNotFound;
+	Group* it = g_GroupManager.Get(groupName);
+	if (!it)
+		return Status::GroupNotFound;
 
-    std::unique_lock lock2(users_mtx); // Need to eliminate race in user->group permissions check
-    {
-        std::shared_lock lock3(set_option_group_callbacks._lock);
-        for (const SetOptionGroupCallback cb : set_option_group_callbacks._callbacks)
-            cb(pluginID, groupName, optionName, value);
-    }
-    v->second->options[optionName] = value;
+	{
+		std::shared_lock lock3(set_option_group_callbacks._lock);
+		for (const SetOptionGroupCallback cb : set_option_group_callbacks._callbacks)
+			cb(pluginID, groupName, optionName, value);
+	}
+
+	it->setCookie(optionName, value);
     return Status::Success;
 }
 
@@ -427,20 +375,10 @@ extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::s
 extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, plg::vector<plg::string>& optionNames,
                                                 plg::vector<plg::any>& values)
 {
-    const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
-    std::shared_lock lock(groups_mtx);
-    const auto v = groups.find(hash);
-    if (v == groups.end())
-        return Status::GroupNotFound;
-
-    optionNames.clear();
-    values.clear();
-
-    for (const auto& [kv, vv] : v->second->options)
-    {
-        optionNames.push_back(kv);
-        values.push_back(vv);
-    }
+	Group* it = g_GroupManager.Get(groupName);
+	if (!it)
+		return Status::GroupNotFound;
+	it->dumpCookies(optionNames, values);
 
     return Status::Success;
 }
@@ -459,21 +397,17 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
                                          const plg::vector<plg::string>& perms, const int priority,
                                          const plg::string& parent)
 {
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::unique_lock lock(groups_mtx);
-    if (groups.contains(hash))
-        return Status::GroupAlreadyExist;
-    Group* parentGroup = nullptr;
-    if (!parent.empty())
-    {
-    	const uint64_t p_hash = XXH3_64bits(name.data(), name.size());
-    	const auto it = groups.find(hash);
-        parentGroup = it == groups.end() ? nullptr : it->second;
-        if (!parentGroup) return Status::ParentGroupNotFound;
-    }
+	std::scoped_lock lock(global_mutex);
+	if (g_GroupManager.Exists(name))
+		return Status::GroupAlreadyExist;
+	Group* parentGroup = nullptr;
+	if (!parent.empty()) {
+		parentGroup = g_GroupManager.Get(parent);
+		if (!parentGroup)
+			return Status::ParentGroupNotFound;
+	}
 
-    auto* group = new Group(perms, name, priority, parentGroup);
-    groups.try_emplace(hash, group);
+	g_GroupManager.Add(perms, name, priority, parentGroup);
     {
         std::shared_lock lock2(group_create_callbacks._lock);
         for (const GroupCreateCallback cb : group_create_callbacks._callbacks)
@@ -491,37 +425,23 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
  */
 extern "C" PLUGIN_API Status DeleteGroup(const int64_t pluginID, const plg::string& name)
 {
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::unique_lock lock(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end())
-        return Status::GroupNotFound;
+	std::scoped_lock lock(global_mutex);
+	const Group* g = g_GroupManager.Get(name);
+	if (!g)
+		return Status::GroupNotFound;
 
     {
         std::shared_lock lock2(group_delete_callbacks._lock);
         for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks)
             cb(pluginID, name);
     }
-    const Group* req_group = it->second;
-    groups.erase(it);
-
-    // Cleanup parent references in other groups
-    for (Group* value : groups | std::views::values)
-    {
-        Group* cur_group = value;
-        while (cur_group)
-        {
-            if (cur_group->_parent == req_group)
-            {
-                cur_group->_parent = nullptr;
-                break;
-            }
-            cur_group = cur_group->_parent;
-        }
-    }
-
-    GroupManager_Callback(req_group); // Delete group in users
-    delete req_group;
+    g_GroupManager.Delete(name);
+	plg::vector<uint64_t> users = g_UserManager.DumpAllUsers();
+	time_t old_timestamp;
+	for (uint64_t user : users) {
+		const std::shared_ptr<User> s_user = g_UserManager.Get(user);
+		s_user->delGroup(g, old_timestamp);
+	}
     return Status::Success;
 }
 
@@ -533,10 +453,7 @@ extern "C" PLUGIN_API Status DeleteGroup(const int64_t pluginID, const plg::stri
  */
 extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
 {
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::unique_lock lock(groups_mtx);
-    const auto v = groups.find(hash);
-    return v != groups.end();
+    return g_GroupManager.Exists(name);
 }
 
 /**

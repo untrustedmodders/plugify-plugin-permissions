@@ -1,8 +1,6 @@
 #include "user_manager.h"
 
-phmap::flat_hash_map<uint64_t, User> users;
-
-std::shared_mutex users_mtx;
+UserManager g_UserManager;
 
 UserPermissionCallbacks user_permission_callbacks;
 
@@ -26,11 +24,10 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
     const uint64_t targetID = plg::get<uint64_t>(userData[2]);
     plg::vector<plg::string> deleted_perms;
     {
-        std::unique_lock lock(users_mtx);
-        const auto it = users.find(targetID);
-        if (it == users.end())
-            return;
-        it->second.temp_nodes.deletePerm(*perm, false, deleted_perms);
+    	std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+    	if (s_user == nullptr)
+    		return;
+        s_user->delTempPerm(*perm, false, deleted_perms);
     }
 
     std::shared_lock lock(perm_expiration_callbacks._lock);
@@ -42,16 +39,16 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
 void g_GroupExpirationCallback(uint32_t /*timer*/, const plg::vector<plg::any>& userData)
 {
     const plg::string* group_name = &plg::get<plg::string>(userData[0]);
-    uint64_t targetID = plg::get<uint64_t>(userData[1]);
+	const uint64_t targetID = plg::get<uint64_t>(userData[1]);
     {
-        std::unique_lock lock(users_mtx);
-        const Group* g = GetGroup(*group_name);
+        const Group* g = g_GroupManager.Get(*group_name);
         if (g == nullptr)
             return;
-        const auto it = users.find(targetID);
-        if (it == users.end())
+        std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+        if (s_user == nullptr)
             return;
-        if (!it->second.delGroup(g))
+    	time_t old_timestamp;
+        if (!s_user->delGroup(g, old_timestamp))
             return;
     }
 
@@ -77,13 +74,11 @@ PLUGIFY_WARN_IGNORE (4190)
  */
 extern "C" PLUGIN_API Status DumpPermissions(const uint64_t targetID, plg::vector<plg::string>& perms)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    perms = Node::dumpNode(v->second.user_nodes);
-    perms.append_range(Node::dumpNode(v->second.temp_nodes));
+	perms = s_user->dumpPerms();
 
     return Status::Success;
 }
@@ -97,18 +92,14 @@ extern "C" PLUGIN_API Status DumpPermissions(const uint64_t targetID, plg::vecto
  */
 extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_t targetID)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v1 = users.find(actorID);
-    const auto v2 = users.find(targetID);
-    if (v1 == users.end())
-        return Status::ActorUserNotFound;
-    if (v2 == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> sa_user = g_UserManager.Get(actorID);
+	const std::shared_ptr<User> st_user = g_UserManager.Get(targetID);
+	if (sa_user == nullptr)
+		return Status::ActorUserNotFound;
+	if (st_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    const int i1 = v1->second.getImmunity();
-    const int i2 = v2->second.getImmunity();
-
-    return i1 >= i2 ? Status::Allow : Status::Disallow;
+    return sa_user->_immunity >= st_user->_immunity ? Status::Allow : Status::Disallow;
 }
 
 /**
@@ -124,21 +115,18 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
 extern "C" PLUGIN_API Status HasPermissionExtended(const uint64_t targetID, const plg::string& perm, const bool exact,
                                                    PermSource& permSource, time_t& timestamp)
 {
-	if (perm.empty())
-		return Status::Error;
     timestamp = -1;
     permSource = PermSource::NotFound;
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
 
-    if (perm.empty()) {
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
+
+    if (perm.empty())
         return Status::Allow;
-    }
 
     bool w_wildcard;
-    const Status status = v->second.hasPermission(perm, permSource, exact, w_wildcard, timestamp);
+    const Status status = s_user->hasPermission(perm, permSource, exact, w_wildcard, timestamp);
     if (exact && isWildcard(perm) != w_wildcard)
         return Status::PermNotFound;
     return status;
@@ -169,29 +157,16 @@ extern "C" PLUGIN_API Status HasPermission(const uint64_t targetID, const plg::s
 extern "C" PLUGIN_API Status HasGroupExtended(const uint64_t targetID, const plg::string& groupName, time_t& timestamp)
 {
     timestamp = -1;
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	bool parent;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    const Group* g = GetGroup(groupName);
+    const Group* g = g_GroupManager.Get(groupName);
     if (g == nullptr)
         return Status::GroupNotFound;
 
-    for (const auto& temp_group : v->second._groups)
-    {
-        const Group* parent = temp_group.group;
-        while (parent)
-        {
-            if (parent == g) {
-                timestamp = temp_group.timestamp;
-                return timestamp == 0 ? Status::PermanentGroup : Status::TemporalGroup;
-            }
-
-            parent = parent->_parent;
-        }
-    }
-    return Status::GroupNotDefined;
+    return s_user->hasGroup(g, timestamp, parent);
 }
 
 /**
@@ -216,23 +191,11 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string
  */
 extern "C" PLUGIN_API Status GetUserGroups(const uint64_t targetID, plg::vector<plg::string>& outGroups)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    outGroups.clear();
-    outGroups.reserve(v->second._groups.size());
-    for (const auto& g : v->second._groups)
-    {
-        plg::string s = g.group->_name;
-        if (g.timestamp != 0)
-        {
-            s += ' ';
-            s += plg::to_string(g.timestamp);
-        }
-        outGroups.push_back(std::move(s));
-    }
+    s_user->dumpGroups(outGroups);
 
     return Status::Success;
 }
@@ -246,11 +209,10 @@ extern "C" PLUGIN_API Status GetUserGroups(const uint64_t targetID, plg::vector<
  */
 extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
-    immunity = v->second.getImmunity();
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
+    immunity = s_user->getImmunity();
     return Status::Success;
 }
 
@@ -263,11 +225,10 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
  */
 extern "C" PLUGIN_API Status SetImmunity(const uint64_t targetID, const int immunity)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
-    v->second._immunity = immunity;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
+    s_user->_immunity = immunity;
     return Status::Success;
 }
 
@@ -286,16 +247,15 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
 {
 	if (perm.empty())
 		return Status::Error;
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
     PermSource perm_type;
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
+    const Status oldState = s_user->hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
     bool replaceToWC = false;
@@ -331,16 +291,12 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
 	plg::vector<plg::string> deleted_perms;
 
     if (timestamp != 0)
-    {
-        v->second.addTempPerm(perm, timestamp, targetID);
-    }
+        s_user->addPerm(perm, timestamp, targetID);
     else
     {
         if (perm_type == PermSource::UserTemp)
-        {
-            v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
-        }
-        v->second.user_nodes.addPerm(perm);
+            s_user->delTempPerm(perm, false, deleted_perms);
+        s_user->addPerm(perm, 0, 0);
     }
 
     if (!dontBroadcast)
@@ -348,9 +304,7 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
         if (replaceToWC) {
 	        act = Action::ReplaceToWC;
         	if (timestamp != old_timestamp && timestamp == 0)
-        	{
-        		v->second.temp_nodes.deletePerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
-        	}
+        		s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
         }
     	const plg::string prm = denied ? perm.substr(1) : perm;
         std::shared_lock lock2(user_permission_callbacks._lock);
@@ -375,16 +329,15 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 {
 	if (perm.empty())
 		return Status::Error;
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
     PermSource perm_type;
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const Status oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
+    const Status oldState = s_user->hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
     bool replaceToWC = false;
@@ -413,7 +366,7 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
                 return Status::PermAlreadyGranted;
 
             if (timestamp == 0)
-                v->second.temp_nodes.deletePerm(perm, false, deleted_perms);
+                s_user->delTempPerm(perm, false, deleted_perms);
 
             act = Action::Replace;
             break;
@@ -422,7 +375,7 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
                 return Status::PermAlreadyGranted;
 
             if (timestamp != 0)
-                v->second.user_nodes.deletePerm(perm, false, deleted_perms);
+                s_user->delTempPerm(perm, false, deleted_perms);
 
             act = Action::Replace;
             break;
@@ -430,10 +383,7 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
             break;
     }
 
-    if (timestamp != 0)
-        v->second.addTempPerm(perm, timestamp, targetID);
-    else
-        v->second.user_nodes.addPerm(perm);
+    s_user->addPerm(perm, timestamp, targetID);
 
     if (!dontBroadcast)
     {
@@ -462,23 +412,22 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
 	if (perm.empty())
 		return Status::Error;
     PermSource perm_type;
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
     bool w_wildcard;
     time_t old_timestamp = -1;
-    const auto oldState = v->second.hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
+    const auto oldState = s_user->hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
     plg::vector<plg::string> deleted_perms;
 	bool ret;
     if (perm_type == PermSource::User)
-        ret = v->second.user_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+        ret = s_user->delPerm(perm, recursiveDeletion, deleted_perms);
     else
-        ret = v->second.temp_nodes.deletePerm(perm, recursiveDeletion, deleted_perms);
+        ret = s_user->delTempPerm(perm, recursiveDeletion, deleted_perms);
 	if (!ret)
 		return Status::PermNotFound;
 
@@ -507,43 +456,35 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
 {
 	if (groupName.empty())
 		return Status::Error;
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    Group* req_group = GetGroup(groupName);
+	std::scoped_lock lock(global_mutex);
+
+    Group* req_group = g_GroupManager.Get(groupName);
     if (req_group == nullptr)
         return Status::GroupNotFound;
 
     time_t old_timestamp = -1;
     Action act = Action::Add;
 
-    for (const auto& temp_group : v->second._groups)
-    {
-        const Group* parent = temp_group.group;
-        if (parent == req_group)
-        {
-            // Reschedule
-            if (temp_group.timestamp != timestamp)
-            {
-                old_timestamp = temp_group.timestamp;
-                v->second.delGroup(parent);
-                act = Action::Replace;
-                break;
-            }
-            return Status::GroupAlreadyExist;
-        }
-        parent = parent->_parent;
-        while (parent)
-        {
-            if (parent == req_group)
-                return Status::GroupAlreadyExist;
-            parent = parent->_parent;
-        }
-    }
+	{
+		bool parent;
+		Status stats = s_user->hasGroup(req_group, old_timestamp, parent);
+		if (stats != Status::GroupNotDefined) {
+			if (parent)
+				return Status::GroupAlreadyExist;
+			if (old_timestamp != timestamp) {
+				s_user->delGroup(req_group, old_timestamp);
+				act = Action::Replace;
+			}
+			else
+				return Status::GroupAlreadyExist;
+		}
+	}
 
-    v->second.addGroup(req_group, timestamp, targetID);
+    s_user->addGroup(req_group, timestamp, targetID);
 
     if (!dontBroadcast)
     {
@@ -567,27 +508,24 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
 {
 	if (groupName.empty())
 		return Status::Error;
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    Group* g = GetGroup(groupName);
+    Group* g = g_GroupManager.Get(groupName);
     if (g == nullptr)
         return Status::ChildGroupNotFound;
 
-    for (auto it = v->second._groups.begin(); it != v->second._groups.end(); it++)
+	time_t timestamp;
+	if (!s_user->delGroup(g, timestamp))
+		return Status::ParentGroupNotFound;
+
     {
-        if (it->group == g)
-        {
-            std::shared_lock lock2(user_group_callbacks._lock);
-            for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-                cb(pluginID, Action::Remove, targetID, groupName, it->timestamp, 0);
-            v->second.delGroup(it->group);
-            return Status::Success;
-        }
+        std::shared_lock lock2(user_group_callbacks._lock);
+        for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+            cb(pluginID, Action::Remove, targetID, groupName, timestamp, 0);
+        return Status::Success;
     }
-    return Status::ParentGroupNotFound;
 }
 
 /**
@@ -602,32 +540,13 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
 {
 	if (name.empty())
 		return Status::Error;
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    auto val = v->second.cookies.find(name);
-    bool found = val != v->second.cookies.end();
-    if (!found)
-    {
-        // Check in groups options
-        for (TempGroup& g : v->second._groups)
-        {
-            Group* parent = g.group;
-            while (parent)
-            {
-                val = parent->options.find(name);
-                found = val != parent->options.end();
-                if (found)
-                    break;
-                parent = parent->_parent;
-            }
-        }
-    }
-    if (found)
-        value = val->second;
-    return found ? Status::Success : Status::CookieNotFound;
+	const bool val = s_user->getCookie(name, value);
+
+    return val ? Status::Success : Status::CookieNotFound;
 }
 
 /**
@@ -645,12 +564,11 @@ extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t ta
 {
 	if (name.empty())
 		return Status::Error;
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    v->second.cookies[name] = cookie;
+    s_user->setCookie(name, cookie);
     if (!dontBroadcast)
     {
         std::shared_lock lock2(user_set_cookie_callbacks._lock);
@@ -671,19 +589,11 @@ extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t ta
 extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<plg::string>& names,
                                            plg::vector<plg::any>& values)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
-        return Status::TargetUserNotFound;
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	if (s_user == nullptr)
+		return Status::TargetUserNotFound;
 
-    names.clear();
-    values.clear();
-
-    for (const auto& [kv, vv] : v->second.cookies)
-    {
-        names.push_back(kv);
-        values.push_back(vv);
-    }
+	s_user->dumpCookies(names, values);
 
     return Status::Success;
 }
@@ -701,8 +611,9 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
 extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t targetID, const int immunity,
                                         const bool offline, const plg::vector<plg::string>& groupsList)
 {
-    std::unique_lock lock(users_mtx);
-    if (users.contains(targetID))
+    std::scoped_lock lock(global_mutex);
+
+    if (g_UserManager.Exists(targetID))
         return Status::UserAlreadyExist;
 
     for (auto& name : groupsList)
@@ -715,7 +626,7 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
             return Status::GroupNotFound;
     }
 
-    users.try_emplace(targetID, immunity, groupsList, targetID, offline);
+    g_UserManager.Add(targetID, immunity, offline, groupsList);
     {
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks)
@@ -733,9 +644,9 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
  */
 extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t targetID)
 {
-    std::unique_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v == users.end())
+	std::scoped_lock lock(global_mutex);
+    const auto s_user = g_UserManager.Get(targetID);
+    if (s_user == nullptr)
         return Status::TargetUserNotFound;
 
     {
@@ -743,8 +654,8 @@ extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t t
         for (const UserDeleteCallback cb : user_delete_callbacks._callbacks)
             cb(pluginID, targetID);
     }
-    Node::destroyAllTimers(v->second.temp_nodes);
-    users.erase(v);
+
+	g_UserManager.Delete(targetID);
     return Status::Success;
 }
 
@@ -756,11 +667,9 @@ extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t t
  */
 extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
 {
-    std::shared_lock lock(users_mtx);
-    const auto v = users.find(targetID);
-    if (v != users.end()) {
-        return v->second._offline ? PlayerState::Offline : PlayerState::Online;
-    }
+	const auto s_user = g_UserManager.Get(targetID);
+    if (s_user != nullptr)
+        return s_user->_offline ? PlayerState::Offline : PlayerState::Online;
     return PlayerState::NotFound;
 }
 
@@ -771,8 +680,7 @@ extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
  */
 extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
 {
-    auto keys_view = std::views::keys(users);
-    return {keys_view.begin(), keys_view.end()};
+    return g_UserManager.DumpAllUsers();
 }
 
 /**
