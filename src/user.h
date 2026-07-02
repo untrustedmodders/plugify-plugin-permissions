@@ -213,7 +213,7 @@ struct User
     	}
     }
 
-	PLUGIFY_FORCE_INLINE bool getCookie(const plg::string& name, plg::any& value)
+	inline bool getCookie(const plg::string& name, plg::any& value)
 	{
 	    {
 		    std::shared_lock lock(cookies_lock);
