@@ -2,7 +2,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-extern std::shared_mutex users_mtx, groups_mtx;
+extern std::mutex global_mutex;
 
 enum class Action : int32_t
 {

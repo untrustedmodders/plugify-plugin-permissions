@@ -6,16 +6,83 @@
 #include <parallel_hashmap/phmap.h>
 #include <plugin_export.h>
 
-extern phmap::flat_hash_map<uint64_t, Group*> groups;
+struct GroupManager {
+private:
+	phmap::flat_hash_map<uint64_t, Group*> _groups;
+	std::shared_mutex _lock;
+public:
+	Group* Get(const std::string_view groupName) {
+		const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+		std::shared_lock lock(_lock);
 
-PLUGIFY_FORCE_INLINE Group* GetGroup(const std::string_view& name)
-{
-    const uint64_t hash = XXH3_64bits(name.data(), name.size());
-    std::shared_lock lock(groups_mtx);
-    const auto it = groups.find(hash);
-    if (it == groups.end()) return nullptr;
-    return it->second;
-}
+		const auto it = _groups.find(hash);
+		return it == _groups.end() ? nullptr : it->second;
+	}
+
+	bool Exists(const std::string_view groupName) {
+		const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+		std::shared_lock lock(_lock);
+
+		return _groups.contains(hash);
+	}
+
+	bool Add(const plg::vector<plg::string>& perms, const plg::string& groupName, const int priority, Group* parent) {
+		const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+		std::unique_lock lock(_lock);
+
+		if (_groups.contains(hash))
+			return false;
+
+		_groups.emplace(hash, new Group(perms, groupName, priority, parent));
+		return true;
+	}
+
+	bool Delete(const std::string_view groupName) {
+		const uint64_t hash = XXH3_64bits(groupName.data(), groupName.size());
+		Group* g = nullptr;
+		{
+			std::unique_lock lock(_lock);
+			const auto it = _groups.find(hash);
+			if (it == _groups.end())
+				return false;
+			g = it->second;
+			_groups.erase(it);
+		}
+		// Cleanup references
+		for (Group* value : _groups | std::views::values)
+		{
+			Group* cur_group = value;
+			while (cur_group)
+			{
+				if (cur_group->_parent.load() == g)
+				{
+					cur_group->_parent.store(nullptr);
+					break;
+				}
+				cur_group = cur_group->_parent;
+			}
+		}
+		g_TimerSystem.CreateTimer(10, &DelayedDelete, TimerFlag::Default, {static_cast<void*>(g)});
+		return true;
+	}
+
+	static void DelayedDelete(uint32_t, const plg::vector<plg::any>& params) {
+		delete static_cast<Group*>(plg::get<void*>(params.at(0)));
+	}
+
+	plg::vector<plg::string> DumpAllGroups() {
+		plg::vector<plg::string> lgroups;
+		{
+			std::shared_lock lock(_lock);
+			for (const auto& vv: _groups | std::views::values)
+				lgroups.push_back(vv->_name);
+		}
+
+		return lgroups;
+	}
+};
+
+extern GroupManager g_GroupManager;
 
 /**
  * @brief Callback invoked when a parent group is set for a child group.
