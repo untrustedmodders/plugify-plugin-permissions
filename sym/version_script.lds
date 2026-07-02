@@ -35,9 +35,9 @@
         SetPermissionGroup;
         RemovePermissionGroup;
         DumpPermissionsGroup;
-        GetCookieGroup;
-        SetCookieGroup;
-        GetAllCookiesGroup;
+        GetOptionGroup;
+        SetOptionGroup;
+        GetAllOptionsGroup;
         GroupExists;
         CreateGroup;
         LoadGroups;
@@ -66,8 +66,8 @@
         OnGroupDelete_Unregister;
         OnGroupSetParent_Register;
         OnGroupSetParent_Unregister;
-        OnGroupSetCookie_Register;
-        OnGroupSetCookie_Unregister;
+        OnGroupSetOption_Register;
+        OnGroupSetOption_Unregister;
         OnGroupPermissionChange_Register;
         OnGroupPermissionChange_Unregister;
         OnUserSetCookie_Register;
