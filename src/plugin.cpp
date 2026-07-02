@@ -4,6 +4,8 @@
 #include <plugin_export.h>
 #include "timer_system.h"
 
+std::mutex global_mutex;
+
 class PlugifyPermissions final : public plg::Plugin
 {
 public:
