@@ -286,31 +286,52 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
             return Status::PermAlreadyGranted;
 
         act = Action::Replace;
+    	if (replaceToWC)
+    		act = Action::ReplaceToWC;
     }
 
-	plg::vector<plg::string> deleted_perms;
+	const plg::string prm = denied ? perm.substr(1) : perm;
+	if (!dontBroadcast) {
+		s_user->_queue.Enqueue([timestamp, s_user, targetID, old_timestamp, perm_type, replaceToWC, act, pluginID, oldState, denied, prm ]()
+		{
+			// TODO: Probe from Fr4nch
 
-    if (timestamp != 0)
-        s_user->addPerm(perm, timestamp, targetID);
-    else
-    {
-        if (perm_type == PermSource::UserTemp)
-            s_user->delTempPerm(perm, false, deleted_perms);
-        s_user->addPerm(perm, 0, 0);
-    }
+			plg::vector<plg::string> deleted_perms;
 
-    if (!dontBroadcast)
-    {
-        if (replaceToWC) {
-	        act = Action::ReplaceToWC;
-        	if (timestamp != old_timestamp && timestamp == 0)
-        		s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
-        }
-    	const plg::string prm = denied ? perm.substr(1) : perm;
-        std::shared_lock lock2(user_permission_callbacks._lock);
-        for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
-    }
+			if (timestamp != 0)
+				s_user->addPerm(prm, timestamp, targetID);
+			else
+			{
+				if (perm_type == PermSource::UserTemp)
+					s_user->delTempPerm(prm, false, deleted_perms);
+				s_user->addPerm(prm, 0, 0);
+			}
+
+			if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
+				s_user->delTempPerm(std::string_view(prm).substr(0, prm.length() - 2), false, deleted_perms);
+
+
+			std::shared_lock lock2(user_permission_callbacks._lock);
+			for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+				cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+		});
+		return Status::Async;
+	}
+	{
+		plg::vector<plg::string> deleted_perms;
+
+		if (timestamp != 0)
+			s_user->addPerm(prm, timestamp, targetID);
+		else
+		{
+			if (perm_type == PermSource::UserTemp)
+				s_user->delTempPerm(prm, false, deleted_perms);
+			s_user->addPerm(prm, 0, 0);
+		}
+
+		if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
+			s_user->delTempPerm(std::string_view(prm).substr(0, prm.length() - 2), false, deleted_perms);
+	}
     return Status::Success;
 }
 
@@ -358,42 +379,74 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 
     Action act = Action::Add;
 
-    plg::vector<plg::string> deleted_perms;
-    switch (perm_type)
+	switch (perm_type)
     {
         case PermSource::UserTemp:
             if (old_timestamp == timestamp && !diff)
                 return Status::PermAlreadyGranted;
-
-            if (timestamp == 0)
-                s_user->delTempPerm(perm, false, deleted_perms);
-
             act = Action::Replace;
             break;
         case PermSource::User:
             if (timestamp == 0 && !diff)
                 return Status::PermAlreadyGranted;
-
-            if (timestamp != 0)
-                s_user->delTempPerm(perm, false, deleted_perms);
-
             act = Action::Replace;
             break;
         default:
             break;
     }
+	if (replaceToWC)
+		act = Action::ReplaceToWC;
+	const plg::string prm = denied ? perm.substr(1) : perm;
+	if (!dontBroadcast) {
+		s_user->_queue.Enqueue([act, perm_type, timestamp, old_timestamp, s_user, targetID, pluginID, prm, oldState, denied]()
+		{
+			// TODO: Probe from Fr4nch
 
-    s_user->addPerm(perm, timestamp, targetID);
+			if (act == Action::Replace || act == Action::ReplaceToWC) {
+				plg::vector<plg::string> deleted_perms;
+				switch (perm_type)
+				{
+					case PermSource::UserTemp:
+						if (timestamp == 0)
+							s_user->delTempPerm(prm, false, deleted_perms);
+						break;
+					case PermSource::User:
+						if (timestamp != 0)
+							s_user->delPerm(prm, false, deleted_perms);
+						break;
+					default:
+						break;
+				}
+			}
 
-    if (!dontBroadcast)
-    {
-        if (replaceToWC)
-            act = Action::ReplaceToWC;
-    	const plg::string prm = denied ? perm.substr(1) : perm;
-        std::shared_lock lock2(user_permission_callbacks._lock);
-        for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
-    }
+			s_user->addPerm(prm, timestamp, targetID);
+
+			std::shared_lock lock2(user_permission_callbacks._lock);
+			for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+				cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+		});
+		return Status::Async;
+	}
+	{
+		if (act == Action::Replace || act == Action::ReplaceToWC) {
+			plg::vector<plg::string> deleted_perms;
+			switch (perm_type)
+			{
+				case PermSource::UserTemp:
+					if (timestamp == 0)
+						s_user->delTempPerm(prm, false, deleted_perms);
+					break;
+				case PermSource::User:
+					if (timestamp != 0)
+						s_user->delPerm(prm, false, deleted_perms);
+					break;
+				default:
+					break;
+			}
+		}
+
+		s_user->addPerm(prm, timestamp, targetID);
+	}
     return Status::Success;
 }
 
@@ -422,23 +475,27 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
-    plg::vector<plg::string> deleted_perms;
-	bool ret;
-    if (perm_type == PermSource::User)
-        ret = s_user->delPerm(perm, recursiveDeletion, deleted_perms);
-    else
-        ret = s_user->delTempPerm(perm, recursiveDeletion, deleted_perms);
-	if (!ret)
-		return Status::PermNotFound;
+	const plg::string prm = perm.starts_with('-') ? perm.substr(1) : perm;
+	s_user->_queue.Enqueue([perm_type, recursiveDeletion, s_user, pluginID, targetID, old_timestamp, prm, oldState]()
+	{
+		// TODO: Probe from Fr4nch
 
-    {
-        std::shared_lock lock2(user_permission_callbacks._lock);
-        for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
-            for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, targetID, s, oldState, Status::PermNotFound, old_timestamp, 0);
-    }
+		plg::vector<plg::string> deleted_perms;
+		bool ret;
+		if (perm_type == PermSource::User)
+			ret = s_user->delPerm(prm, recursiveDeletion, deleted_perms);
+		else
+			ret = s_user->delTempPerm(prm, recursiveDeletion, deleted_perms);
+		// if (!ret)
+		// 	return Status::PermNotFound;
 
-    return Status::Success;
+		std::shared_lock lock2(user_permission_callbacks._lock);
+		for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+			for (const plg::string& s : deleted_perms)
+				cb(pluginID, Action::Remove, targetID, s, oldState, Status::PermNotFound, old_timestamp, 0);
+	});
+
+    return Status::Async;
 }
 
 /**
@@ -466,34 +523,51 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
     if (req_group == nullptr)
         return Status::GroupNotFound;
 
-    time_t old_timestamp = -1;
+	time_t old_timestamp = -1;
     Action act = Action::Add;
+	bool delete_temp = false;
 
 	{
 		bool parent;
-		Status stats = s_user->hasGroup(req_group, old_timestamp, parent);
+		const Status stats = s_user->hasGroup(req_group, old_timestamp, parent);
 		if (stats != Status::GroupNotDefined) {
 			if (parent)
 				return Status::GroupAlreadyExist;
 			if (old_timestamp != timestamp) {
-				s_user->delGroup(req_group, old_timestamp);
+				delete_temp = true;
 				act = Action::Replace;
 			}
 			else
 				return Status::GroupAlreadyExist;
 		}
 	}
+	if (!dontBroadcast)
+	{
+		s_user->_queue.Enqueue([delete_temp, s_user, timestamp, targetID, act, old_timestamp, pluginID, groupName]()
+		{
+			std::scoped_lock lock3(global_mutex);
 
-    s_user->addGroup(req_group, timestamp, targetID);
+			Group* l_req_group = g_GroupManager.Get(groupName);
+			if (l_req_group == nullptr)
+				return;
 
-    if (!dontBroadcast)
-    {
-        std::shared_lock lock2(user_group_callbacks._lock);
-        for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-            cb(pluginID, act, targetID, groupName, old_timestamp, timestamp);
+			// TODO: Probe from Fr4nch
+
+			time_t l_old_timestamp = old_timestamp;
+			if (delete_temp)
+				s_user->delGroup(l_req_group, l_old_timestamp);
+			s_user->addGroup(l_req_group, timestamp, targetID);
+
+			std::shared_lock lock2(user_group_callbacks._lock);
+			for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+				cb(pluginID, act, targetID, groupName, l_old_timestamp, timestamp);
+		});
+
+		return Status::Async;
     }
-
-    return Status::Success;
+	if (delete_temp)
+		s_user->delGroup(req_group, old_timestamp);
+	return s_user->addGroup(req_group, timestamp, targetID);
 }
 
 /**
@@ -516,16 +590,18 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
     if (g == nullptr)
         return Status::ChildGroupNotFound;
 
-	time_t timestamp;
-	if (!s_user->delGroup(g, timestamp))
-		return Status::ParentGroupNotFound;
+	s_user->_queue.Enqueue([s_user, pluginID, targetID, groupName, g]()
+	{
+		// TODO: Probe from Fr4nch
+		time_t timestamp;
+		if (!s_user->delGroup(g, timestamp))
+			return;
 
-    {
-        std::shared_lock lock2(user_group_callbacks._lock);
-        for (const UserGroupCallback cb : user_group_callbacks._callbacks)
-            cb(pluginID, Action::Remove, targetID, groupName, timestamp, 0);
-        return Status::Success;
-    }
+		std::shared_lock lock2(user_group_callbacks._lock);
+		for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+			cb(pluginID, Action::Remove, targetID, groupName, timestamp, 0);
+	});
+	return Status::Async;
 }
 
 /**
@@ -568,13 +644,18 @@ extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t ta
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
 
-    s_user->setCookie(name, cookie);
-    if (!dontBroadcast)
-    {
-        std::shared_lock lock2(user_set_cookie_callbacks._lock);
-        for (const UserSetCookieCallback cb : user_set_cookie_callbacks._callbacks)
-            cb(pluginID, targetID, name, cookie);
-    }
+	if (!dontBroadcast) {
+		s_user->_queue.Enqueue([s_user, name, cookie, pluginID, targetID]()
+		{
+			// TODO: Probe from Fr4nch
+			s_user->setCookie(name, cookie);
+
+			std::shared_lock lock2(user_set_cookie_callbacks._lock);
+			for (const UserSetCookieCallback cb : user_set_cookie_callbacks._callbacks)
+				cb(pluginID, targetID, name, cookie);
+		});
+		return Status::Async;
+	}
     return Status::Success;
 }
 
@@ -627,11 +708,14 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
     }
 
     g_UserManager.Add(targetID, immunity, offline, groupsList);
+	std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	s_user->_queue.Enqueue([pluginID, targetID, immunity, offline, groupsList]()
     {
+		// TODO: Probe from Fr4nch
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks)
             cb(pluginID, targetID, immunity, offline, groupsList);
-    }
+    });
     return Status::Success;
 }
 

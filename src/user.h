@@ -1,4 +1,5 @@
 #pragma once
+#include "async_queue.h"
 #include "group.h"
 
 #include <parallel_hashmap/phmap.h>
@@ -6,7 +7,6 @@
 #include <plg/string.hpp>
 #include <plg/vector.hpp>
 
-#include "group_manager.h"
 #include "timer_system.h"
 
 struct User;
@@ -49,6 +49,8 @@ struct User
     plg::vector<TempGroup> _groups; // groups that player belongs to
     int _immunity;
     bool _offline;
+
+	AsyncTaskQueue _queue;
 
     [[nodiscard]] PLUGIFY_FORCE_INLINE int getImmunity() const
     {
@@ -108,7 +110,7 @@ struct User
         return Status::PermNotFound;
     }
 
-	PLUGIFY_FORCE_INLINE void addPerm(const std::string_view& perm, time_t timestamp, uint64_t user_id)
+	PLUGIFY_FORCE_INLINE void addPerm(const std::string_view& perm, const time_t timestamp, const uint64_t user_id)
 	{
 	    if (timestamp == 0) {
 	    	std::unique_lock lock(perms_lock);
@@ -143,8 +145,15 @@ struct User
     	return temp_nodes.deletePerm(perm, recursive_delete, deleted_perms);
     }
 
-    PLUGIFY_FORCE_INLINE void addGroup(Group* g, time_t timestamp, uint64_t targetID)
+    PLUGIFY_FORCE_INLINE Status addGroup(Group* g, time_t timestamp, uint64_t targetID)
     {
+    	time_t old_timestamp = -1;
+    	bool parent;
+    	if (this->hasGroup(g, old_timestamp, parent) != Status::GroupNotDefined) {
+    		if (parent || timestamp == old_timestamp)
+    			return Status::GroupAlreadyExist;
+    		this->delGroup(g, old_timestamp);
+    	}
     	std::unique_lock lock(groups_lock);
         TempGroup& tg = this->_groups.emplace_back(timestamp, g, 0xFFFFFFFF);
         if (timestamp != 0)
@@ -156,6 +165,7 @@ struct User
                                                  });
         }
         this->sortGroups();
+    	return Status::Success;
     }
 
     PLUGIFY_FORCE_INLINE bool delGroup(const Group* g, time_t& timestamp)
@@ -213,7 +223,7 @@ struct User
     	}
     }
 
-	inline bool getCookie(const plg::string& name, plg::any& value)
+	PLUGIFY_FORCE_INLINE bool getCookie(const plg::string& name, plg::any& value)
 	{
 	    {
 		    std::shared_lock lock(cookies_lock);
@@ -225,8 +235,8 @@ struct User
 	    }
 	    {
 		    std::shared_lock lock(groups_lock);
-	    	for (auto it = this->_groups.begin(); it != this->_groups.end(); ++it)
-	    		if (it->group->getCookie(name, value))
+	    	for (const auto & _group : this->_groups)
+	    		if (_group.group->getCookie(name, value))
 	    			return true;
 	    }
     	return false;
@@ -267,6 +277,7 @@ struct User
 
 	~User()
 	{
+    	_queue.Shutdown();
     	std::unique_lock lock(perms_lock);
     	Node::destroyAllTimers(temp_nodes);
     }
@@ -335,5 +346,7 @@ struct User
 
         Node::forceRehash(this->user_nodes.nodes);
         Node::forceRehash(this->temp_nodes.nodes);
+
+    	_queue.Run();
     }
 };
