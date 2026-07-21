@@ -3,8 +3,10 @@
 #include <plg/string.hpp>
 #include <plugin_export.h>
 #include "timer_system.h"
+#include <atomic>
 
 std::mutex global_mutex;
+std::atomic<int64_t> connectorID = -1;
 
 class PlugifyPermissions final : public plg::Plugin
 {
@@ -28,4 +30,14 @@ public:
     }
 } g_permissionsPlugin;
 
+extern "C" PLUGIN_API void SetConnectorID(const int64_t pluginID) {
+	connectorID.store(pluginID);
+}
+
+extern "C" PLUGIN_API void ResetConnectorID() {
+	connectorID.store(-1);
+}
+
 PLUGIFY_PLUGIN(PLUGIN_API, &g_permissionsPlugin)
+
+

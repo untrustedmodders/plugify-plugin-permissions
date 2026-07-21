@@ -1,5 +1,7 @@
 #include "user_manager.h"
 
+#include <oneapi/tbb/detail/_template_helpers.h>
+
 UserManager g_UserManager;
 
 UserPermissionCallbacks user_permission_callbacks;
@@ -228,6 +230,7 @@ extern "C" PLUGIN_API Status SetImmunity(const uint64_t targetID, const int immu
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
+	// TODO: MORE PROBES FROM fr4nch
     s_user->_immunity = immunity;
     return Status::Success;
 }
@@ -289,31 +292,55 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
     	if (replaceToWC)
     		act = Action::ReplaceToWC;
     }
-
-	const plg::string prm = denied ? perm.substr(1) : perm;
 	if (!dontBroadcast) {
-		s_user->_queue.Enqueue([timestamp, s_user, targetID, old_timestamp, perm_type, replaceToWC, act, pluginID, oldState, denied, prm ]()
+		s_user->_queue.Enqueue([timestamp, s_user, targetID, old_timestamp, perm_type, replaceToWC, act, pluginID, oldState, denied, perm ]()
 		{
-			// TODO: Probe from Fr4nch
+			const plg::string prm = denied ? perm.substr(1) : perm;
+			const int64_t cID = connectorID.load();
+			if (cID != -1) {
+				UserPermissionCallback callback = nullptr;
+				{
+					std::shared_lock lock2(user_permission_callbacks._lock);
+					const auto it = user_permission_callbacks._callbacks.find(cID);
+					if (it != user_permission_callbacks._callbacks.end())
+						callback = it->second;
+				}
+				if (callback && !callback(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp)) {
+					{
+						std::shared_lock lock2(user_permission_callbacks._lock);
+						const auto it = user_permission_callbacks._callbacks.find(pluginID);
+						if (it != user_permission_callbacks._callbacks.end())
+							callback = it->second;
+						else
+							callback = nullptr;
+					}
+					if (callback)
+						callback(pluginID, act, targetID, prm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA, old_timestamp, timestamp);
+					return;
+				}
+			}
 
 			plg::vector<plg::string> deleted_perms;
 
 			if (timestamp != 0)
-				s_user->addPerm(prm, timestamp, targetID);
+				s_user->addPerm(perm, timestamp, targetID);
 			else
 			{
 				if (perm_type == PermSource::UserTemp)
-					s_user->delTempPerm(prm, false, deleted_perms);
-				s_user->addPerm(prm, 0, 0);
+					s_user->delTempPerm(perm, false, deleted_perms);
+				s_user->addPerm(perm, 0, 0);
 			}
 
 			if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
-				s_user->delTempPerm(std::string_view(prm).substr(0, prm.length() - 2), false, deleted_perms);
+				s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
 
 
 			std::shared_lock lock2(user_permission_callbacks._lock);
-			for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+			for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
+				if (id == cID)
+					[[unlikely]] continue;
 				cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+			}
 		});
 		return Status::Async;
 	}
@@ -321,16 +348,16 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
 		plg::vector<plg::string> deleted_perms;
 
 		if (timestamp != 0)
-			s_user->addPerm(prm, timestamp, targetID);
+			s_user->addPerm(perm, timestamp, targetID);
 		else
 		{
 			if (perm_type == PermSource::UserTemp)
-				s_user->delTempPerm(prm, false, deleted_perms);
-			s_user->addPerm(prm, 0, 0);
+				s_user->delTempPerm(perm, false, deleted_perms);
+			s_user->addPerm(perm, 0, 0);
 		}
 
 		if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
-			s_user->delTempPerm(std::string_view(prm).substr(0, prm.length() - 2), false, deleted_perms);
+			s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
 	}
     return Status::Success;
 }
@@ -396,11 +423,34 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
     }
 	if (replaceToWC)
 		act = Action::ReplaceToWC;
-	const plg::string prm = denied ? perm.substr(1) : perm;
+
 	if (!dontBroadcast) {
-		s_user->_queue.Enqueue([act, perm_type, timestamp, old_timestamp, s_user, targetID, pluginID, prm, oldState, denied]()
+		s_user->_queue.Enqueue([act, perm_type, timestamp, old_timestamp, s_user, targetID, pluginID, oldState, denied, perm]()
 		{
-			// TODO: Probe from Fr4nch
+			const plg::string prm = denied ? perm.substr(1) : perm;
+			const int64_t cID = connectorID.load();
+			if (cID != -1) {
+				UserPermissionCallback callback = nullptr;
+				{
+					std::shared_lock lock2(user_permission_callbacks._lock);
+					const auto it = user_permission_callbacks._callbacks.find(cID);
+					if (it != user_permission_callbacks._callbacks.end())
+						callback = it->second;
+				}
+				if (callback && !callback(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp)) {
+					{
+						std::shared_lock lock2(user_permission_callbacks._lock);
+						const auto it = user_permission_callbacks._callbacks.find(pluginID);
+						if (it != user_permission_callbacks._callbacks.end())
+							callback = it->second;
+						else
+							callback = nullptr;
+					}
+					if (callback)
+						callback(pluginID, act, targetID, prm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA, old_timestamp, timestamp);
+					return;
+				}
+			}
 
 			if (act == Action::Replace || act == Action::ReplaceToWC) {
 				plg::vector<plg::string> deleted_perms;
@@ -408,22 +458,25 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 				{
 					case PermSource::UserTemp:
 						if (timestamp == 0)
-							s_user->delTempPerm(prm, false, deleted_perms);
+							s_user->delTempPerm(perm, false, deleted_perms);
 						break;
 					case PermSource::User:
 						if (timestamp != 0)
-							s_user->delPerm(prm, false, deleted_perms);
+							s_user->delPerm(perm, false, deleted_perms);
 						break;
 					default:
 						break;
 				}
 			}
 
-			s_user->addPerm(prm, timestamp, targetID);
+			s_user->addPerm(perm, timestamp, targetID);
 
 			std::shared_lock lock2(user_permission_callbacks._lock);
-			for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+			for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
+				if (id == cID)
+					[[unlikely]] continue;
 				cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+			}
 		});
 		return Status::Async;
 	}
@@ -434,18 +487,18 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 			{
 				case PermSource::UserTemp:
 					if (timestamp == 0)
-						s_user->delTempPerm(prm, false, deleted_perms);
+						s_user->delTempPerm(perm, false, deleted_perms);
 					break;
 				case PermSource::User:
 					if (timestamp != 0)
-						s_user->delPerm(prm, false, deleted_perms);
+						s_user->delPerm(perm, false, deleted_perms);
 					break;
 				default:
 					break;
 			}
 		}
 
-		s_user->addPerm(prm, timestamp, targetID);
+		s_user->addPerm(perm, timestamp, targetID);
 	}
     return Status::Success;
 }
@@ -475,24 +528,48 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
-	const plg::string prm = perm.starts_with('-') ? perm.substr(1) : perm;
-	s_user->_queue.Enqueue([perm_type, recursiveDeletion, s_user, pluginID, targetID, old_timestamp, prm, oldState]()
+	s_user->_queue.Enqueue([perm_type, recursiveDeletion, s_user, pluginID, targetID, old_timestamp, perm, oldState]()
 	{
-		// TODO: Probe from Fr4nch
+		const int64_t cID = connectorID.load();
+		if (cID != -1) {
+			UserPermissionCallback callback = nullptr;
+			{
+				std::shared_lock lock2(user_permission_callbacks._lock);
+				const auto it = user_permission_callbacks._callbacks.find(cID);
+				if (it != user_permission_callbacks._callbacks.end())
+					callback = it->second;
+			}
+			if (callback && !callback(pluginID, Action::Remove, targetID, perm, oldState, Status::PermNotFound, old_timestamp, 0)) {
+				{
+					std::shared_lock lock2(user_permission_callbacks._lock);
+					const auto it = user_permission_callbacks._callbacks.find(pluginID);
+					if (it != user_permission_callbacks._callbacks.end())
+						callback = it->second;
+					else
+						callback = nullptr;
+				}
+				if (callback)
+					callback(pluginID, Action::Remove, targetID, perm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA, old_timestamp, 0);
+				return;
+			}
+		}
 
 		plg::vector<plg::string> deleted_perms;
 		bool ret;
 		if (perm_type == PermSource::User)
-			ret = s_user->delPerm(prm, recursiveDeletion, deleted_perms);
+			ret = s_user->delPerm(perm, recursiveDeletion, deleted_perms);
 		else
-			ret = s_user->delTempPerm(prm, recursiveDeletion, deleted_perms);
+			ret = s_user->delTempPerm(perm, recursiveDeletion, deleted_perms);
 		// if (!ret)
 		// 	return Status::PermNotFound;
 
 		std::shared_lock lock2(user_permission_callbacks._lock);
-		for (const UserPermissionCallback cb : user_permission_callbacks._callbacks)
+		for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
 			for (const plg::string& s : deleted_perms)
 				cb(pluginID, Action::Remove, targetID, s, oldState, Status::PermNotFound, old_timestamp, 0);
+		}
 	});
 
     return Status::Async;
@@ -559,7 +636,7 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
 			s_user->addGroup(l_req_group, timestamp, targetID);
 
 			std::shared_lock lock2(user_group_callbacks._lock);
-			for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+			for (const UserGroupCallback cb : user_group_callbacks._callbacks | std::views::values)
 				cb(pluginID, act, targetID, groupName, l_old_timestamp, timestamp);
 		});
 
@@ -598,7 +675,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
 			return;
 
 		std::shared_lock lock2(user_group_callbacks._lock);
-		for (const UserGroupCallback cb : user_group_callbacks._callbacks)
+		for (const UserGroupCallback cb : user_group_callbacks._callbacks | std::views::values)
 			cb(pluginID, Action::Remove, targetID, groupName, timestamp, 0);
 	});
 	return Status::Async;
@@ -647,15 +724,39 @@ extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t ta
 	if (!dontBroadcast) {
 		s_user->_queue.Enqueue([s_user, name, cookie, pluginID, targetID]()
 		{
-			// TODO: Probe from Fr4nch
+			const int64_t cID = connectorID.load();
+			if (cID != -1) {
+				UserSetCookieCallback callback = nullptr;
+				{
+					std::shared_lock lock2(user_set_cookie_callbacks._lock);
+					const auto it = user_set_cookie_callbacks._callbacks.find(cID);
+					if (it != user_set_cookie_callbacks._callbacks.end())
+						callback = it->second;
+				}
+				if (callback && !callback(pluginID, targetID, name, cookie)) {
+					// {
+					// 	std::shared_lock lock2(user_set_cookie_callbacks._lock);
+					// 	const auto it = user_set_cookie_callbacks._callbacks.find(pluginID);
+					// 	if (it != user_set_cookie_callbacks._callbacks.end())
+					// 		callback = it->second;
+					// 	else
+					// 		callback = nullptr;
+					// }
+					return;
+				}
+			}
 			s_user->setCookie(name, cookie);
 
 			std::shared_lock lock2(user_set_cookie_callbacks._lock);
-			for (const UserSetCookieCallback cb : user_set_cookie_callbacks._callbacks)
+			for (const auto& [id, cb] : user_set_cookie_callbacks._callbacks) {
+				if (id == cID)
+					[[unlikely]] continue;
 				cb(pluginID, targetID, name, cookie);
+			}
 		});
 		return Status::Async;
 	}
+	s_user->setCookie(name, cookie);
     return Status::Success;
 }
 
@@ -708,14 +809,13 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
     }
 
     g_UserManager.Add(targetID, immunity, offline, groupsList);
-	std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
-	s_user->_queue.Enqueue([pluginID, targetID, immunity, offline, groupsList]()
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
+	// s_user->_queue.Enqueue([pluginID, targetID, immunity, offline, groupsList]()
     {
-		// TODO: Probe from Fr4nch
         std::shared_lock lock2(user_create_callbacks._lock);
-        for (const UserCreateCallback cb : user_create_callbacks._callbacks)
+        for (const UserCreateCallback cb : user_create_callbacks._callbacks | std::views::values)
             cb(pluginID, targetID, immunity, offline, groupsList);
-    });
+    }
     return Status::Success;
 }
 
@@ -729,13 +829,12 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
 extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t targetID)
 {
 	std::scoped_lock lock(global_mutex);
-    const auto s_user = g_UserManager.Get(targetID);
+    const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
     if (s_user == nullptr)
         return Status::TargetUserNotFound;
-
     {
         std::shared_lock lock2(user_delete_callbacks._lock);
-        for (const UserDeleteCallback cb : user_delete_callbacks._callbacks)
+        for (const UserDeleteCallback cb : user_delete_callbacks._callbacks | std::views::values)
             cb(pluginID, targetID);
     }
 
@@ -751,7 +850,7 @@ extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t t
  */
 extern "C" PLUGIN_API PlayerState UserExists(const uint64_t targetID)
 {
-	const auto s_user = g_UserManager.Get(targetID);
+	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
     if (s_user != nullptr)
         return s_user->_offline ? PlayerState::Offline : PlayerState::Online;
     return PlayerState::NotFound;
@@ -785,7 +884,7 @@ extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
 extern "C" PLUGIN_API void LoadUser(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, UserLoadedCallback callback)
 {
     std::shared_lock lock2(user_load_callbacks._lock);
-    for (const UserRequestCallback cb : user_load_callbacks._callbacks)
+    for (const UserRequestCallback cb : user_load_callbacks._callbacks | std::views::values)
         cb(pluginID, targetID, username, offline, callback);
 }
 
@@ -810,26 +909,27 @@ extern "C" PLUGIN_API void LoadUser(const int64_t pluginID, const uint64_t targe
 /**
  * @brief Register listener on LoadUser event.
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnLoadUser_Register(UserRequestCallback callback)
+extern "C" PLUGIN_API Status OnLoadUser_Register(const int64_t pluginID, UserRequestCallback callback)
 {
     std::unique_lock lock(user_load_callbacks._lock);
-    auto ret = user_load_callbacks._callbacks.insert(callback);
+    auto ret = user_load_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on LoadUser event.
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserRequestCallback callback)
+extern "C" PLUGIN_API Status OnLoadUser_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(user_load_callbacks._lock);
-    const size_t ret = user_load_callbacks._callbacks.erase(callback);
+    const size_t ret = user_load_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
@@ -862,182 +962,189 @@ extern "C" PLUGIN_API Status OnLoadUser_Unregister(UserRequestCallback callback)
 /**
  * @brief Register listener on user permission add/remove
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserPermissionChange_Register(UserPermissionCallback callback)
+extern "C" PLUGIN_API Status OnUserPermissionChange_Register(const int64_t pluginID, UserPermissionCallback callback)
 {
     std::unique_lock lock(user_permission_callbacks._lock);
-    auto ret = user_permission_callbacks._callbacks.insert(callback);
+    auto ret = user_permission_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on user permission add/remove
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserPermissionChange_Unregister(UserPermissionCallback callback)
+extern "C" PLUGIN_API Status OnUserPermissionChange_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(user_permission_callbacks._lock);
-    const size_t ret = user_permission_callbacks._callbacks.erase(callback);
+    const size_t ret = user_permission_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on user cookie sets
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserSetCookie_Register(UserSetCookieCallback callback)
+extern "C" PLUGIN_API Status OnUserSetCookie_Register(const int64_t pluginID, UserSetCookieCallback callback)
 {
     std::unique_lock lock(user_set_cookie_callbacks._lock);
-    auto ret = user_set_cookie_callbacks._callbacks.insert(callback);
+    auto ret = user_set_cookie_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Register listener on user cookie sets
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserSetCookie_Unregister(UserSetCookieCallback callback)
+extern "C" PLUGIN_API Status OnUserSetCookie_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(user_set_cookie_callbacks._lock);
-    const size_t ret = user_set_cookie_callbacks._callbacks.erase(callback);
+    const size_t ret = user_set_cookie_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on user groups changing
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserGroupChange_Register(UserGroupCallback callback)
+extern "C" PLUGIN_API Status OnUserGroupChange_Register(const int64_t pluginID, UserGroupCallback callback)
 {
     std::unique_lock lock(user_group_callbacks._lock);
-    auto ret = user_group_callbacks._callbacks.insert(callback);
+    auto ret = user_group_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on user groups changing
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserGroupChange_Unregister(UserGroupCallback callback)
+extern "C" PLUGIN_API Status OnUserGroupChange_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(user_group_callbacks._lock);
-    const size_t ret = user_group_callbacks._callbacks.erase(callback);
+    const size_t ret = user_group_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on user creation
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserCreate_Register(UserCreateCallback callback)
+extern "C" PLUGIN_API Status OnUserCreate_Register(const int64_t pluginID, UserCreateCallback callback)
 {
     std::unique_lock lock(user_create_callbacks._lock);
-    auto ret = user_create_callbacks._callbacks.insert(callback);
+    auto ret = user_create_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on user creation
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserCreate_Unregister(UserCreateCallback callback)
+extern "C" PLUGIN_API Status OnUserCreate_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(user_create_callbacks._lock);
-    const size_t ret = user_create_callbacks._callbacks.erase(callback);
+    const size_t ret = user_create_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on user deletion
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserDelete_Register(UserDeleteCallback callback)
+extern "C" PLUGIN_API Status OnUserDelete_Register(const int64_t pluginID, UserDeleteCallback callback)
 {
     std::unique_lock lock(user_delete_callbacks._lock);
-    auto ret = user_delete_callbacks._callbacks.insert(callback);
+    auto ret = user_delete_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on user deletion
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnUserDelete_Unregister(UserDeleteCallback callback)
+extern "C" PLUGIN_API Status OnUserDelete_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(user_delete_callbacks._lock);
-    const size_t ret = user_delete_callbacks._callbacks.erase(callback);
+    const size_t ret = user_delete_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on user permission expiration
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnPermissionExpirationCallback_Register(PermExpirationCallback callback)
+extern "C" PLUGIN_API Status OnPermissionExpirationCallback_Register(const int64_t pluginID, PermExpirationCallback callback)
 {
     std::unique_lock lock(perm_expiration_callbacks._lock);
-    auto ret = perm_expiration_callbacks._callbacks.insert(callback);
+    auto ret = perm_expiration_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on user permission expiration
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnPermissionExpirationCallback_Unregister(PermExpirationCallback callback)
+extern "C" PLUGIN_API Status OnPermissionExpirationCallback_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(perm_expiration_callbacks._lock);
-    const size_t ret = perm_expiration_callbacks._callbacks.erase(callback);
+    const size_t ret = perm_expiration_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on user permission expiration
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupExpirationCallback_Register(GroupExpirationCallback callback)
+extern "C" PLUGIN_API Status OnGroupExpirationCallback_Register(const int64_t pluginID, GroupExpirationCallback callback)
 {
     std::unique_lock lock(group_expiration_callbacks._lock);
-    auto ret = group_expiration_callbacks._callbacks.insert(callback);
+    auto ret = group_expiration_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on user group expiration
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupExpirationCallback_Unregister(GroupExpirationCallback callback)
+extern "C" PLUGIN_API Status OnGroupExpirationCallback_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(group_expiration_callbacks._lock);
-    const size_t ret = group_expiration_callbacks._callbacks.erase(callback);
+    const size_t ret = group_expiration_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 

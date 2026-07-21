@@ -1,8 +1,11 @@
 #pragma once
+#include <atomic>
 #include <mutex>
 #include <shared_mutex>
 
 extern std::mutex global_mutex;
+
+extern std::atomic<int64_t> connectorID;
 
 enum class Action : int32_t
 {
