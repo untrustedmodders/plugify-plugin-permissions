@@ -7381,7 +7381,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "description": "Immunity."
-                            },
+                            }
                         ],
                         "retType": {
                             "type": "bool"
