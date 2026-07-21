@@ -37,6 +37,13 @@ public:
 	}
 
 	bool Delete(const uint64_t targetID) {
+		{
+			std::shared_lock lock(_lock);
+			const auto it = _users.find(targetID);
+			if (it == _users.end())
+				return false;
+			it->second->_queue.Shutdown();
+		}
 		std::unique_lock lock(_lock);
 
 		return _users.erase(targetID) > 0;
@@ -70,7 +77,7 @@ enum class PlayerState : uint32_t {
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New duration (timestamp) assigned to the permission.
  */
-using UserPermissionCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
+using UserPermissionCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                         const plg::string& perm, const Status oldState, const Status newState, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
@@ -81,7 +88,7 @@ using UserPermissionCallback = void (*)(const int64_t pluginID, const Action act
  * @param name		Name of the cookie.
  * @param cookie	Value of the cookie.
  */
-using UserSetCookieCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
+using UserSetCookieCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie);
 
 /**
@@ -94,7 +101,7 @@ using UserSetCookieCallback = void (*)(const int64_t pluginID, const uint64_t ta
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New group duration.
  */
-using UserGroupCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
+using UserGroupCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
@@ -106,7 +113,7 @@ using UserGroupCallback = void (*)(const int64_t pluginID, const Action action, 
  * @param offline       Indicates whether the user's data was loaded without user presence on server.
  * @param groupNames	Array of groups inherited by the user.
  */
-using UserCreateCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
+using UserCreateCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
                                     const bool offline, const plg::vector<plg::string>& groupNames);
 
 /**
@@ -115,7 +122,7 @@ using UserCreateCallback = void (*)(const int64_t pluginID, const uint64_t targe
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
  */
-using UserDeleteCallback = void (*)(const int64_t pluginID, const uint64_t targetID);
+using UserDeleteCallback = bool (*)(const int64_t pluginID, const uint64_t targetID);
 
 /**
  * @brief Callback invoked when a permission in user has been expired.
@@ -170,62 +177,62 @@ using UserRequestCallback = void(*)(const int64_t pluginID, const uint64_t targe
 struct UserPermissionCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserPermissionCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserPermissionCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct UserSetCookieCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserSetCookieCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserSetCookieCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct UserGroupCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserGroupCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserGroupCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct UserCreateCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserCreateCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserCreateCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct UserDeleteCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserDeleteCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserDeleteCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct PermExpirationCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<PermExpirationCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, PermExpirationCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct GroupExpirationCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<GroupExpirationCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, GroupExpirationCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct UserLoadCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserRequestCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserRequestCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct UserLoadedCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<UserLoadedCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserLoadedCallback> _callbacks;
     std::atomic_int _counter;
 };

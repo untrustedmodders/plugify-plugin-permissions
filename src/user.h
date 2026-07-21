@@ -277,7 +277,6 @@ struct User
 
 	~User()
 	{
-    	_queue.Shutdown();
     	std::unique_lock lock(perms_lock);
     	Node::destroyAllTimers(temp_nodes);
     }

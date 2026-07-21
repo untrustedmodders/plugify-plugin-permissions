@@ -62,6 +62,7 @@ public:
 				cur_group = cur_group->_parent;
 			}
 		}
+		g->_queue.Shutdown();
 		g_TimerSystem.CreateTimer(10, &DelayedDelete, TimerFlag::Default, {static_cast<void*>(g)});
 		return true;
 	}
@@ -91,7 +92,7 @@ extern GroupManager g_GroupManager;
  * @param childName		Name of the child group.
  * @param parentName	Name of the parent group being assigned.
  */
-using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& childName,
+using SetParentCallback = bool (*)(const int64_t pluginID, const plg::string& childName,
                                    const plg::string& parentName);
 
 /**
@@ -102,7 +103,7 @@ using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& ch
  * @param optionName	Name of the option being set.
  * @param value			Value of the option.
  */
-using SetOptionGroupCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
+using SetOptionGroupCallback = bool (*)(const int64_t pluginID, const plg::string& groupName,
                                         const plg::string& optionName, const plg::any& value);
 
 /**
@@ -115,7 +116,7 @@ using SetOptionGroupCallback = void (*)(const int64_t pluginID, const plg::strin
  * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
  * @param newState      Current state after the change (the newly assigned state).
  */
-using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
+using GroupPermissionCallback = bool (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
                                          const plg::string& perm, const Status oldState, const Status newState);
 
 /**
@@ -127,7 +128,7 @@ using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action ac
  * @param priority	Priority of the group.
  * @param parent	Name of the parent group (empty if none).
  */
-using GroupCreateCallback = void (*)(const int64_t pluginID, const plg::string& name,
+using GroupCreateCallback = bool (*)(const int64_t pluginID, const plg::string& name,
                                      const plg::vector<plg::string>& perms, const int priority,
                                      const plg::string& parent);
 
@@ -137,7 +138,7 @@ using GroupCreateCallback = void (*)(const int64_t pluginID, const plg::string& 
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param name		Name of the group being deleted.
  */
-using GroupDeleteCallback = void (*)(const int64_t pluginID, const plg::string& name);
+using GroupDeleteCallback = bool (*)(const int64_t pluginID, const plg::string& name);
 
 /**
  * @brief Called when the core requests loading of server groups.
@@ -155,41 +156,41 @@ using LoadGroupsCallback = void(*)(const int64_t pluginID);
 struct SetParentCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<SetParentCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, SetParentCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct SetOptionGroupCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<SetOptionGroupCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, SetOptionGroupCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct GroupPermissionCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<GroupPermissionCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, GroupPermissionCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct GroupCreateCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<GroupCreateCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, GroupCreateCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct GroupDeleteCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_set<GroupDeleteCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, GroupDeleteCallback> _callbacks;
     std::atomic_int _counter;
 };
 
 struct LoadGroupsCallbacks
 {
 	std::shared_mutex _lock;
-	phmap::flat_hash_set<LoadGroupsCallback> _callbacks;
+	phmap::flat_hash_map<int64_t, LoadGroupsCallback> _callbacks;
 	std::atomic_int _counter;
 };

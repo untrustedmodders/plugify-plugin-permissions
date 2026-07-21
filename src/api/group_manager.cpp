@@ -33,22 +33,23 @@ PLUGIFY_WARN_IGNORE (4190)
 extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string& childName,
                                        const plg::string& parentName)
 {
-    Group* it1 = g_GroupManager.Get(childName);
-    Group* it2 = g_GroupManager.Get(parentName);
+    Group* g1 = g_GroupManager.Get(childName);
+    Group* g2 = g_GroupManager.Get(parentName);
 
 	const bool empty_group = childName.empty();
 
-    if (!it1 && !empty_group)
+    if (!g1 && !empty_group)
     	return Status::ChildGroupNotFound;
-    if (!it2)
+    if (!g2)
         return Status::ParentGroupNotFound;
 
-    it1->_parent.store(empty_group ? nullptr : it2);
+    g1->_parent.store(empty_group ? nullptr : g2);
+	g1->_queue.Enqueue([pluginID, childName, parentName]()
     {
         std::shared_lock lock2(set_parent_callbacks._lock);
-        for (const SetParentCallback cb : set_parent_callbacks._callbacks)
+        for (const SetParentCallback cb : set_parent_callbacks._callbacks | std::views::values)
             cb(pluginID, childName, parentName);
-    }
+    });
     return Status::Success;
 }
 
@@ -61,14 +62,14 @@ extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string
  */
 extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string& parentName)
 {
-    const Group* it = g_GroupManager.Get(groupName);
+    const Group* child = g_GroupManager.Get(groupName);
 
-    if (!it)
+    if (!child)
         return Status::ChildGroupNotFound;
-	const Group* g = it->_parent.load();
-    if (!g)
+	const Group* parent = child->_parent.load();
+    if (!parent)
         return Status::ParentGroupNotFound;
-    parentName = g->_name;
+    parentName = parent->_name;
     return Status::Success;
 }
 
@@ -81,9 +82,9 @@ extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string
  */
 extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::vector<plg::string>& perms)
 {
-	Group* it = g_GroupManager.Get(name);
+	Group* g = g_GroupManager.Get(name);
 
-    perms = it->dumpPerms();
+    perms = g->dumpPerms();
 
     return Status::Success;
 }
@@ -108,15 +109,15 @@ extern "C" PLUGIN_API plg::vector<plg::string> GetAllGroups()
  */
 extern "C" PLUGIN_API Status HasPermissionGroupExtended(const plg::string& name, const plg::string& perm, const bool exact)
 {
-	Group* it = g_GroupManager.Get(name);
-	if (!it)
+	Group* g = g_GroupManager.Get(name);
+	if (!g)
 		return Status::GroupNotFound;
 
 	if (perm.empty())
 		return Status::Allow;
 
     bool w_wildcard;
-    Status status = it->hasPermission(perm, exact, w_wildcard);
+    Status status = g->hasPermission(perm, exact, w_wildcard);
     if (exact && isWildcard(perm) != w_wildcard)
         return Status::PermNotFound;
     return status;
@@ -143,14 +144,14 @@ extern "C" PLUGIN_API Status HasPermissionGroup(const plg::string& name, const p
  */
 extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const plg::string& parentName)
 {
-	Group* it1 = g_GroupManager.Get(childName);
-	Group* it2 = g_GroupManager.Get(parentName);
-    if (!it1)
+	Group* g1 = g_GroupManager.Get(childName);
+	Group* g2 = g_GroupManager.Get(parentName);
+    if (!g1)
         return Status::ChildGroupNotFound;
-    if (!it2)
+    if (!g2)
         return Status::ParentGroupNotFound;
 
-    if (it1->hasParent(it2))
+    if (g1->hasParent(g2))
     	return Status::Allow;
     return Status::Disallow;
 }
@@ -164,10 +165,10 @@ extern "C" PLUGIN_API Status HasParentGroup(const plg::string& childName, const 
  */
 extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int& priority)
 {
-	Group* it = g_GroupManager.Get(groupName);
-	if (!it)
+	Group* g = g_GroupManager.Get(groupName);
+	if (!g)
 		return Status::GroupNotFound;
-    priority = it->_priority;
+    priority = g->_priority;
     return Status::Success;
 }
 
@@ -185,13 +186,13 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 {
 	if (perm.empty())
 		return Status::Error;
-	Group* it = g_GroupManager.Get(name);
-	if (!it)
+	Group* g = g_GroupManager.Get(name);
+	if (!g)
 		return Status::GroupNotFound;
 
     const bool denied = perm.starts_with('-');
     bool w_wildcard;
-    const Status oldState = it->hasPermission(perm, true, w_wildcard);
+    const Status oldState = g->hasPermission(perm, true, w_wildcard);
     const bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
 	bool replaceToWC = false;
@@ -213,22 +214,51 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
     	}
 
     	act = Action::Replace;
+    	if (replaceToWC)
+    		act = Action::ReplaceToWC;
     }
 
-	it->addPerm(perm);
-
-	plg::vector<plg::string> deleted_perms;
-
 	if (!dontBroadcast) {
-		if (replaceToWC)
-			act = Action::ReplaceToWC;
+		g->_queue.Enqueue([g, perm, pluginID, act, name, denied, oldState]()
 		{
+			const int64_t cID = connectorID.load();
+			if (cID != -1) {
+				GroupPermissionCallback callback = nullptr;
+				{
+					std::shared_lock lock2(group_permission_callbacks._lock);
+					const auto it = group_permission_callbacks._callbacks.find(cID);
+					if (it != group_permission_callbacks._callbacks.end())
+						callback = it->second;
+				}
+				if (callback && !callback(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow)) {
+					{
+						std::shared_lock lock2(group_permission_callbacks._lock);
+						const auto it = group_permission_callbacks._callbacks.find(pluginID);
+						if (it != group_permission_callbacks._callbacks.end())
+							callback = it->second;
+						else
+							callback = nullptr;
+					}
+					if (callback)
+						callback(pluginID, act, name, perm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA);
+					return;
+				}
+			}
+
+			g->addPerm(perm);
+
 			const plg::string prm = denied ? perm.substr(1) : perm;
 			std::shared_lock lock3(group_permission_callbacks._lock);
-			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
+			for (const auto& [id, cb] : group_permission_callbacks._callbacks) {
+				if (id == cID)
+					[[unlikely]] continue;
 				cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
-		}
+			}
+		});
+		return Status::Async;
 	}
+	g->addPerm(perm);
+
     return Status::Success;
 }
 
@@ -237,13 +267,13 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 {
 	if (perm.empty())
 		return Status::Error;
-	Group* it = g_GroupManager.Get(name);
-	if (!it)
+	Group* g = g_GroupManager.Get(name);
+	if (!g)
 		return Status::GroupNotFound;
 
 	const bool denied = perm.starts_with('-');
 	bool w_wildcard;
-	const Status oldState = it->hasPermission(perm, true, w_wildcard);
+	const Status oldState = g->hasPermission(perm, true, w_wildcard);
 	bool diff = !((denied && oldState == Status::Disallow) || (!denied && oldState == Status::Allow));
 
 	bool replaceToWC = false;
@@ -261,23 +291,53 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 			diff = true;
 		}
 		act = Action::Replace;
+		if (replaceToWC)
+			act = Action::ReplaceToWC;
 	}
 
 	if (!diff)
 		return Status::PermAlreadyGranted;
 
-	it->addPerm(perm);
-
 	if (!dontBroadcast) {
-		if (replaceToWC)
-			act = Action::ReplaceToWC;
-		const plg::string prm = denied ? perm.substr(1) : perm;
+		g->_queue.Enqueue([g, perm, pluginID, act, name, denied, oldState]()
 		{
+			const int64_t cID = connectorID.load();
+			if (cID != -1) {
+				GroupPermissionCallback callback = nullptr;
+				{
+					std::shared_lock lock2(group_permission_callbacks._lock);
+					const auto it = group_permission_callbacks._callbacks.find(cID);
+					if (it != group_permission_callbacks._callbacks.end())
+						callback = it->second;
+				}
+				if (callback && !callback(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow)) {
+					{
+						std::shared_lock lock2(group_permission_callbacks._lock);
+						const auto it = group_permission_callbacks._callbacks.find(pluginID);
+						if (it != group_permission_callbacks._callbacks.end())
+							callback = it->second;
+						else
+							callback = nullptr;
+					}
+					if (callback)
+						callback(pluginID, act, name, perm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA);
+					return;
+				}
+			}
+
+			g->addPerm(perm);
+
+			const plg::string prm = denied ? perm.substr(1) : perm;
 			std::shared_lock lock3(group_permission_callbacks._lock);
-			for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
+			for (const auto& [id, cb] : group_permission_callbacks._callbacks) {
+				if (id == cID)
+					[[unlikely]] continue;
 				cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
-		}
+			}
+		});
+		return Status::Async;
 	}
+	g->addPerm(perm);
 
 	return Status::Success;
 }
@@ -292,31 +352,58 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
  * @return Success, GroupNotFound, PermNotFound
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const plg::string& name,
-                                                   const plg::string& perm, const bool recursiveDeletion)
-{
+                                                   const plg::string& perm, const bool recursiveDeletion) {
 	if (perm.empty())
 		return Status::Error;
-	Group* it = g_GroupManager.Get(name);
-	if (!it)
+	Group* g = g_GroupManager.Get(name);
+	if (!g)
 		return Status::GroupNotFound;
 
 	bool w_wildcard;
-	const auto oldState = it->hasPermission(perm, true, w_wildcard);
+	const auto oldState = g->hasPermission(perm, true, w_wildcard);
 	if (oldState == Status::PermNotFound)
 		return Status::PermNotFound;
 
-    plg::vector<plg::string> deleted_perms;
-	const bool ret = it->delPerm(perm, recursiveDeletion, deleted_perms);
-	if (!ret)
-		return Status::PermNotFound;
+	g->_queue.Enqueue([g, perm, recursiveDeletion, pluginID, oldState, name]()
+	{
+		const int64_t cID = connectorID.load();
+			if (cID != -1) {
+				GroupPermissionCallback callback = nullptr;
+				{
+					std::shared_lock lock2(group_permission_callbacks._lock);
+					const auto it = group_permission_callbacks._callbacks.find(cID);
+					if (it != group_permission_callbacks._callbacks.end())
+						callback = it->second;
+				}
+				if (callback && !callback(pluginID, Action::Remove, name, perm, oldState, Status::PermNotFound)) {
+					{
+						std::shared_lock lock2(group_permission_callbacks._lock);
+						const auto it = group_permission_callbacks._callbacks.find(pluginID);
+						if (it != group_permission_callbacks._callbacks.end())
+							callback = it->second;
+						else
+							callback = nullptr;
+					}
+					if (callback)
+						callback(pluginID, Action::Remove, name, perm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA);
+					return;
+				}
+			}
 
-    {
-        std::shared_lock lock3(group_permission_callbacks._lock);
-        for (const GroupPermissionCallback cb : group_permission_callbacks._callbacks)
-            for (const plg::string& s : deleted_perms)
-                cb(pluginID, Action::Remove, s, perm, oldState, Status::PermNotFound);
-    }
-    return Status::Success;
+		plg::vector<plg::string> deleted_perms;
+		if (!g->delPerm(perm, recursiveDeletion, deleted_perms))
+			return;
+
+		std::shared_lock lock3(group_permission_callbacks._lock);
+		for (const auto& [id, cb] : group_permission_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
+			for (const plg::string& s : deleted_perms)
+				cb(pluginID, Action::Remove, s, perm, oldState, Status::PermNotFound);
+		}
+	});
+	plg::vector<plg::string> deleted_perms;
+	return g->delPerm(perm, recursiveDeletion, deleted_perms) ? Status::Success : Status::PermNotFound;
 }
 
 /**
@@ -330,11 +417,11 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const plg::string& optionName,
                                             plg::any& value)
 {
-	Group* it = g_GroupManager.Get(groupName);
-	if (!it)
+	Group* g = g_GroupManager.Get(groupName);
+	if (!g)
 		return Status::GroupNotFound;
 
-    return it->getCookie(optionName, value) ? Status::Success : Status::OptionNotFound;
+    return g->getCookie(optionName, value) ? Status::Success : Status::OptionNotFound;
 }
 
 /**
@@ -349,18 +436,45 @@ extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const 
 extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::string& groupName,
                                             const plg::string& optionName, const plg::any& value)
 {
-	Group* it = g_GroupManager.Get(groupName);
-	if (!it)
+	Group* g = g_GroupManager.Get(groupName);
+	if (!g)
 		return Status::GroupNotFound;
 
+	g->_queue.Enqueue([g, pluginID, optionName, value, groupName]()
 	{
-		std::shared_lock lock3(set_option_group_callbacks._lock);
-		for (const SetOptionGroupCallback cb : set_option_group_callbacks._callbacks)
-			cb(pluginID, groupName, optionName, value);
-	}
+		const int64_t cID = connectorID.load();
+		if (cID != -1) {
+			SetOptionGroupCallback callback = nullptr;
+			{
+				std::shared_lock lock2(set_option_group_callbacks._lock);
+				const auto it = set_option_group_callbacks._callbacks.find(cID);
+				if (it != set_option_group_callbacks._callbacks.end())
+					callback = it->second;
+			}
+			if (callback && !callback(pluginID, groupName, optionName, value)) {
+				// {
+				// 	std::shared_lock lock2(set_option_group_callbacks._lock);
+				// 	const auto it = set_option_group_callbacks._callbacks.find(pluginID);
+				// 	if (it != set_option_group_callbacks._callbacks.end())
+				// 		callback = it->second;
+				// 	else
+				// 		callback = nullptr;
+				// }
+				return;
+			}
+		}
 
-	it->setCookie(optionName, value);
-    return Status::Success;
+		g->setCookie(optionName, value);
+
+		std::shared_lock lock3(set_option_group_callbacks._lock);
+		for (const auto& [id, cb] : set_option_group_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
+			cb(pluginID, groupName, optionName, value);
+		}
+	});
+
+    return Status::Async;
 }
 
 /**
@@ -375,10 +489,10 @@ extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::s
 extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, plg::vector<plg::string>& optionNames,
                                                 plg::vector<plg::any>& values)
 {
-	Group* it = g_GroupManager.Get(groupName);
-	if (!it)
+	Group* g = g_GroupManager.Get(groupName);
+	if (!g)
 		return Status::GroupNotFound;
-	it->dumpCookies(optionNames, values);
+	g->dumpCookies(optionNames, values);
 
     return Status::Success;
 }
@@ -410,7 +524,7 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
 	g_GroupManager.Add(perms, name, priority, parentGroup);
     {
         std::shared_lock lock2(group_create_callbacks._lock);
-        for (const GroupCreateCallback cb : group_create_callbacks._callbacks)
+        for (const GroupCreateCallback cb : group_create_callbacks._callbacks | std::views::values)
             cb(pluginID, name, perms, priority, parent);
     }
     return Status::Success;
@@ -432,7 +546,7 @@ extern "C" PLUGIN_API Status DeleteGroup(const int64_t pluginID, const plg::stri
 
     {
         std::shared_lock lock2(group_delete_callbacks._lock);
-        for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks)
+        for (const GroupDeleteCallback cb : group_delete_callbacks._callbacks | std::views::values)
             cb(pluginID, name);
     }
     g_GroupManager.Delete(name);
@@ -466,168 +580,175 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
  *
  * Thread-safe: acquires a shared lock while iterating over callbacks.
  *
- * @param pluginID Identifier of the plugin that calls the method.
+ * @param pluginID   Identifier of the calling plugin.
+ * @param callback Function callback.
  */
 extern "C" PLUGIN_API void LoadGroups(const int64_t pluginID)
 {
     std::shared_lock lock2(load_groups_callbacks._lock);
-    for (const LoadGroupsCallback cb : load_groups_callbacks._callbacks)
+    for (const LoadGroupsCallback cb : load_groups_callbacks._callbacks | std::views::values)
         cb(pluginID);
 }
 
 /**
  * @brief Register listener on LoadGroups event.
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnLoadGroups_Register(LoadGroupsCallback callback)
+extern "C" PLUGIN_API Status OnLoadGroups_Register(const int64_t pluginID, LoadGroupsCallback callback)
 {
     std::unique_lock lock(load_groups_callbacks._lock);
-    auto ret = load_groups_callbacks._callbacks.insert(callback);
+    auto ret = load_groups_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on LoadGroups event.
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnLoadGroups_Unregister(LoadGroupsCallback callback)
+extern "C" PLUGIN_API Status OnLoadGroups_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(load_groups_callbacks._lock);
-    const size_t ret = load_groups_callbacks._callbacks.erase(callback);
+    const size_t ret = load_groups_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on group parent changing
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetParent_Register(SetParentCallback callback)
+extern "C" PLUGIN_API Status OnGroupSetParent_Register(const int64_t pluginID, SetParentCallback callback)
 {
     std::unique_lock lock(set_parent_callbacks._lock);
-    auto ret = set_parent_callbacks._callbacks.insert(callback);
+    auto ret = set_parent_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on group parent changing
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(SetParentCallback callback)
+extern "C" PLUGIN_API Status OnGroupSetParent_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(set_parent_callbacks._lock);
-    const size_t ret = set_parent_callbacks._callbacks.erase(callback);
+    const size_t ret = set_parent_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on group option sets
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetOption_Register(SetOptionGroupCallback callback)
+extern "C" PLUGIN_API Status OnGroupSetOption_Register(const int64_t pluginID, SetOptionGroupCallback callback)
 {
     std::unique_lock lock(set_option_group_callbacks._lock);
-    auto ret = set_option_group_callbacks._callbacks.insert(callback);
+    auto ret = set_option_group_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on group option sets
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupSetOption_Unregister(SetOptionGroupCallback callback)
+extern "C" PLUGIN_API Status OnGroupSetOption_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(set_option_group_callbacks._lock);
-    const size_t ret = set_option_group_callbacks._callbacks.erase(callback);
+    const size_t ret = set_option_group_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on group permissions add/remove
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupPermissionChange_Register(GroupPermissionCallback callback)
+extern "C" PLUGIN_API Status OnGroupPermissionChange_Register(const int64_t pluginID, GroupPermissionCallback callback)
 {
     std::unique_lock lock(group_permission_callbacks._lock);
-    auto ret = group_permission_callbacks._callbacks.insert(callback);
+    auto ret = group_permission_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on group permissions add/remove
  *
- * @param callback Function callback.
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupPermissionChange_Unregister(GroupPermissionCallback callback)
+extern "C" PLUGIN_API Status OnGroupPermissionChange_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(group_permission_callbacks._lock);
-    const size_t ret = group_permission_callbacks._callbacks.erase(callback);
+    const size_t ret = group_permission_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on group creation
  *
+ * @param pluginID   Identifier of the calling plugin.
  * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupCreate_Register(GroupCreateCallback callback)
+extern "C" PLUGIN_API Status OnGroupCreate_Register(const int64_t pluginID, GroupCreateCallback callback)
 {
     std::unique_lock lock(group_create_callbacks._lock);
-    auto ret = group_create_callbacks._callbacks.insert(callback);
+    auto ret = group_create_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on group creation
  *
- * @param callback Listener
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupCreate_Unregister(GroupCreateCallback callback)
+extern "C" PLUGIN_API Status OnGroupCreate_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(group_create_callbacks._lock);
-    const size_t ret = group_create_callbacks._callbacks.erase(callback);
+    const size_t ret = group_create_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
 /**
  * @brief Register listener on group deletion
  *
- * @param callback Listener
+ * @param pluginID   Identifier of the calling plugin.
+ * @param callback Function callback.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupDelete_Register(GroupDeleteCallback callback)
+extern "C" PLUGIN_API Status OnGroupDelete_Register(const int64_t pluginID, GroupDeleteCallback callback)
 {
     std::unique_lock lock(group_delete_callbacks._lock);
-    auto ret = group_delete_callbacks._callbacks.insert(callback);
+    auto ret = group_delete_callbacks._callbacks.insert({pluginID, callback});
     return ret.second ? Status::Success : Status::CallbackAlreadyExist;
 }
 
 /**
  * @brief Unregister listener on group deletion
  *
- * @param callback Listener
+ * @param pluginID   Identifier of the calling plugin.
  * @return
  */
-extern "C" PLUGIN_API Status OnGroupDelete_Unregister(GroupDeleteCallback callback)
+extern "C" PLUGIN_API Status OnGroupDelete_Unregister(const int64_t pluginID)
 {
     std::unique_lock lock(group_delete_callbacks._lock);
-    const size_t ret = group_delete_callbacks._callbacks.erase(callback);
+    const size_t ret = group_delete_callbacks._callbacks.erase(pluginID);
     return ret > 0 ? Status::Success : Status::CallbackNotFound;
 }
 
