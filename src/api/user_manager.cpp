@@ -33,7 +33,7 @@ void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector
     }
 
     std::shared_lock lock(perm_expiration_callbacks._lock);
-    for (const auto& callback : perm_expiration_callbacks._callbacks)
+    for (const auto& callback : perm_expiration_callbacks._callbacks | std::views::values)
         for (const plg::string& s : deleted_perms)
             callback(targetID, s, state ? Status::Allow : Status::Disallow);
 }
@@ -55,7 +55,7 @@ void g_GroupExpirationCallback(uint32_t /*timer*/, const plg::vector<plg::any>& 
     }
 
     std::shared_lock lock(group_expiration_callbacks._lock);
-    for (const auto& callback : group_expiration_callbacks._callbacks)
+    for (const auto& callback : group_expiration_callbacks._callbacks | std::views::values)
         callback(targetID, *group_name);
 }
 
