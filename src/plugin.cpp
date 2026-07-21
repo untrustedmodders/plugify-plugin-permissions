@@ -6,7 +6,7 @@
 #include <atomic>
 
 std::mutex global_mutex;
-std::atomic<int64_t> connectorID = -1;
+std::atomic<int64_t> storageID = -1;
 
 class PlugifyPermissions final : public plg::Plugin
 {
@@ -29,14 +29,6 @@ public:
 		return {};
     }
 } g_permissionsPlugin;
-
-extern "C" PLUGIN_API void SetConnectorID(const int64_t pluginID) {
-	connectorID.store(pluginID);
-}
-
-extern "C" PLUGIN_API void ResetConnectorID() {
-	connectorID.store(-1);
-}
 
 PLUGIFY_PLUGIN(PLUGIN_API, &g_permissionsPlugin)
 

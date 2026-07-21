@@ -12,6 +12,30 @@
 	"dependencies": [],
 	"methods": [
         {
+            "name": "SetStorageID",
+            "funcName": "SetStorageID",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false
+                }
+            ],
+            "retType": {
+                "type": "void"
+            },
+            "group": "Storage"
+        },
+        {
+            "name": "ResetStorageID",
+            "funcName": "ResetStorageID",
+            "paramTypes": [],
+            "retType": {
+                "type": "void"
+            },
+            "group": "Storage"
+        },
+        {
             "name": "HasPermission",
             "funcName": "HasPermission",
             "paramTypes": [
@@ -109,6 +133,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -257,6 +289,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -362,6 +402,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -473,6 +521,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -578,6 +634,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -683,6 +747,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -788,6 +860,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -894,6 +974,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1017,6 +1105,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1128,6 +1224,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1252,6 +1356,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1375,6 +1487,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1492,6 +1612,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1597,6 +1725,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1709,6 +1845,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1832,6 +1976,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -1943,6 +2095,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2112,6 +2272,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2302,6 +2470,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2421,6 +2597,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2532,6 +2716,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2637,6 +2829,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2742,6 +2942,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2848,6 +3056,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -2959,6 +3175,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3071,6 +3295,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3188,6 +3420,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3293,6 +3533,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3405,6 +3653,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3522,6 +3778,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3633,6 +3897,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3775,6 +4047,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3897,6 +4177,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -3912,6 +4200,12 @@
             "funcName": "OnLoadUser_Register",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
@@ -4082,6 +4376,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -4094,94 +4396,10 @@
             "funcName": "OnLoadUser_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserRequestCallback",
-                        "funcName": "UserRequestCallback",
-                        "description": "Called when a user data load is requested. This callback is triggered by the core when it requires user data to be loaded from an external storage (e.g. database). Extensions can subscribe to this event to perform the actual loading process and initialize the user in memory. This event does NOT guarantee that the user object already exists in memory.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "PlayerID of the user whose data should be loaded."
-                            },
-                            {
-                                "name": "username",
-                                "type": "string",
-                                "ref": false,
-                                "description": "The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation)."
-                            },
-                            {
-                                "name": "offline",
-                                "type": "bool",
-                                "ref": false,
-                                "description": "Indicates whether the user's data was loaded without user presence on server."
-                            },
-                            {
-                                "name": "callback",
-                                "type": "function",
-                                "ref": false,
-                                "description": "Function callback.",
-                                "prototype": {
-                                    "name": "UserLoadedCallback",
-                                    "funcName": "UserLoadedCallback",
-                                    "description": "Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.",
-                                    "paramTypes": [
-                                        {
-                                            "name": "pluginID",
-                                            "type": "int64",
-                                            "ref": false,
-                                            "description": "Identifier of the plugin that reports the completion of the loading process."
-                                        },
-                                        {
-                                            "name": "targetID",
-                                            "type": "uint64",
-                                            "ref": false,
-                                            "description": "PlayerID of the user whose data has been loaded."
-                                        },
-                                        {
-                                            "name": "playerState",
-                                            "type": "uint32",
-                                            "ref": false,
-                                            "enum": {
-                                                "name": "PlayerState",
-                                                "values": [
-                                                    {
-                                                        "name": "NotFound",
-                                                        "value": 0
-                                                    },
-                                                    {
-                                                        "name": "Online",
-                                                        "value": 1
-                                                    },
-                                                    {
-                                                        "name": "Offline",
-                                                        "value": 2
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ],
-                                    "retType": {
-                                        "type": "void"
-                                    }
-                                }
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -4264,6 +4482,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -4276,6 +4502,12 @@
             "funcName": "OnUserCreate_Register",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
@@ -4311,7 +4543,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -4396,6 +4628,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -4408,44 +4648,10 @@
             "funcName": "OnUserCreate_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserCreateCallback",
-                        "funcName": "UserCreateCallback",
-                        "description": "Callback invoked after a user is successfully created.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Player ID of the created user."
-                            },
-                            {
-                                "name": "immunity",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "User immunity value passed to CreateUser (may be -1 if highest group priority was requested)."
-                            },
-                            {
-                                "name": "groupNames",
-                                "type": "string[]",
-                                "ref": false,
-                                "description": "Array of groups inherited by the user."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -4528,6 +4734,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -4540,125 +4754,11 @@
             "funcName": "OnUserDelete_Register",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserDeleteCallback",
-                        "funcName": "UserDeleteCallback",
-                        "description": "Callback invoked before a user is deleted.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Player ID of the user being deleted."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "OptionNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        },
-                        {
-                            "name": "PermAlreadyGranted",
-                            "value": 14
-                        },
-                        {
-                            "name": "TemporalGroup",
-                            "value": 15
-                        },
-                        {
-                            "name": "PermanentGroup",
-                            "value": 16
-                        },
-                        {
-                            "name": "GroupNotDefined",
-                            "value": 17
-                        }
-                    ]
-                }
-            },
-            "group": "UserListeners",
-            "description": "Register listener on user deletion"
-        },
-        {
-            "name": "OnUserDelete_Unregister",
-            "funcName": "OnUserDelete_Unregister",
-            "paramTypes": [
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
@@ -4683,7 +4783,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -4768,6 +4868,120 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user deletion"
+        },
+        {
+            "name": "OnUserDelete_Unregister",
+            "funcName": "OnUserDelete_Unregister",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -4781,216 +4995,11 @@
             "funcName": "OnUserPermissionChange_Register",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserPermissionCallback",
-                        "funcName": "UserPermissionCallback",
-                        "description": "Callback invoked when a permission is added, removed, or replaced for a user.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "action",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "Action performed (Add, Remove, or Replace).",
-                                "enum": {
-                                    "name": "Action",
-                                    "values": [
-                                        {
-                                            "name": "Add",
-                                            "value": 0
-                                        },
-                                        {
-                                            "name": "Remove",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Replace",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "ReplaceToWC",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Player ID of the affected user."
-                            },
-                            {
-                                "name": "perm",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Permission line affected."
-                            },
-                            {
-                                "name": "oldState",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
-                                "enum": {
-                                    "name": "Status",
-                                    "values": [
-                                        {
-                                            "name": "Allow",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Disallow",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "PermNotFound",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "newState",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "Current state after the change (the newly assigned state).",
-                                "enum": {
-                                    "name": "Status",
-                                    "values": [
-                                        {
-                                            "name": "Allow",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Disallow",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "PermNotFound",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "oldTimestamp",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Old permission duration. (-1 if it doesn't exist)."
-                            },
-                            {
-                                "name": "newTimestamp",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "New duration (timestamp) assigned to the permission."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "OptionNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        },
-                        {
-                            "name": "PermAlreadyGranted",
-                            "value": 14
-                        },
-                        {
-                            "name": "TemporalGroup",
-                            "value": 15
-                        },
-                        {
-                            "name": "PermanentGroup",
-                            "value": 16
-                        },
-                        {
-                            "name": "GroupNotDefined",
-                            "value": 17
-                        }
-                    ]
-                }
-            },
-            "group": "UserListeners",
-            "description": "Register listener on user permission add/remove"
-        },
-        {
-            "name": "OnUserPermissionChange_Unregister",
-            "funcName": "OnUserPermissionChange_Unregister",
-            "paramTypes": [
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
@@ -5106,7 +5115,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -5191,6 +5200,120 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user permission add/remove"
+        },
+        {
+            "name": "OnUserPermissionChange_Unregister",
+            "funcName": "OnUserPermissionChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -5204,170 +5327,11 @@
             "funcName": "OnUserGroupChange_Register",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserGroupCallback",
-                        "funcName": "UserGroupCallback",
-                        "description": "Callback invoked when a group is added or removed from a user.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "action",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "Action performed (Add or Remove).",
-                                "enum": {
-                                    "name": "Action",
-                                    "values": [
-                                        {
-                                            "name": "Add",
-                                            "value": 0
-                                        },
-                                        {
-                                            "name": "Remove",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Replace",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "ReplaceToWC",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Player ID of the affected user."
-                            },
-                            {
-                                "name": "group",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the group added or removed."
-                            },
-                            {
-                                "name": "oldTimestamp",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Old group duration. (-1 if it doesn't exist)."
-                            },
-                            {
-                                "name": "newTimestamp",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "New group duration."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "OptionNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        },
-                        {
-                            "name": "PermAlreadyGranted",
-                            "value": 14
-                        },
-                        {
-                            "name": "TemporalGroup",
-                            "value": 15
-                        },
-                        {
-                            "name": "PermanentGroup",
-                            "value": 16
-                        },
-                        {
-                            "name": "GroupNotDefined",
-                            "value": 17
-                        }
-                    ]
-                }
-            },
-            "group": "UserListeners",
-            "description": "Register listener on user groups changing"
-        },
-        {
-            "name": "OnUserGroupChange_Unregister",
-            "funcName": "OnUserGroupChange_Unregister",
-            "paramTypes": [
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
@@ -5437,7 +5401,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -5522,6 +5486,120 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Register listener on user groups changing"
+        },
+        {
+            "name": "OnUserGroupChange_Unregister",
+            "funcName": "OnUserGroupChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -5535,6 +5613,12 @@
             "funcName": "OnPermissionExpirationCallback_Register",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
@@ -5662,6 +5746,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -5674,51 +5766,10 @@
             "funcName": "OnPermissionExpirationCallback_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "PermExpirationCallback",
-                        "funcName": "PermExpirationCallback",
-                        "description": "Callback invoked when a permission in user has been expired.",
-                        "paramTypes": [
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Player ID of the user whose permission has expired."
-                            },
-                            {
-                                "name": "perm",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Permission line affected."
-                            },
-                            {
-                                "name": "state",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "The state of the permission before expiration (Allow or Disallow).",
-                                "enum": {
-                                    "name": "Status",
-                                    "values": [
-                                        {
-                                            "name": "Allow",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Disallow",
-                                            "value": 2
-                                        }
-                                    ]
-                                }
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -5801,6 +5852,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -5813,6 +5872,12 @@
             "funcName": "OnGroupExpirationCallback_Register",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
@@ -5921,6 +5986,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -5933,32 +6006,10 @@
             "funcName": "OnGroupExpirationCallback_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "GroupExpirationCallback",
-                        "funcName": "GroupExpirationCallback",
-                        "description": "Callback invoked when a group in user has been expired.",
-                        "paramTypes": [
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "PlayerID of the user whose group has expired."
-                            },
-                            {
-                                "name": "group",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the group expiration."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -6041,6 +6092,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -6050,17 +6109,23 @@
         },
 
         {
-            "name": "OnUserSetCookie_Register",
-            "funcName": "OnUserSetCookie_Register",
+            "name": "OnUserCookieChange_Register",
+            "funcName": "OnUserCookieChange_Register",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "UserSetCookieCallback",
-                        "funcName": "UserSetCookieCallback",
+                        "name": "UserCookieCallback",
+                        "funcName": "UserCookieCallback",
                         "description": "Callback invoked when a cookie is set for a user.",
                         "paramTypes": [
                             {
@@ -6089,7 +6154,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -6174,6 +6239,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -6182,48 +6255,14 @@
             "description": "Register listener on user cookie sets"
         },
         {
-            "name": "OnUserSetCookie_Unregister",
-            "funcName": "OnUserSetCookie_Unregister",
+            "name": "OnUserCookieChange_Unregister",
+            "funcName": "OnUserCookieChange_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "UserSetCookieCallback",
-                        "funcName": "UserSetCookieCallback",
-                        "description": "Callback invoked when a cookie is set for a user.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "targetID",
-                                "type": "uint64",
-                                "ref": false,
-                                "description": "Player ID of the user."
-                            },
-                            {
-                                "name": "name",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the cookie."
-                            },
-                            {
-                                "name": "cookie",
-                                "type": "any",
-                                "ref": false,
-                                "description": "Value of the cookie."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -6306,12 +6345,20 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
             },
             "group": "UserListeners",
-            "description": "Register listener on user cookie sets"
+            "description": "Unregister listener on user cookie sets"
         },
 
 
@@ -6320,6 +6367,12 @@
             "name": "OnLoadGroups_Register",
             "funcName": "OnLoadGroups_Register",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
@@ -6423,6 +6476,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -6435,26 +6496,10 @@
             "funcName": "OnLoadGroups_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "LoadGroupsCallback",
-                        "funcName": "LoadGroupsCallback",
-                        "description": "Called when the core requests loading of server groups. This callback is triggered when the system needs to load group definitions associated with a specific plugin. Extensions (e.g., database providers) should subscribe to this event and load the groups into memory.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -6537,6 +6582,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -6550,6 +6603,12 @@
             "funcName": "OnGroupCreate_Register",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
@@ -6591,7 +6650,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -6676,6 +6735,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -6688,50 +6755,10 @@
             "funcName": "OnGroupCreate_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Listener",
-                    "prototype": {
-                        "name": "GroupCreateCallback",
-                        "funcName": "GroupCreateCallback",
-                        "description": "Callback invoked after a group is successfully created.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "name",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the created group."
-                            },
-                            {
-                                "name": "perms",
-                                "type": "string[]",
-                                "ref": false,
-                                "description": "Array of permissions assigned to the group."
-                            },
-                            {
-                                "name": "priority",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "Priority of the group."
-                            },
-                            {
-                                "name": "parent",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the parent group (empty if none)."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -6814,6 +6841,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -6826,125 +6861,11 @@
             "funcName": "OnGroupDelete_Register",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Listener",
-                    "prototype": {
-                        "name": "GroupDeleteCallback",
-                        "funcName": "GroupDeleteCallback",
-                        "description": "Callback invoked before a group is deleted.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "name",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the group being deleted."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
-                }
-            ],
-            "retType": {
-                "type": "int32",
-                "enum": {
-                    "name": "Status",
-                    "values": [
-                        {
-                            "name": "Success",
-                            "value": 0
-                        },
-                        {
-                            "name": "Allow",
-                            "value": 1
-                        },
-                        {
-                            "name": "Disallow",
-                            "value": 2
-                        },
-                        {
-                            "name": "PermNotFound",
-                            "value": 3
-                        },
-                        {
-                            "name": "CookieNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "OptionNotFound",
-                            "value": 4
-                        },
-                        {
-                            "name": "GroupNotFound",
-                            "value": 5
-                        },
-                        {
-                            "name": "ChildGroupNotFound",
-                            "value": 6
-                        },
-                        {
-                            "name": "ParentGroupNotFound",
-                            "value": 7
-                        },
-                        {
-                            "name": "ActorUserNotFound",
-                            "value": 8
-                        },
-                        {
-                            "name": "TargetUserNotFound",
-                            "value": 9
-                        },
-                        {
-                            "name": "GroupAlreadyExist",
-                            "value": 10
-                        },
-                        {
-                            "name": "UserAlreadyExist",
-                            "value": 11
-                        },
-                        {
-                            "name": "CallbackAlreadyExist",
-                            "value": 12
-                        },
-                        {
-                            "name": "CallbackNotFound",
-                            "value": 13
-                        },
-                        {
-                            "name": "PermAlreadyGranted",
-                            "value": 14
-                        },
-                        {
-                            "name": "TemporalGroup",
-                            "value": 15
-                        },
-                        {
-                            "name": "PermanentGroup",
-                            "value": 16
-                        },
-                        {
-                            "name": "GroupNotDefined",
-                            "value": 17
-                        }
-                    ]
-                }
-            },
-            "group": "GroupListeners",
-            "description": "Register listener on group deletion"
-        },
-        {
-            "name": "OnGroupDelete_Unregister",
-            "funcName": "OnGroupDelete_Unregister",
-            "paramTypes": [
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
@@ -6969,7 +6890,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -7054,6 +6975,120 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
+                        }
+                    ]
+                }
+            },
+            "group": "GroupListeners",
+            "description": "Register listener on group deletion"
+        },
+        {
+            "name": "OnGroupDelete_Unregister",
+            "funcName": "OnGroupDelete_Unregister",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -7067,6 +7102,12 @@
             "funcName": "OnGroupSetParent_Register",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
@@ -7096,7 +7137,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -7181,6 +7222,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -7193,14 +7242,127 @@
             "funcName": "OnGroupSetParent_Unregister",
             "paramTypes": [
                 {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
+                        }
+                    ]
+                }
+            },
+            "group": "GroupListeners",
+            "description": "Unregister listener on group parent changing"
+        },
+
+        {
+            "name": "OnUserImmunityChange_Register",
+            "funcName": "OnUserImmunityChange_Register",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
+                {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "SetParentCallback",
-                        "funcName": "SetParentCallback",
-                        "description": "Callback invoked when a parent group is set for a child group.",
+                        "name": "UserImmunityCallback",
+                        "funcName": "UserImmunityCallback",
+                        "description": "Callback invoked when immunity is set for a user.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -7209,20 +7371,20 @@
                                 "description": "Identifier of the plugin that initiated the call."
                             },
                             {
-                                "name": "childName",
-                                "type": "string",
+                                "name": "targetID",
+                                "type": "uint64",
                                 "ref": false,
-                                "description": "Name of the child group."
+                                "description": "Player ID of the user."
                             },
                             {
-                                "name": "parentName",
-                                "type": "string",
+                                "name": "immunity",
+                                "type": "int32",
                                 "ref": false,
-                                "description": "Name of the parent group being assigned."
-                            }
+                                "description": "Immunity."
+                            },
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -7307,18 +7469,138 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
             },
-            "group": "GroupListeners",
-            "description": "Unregister listener on group parent changing"
+            "group": "UserListeners",
+            "description": "Register listener on user immunity set"
+        },
+        {
+            "name": "OnUserImmunityChange_Unregister",
+            "funcName": "OnUserImmunityChange_Unregister",
+            "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": {
+                    "name": "Status",
+                    "values": [
+                        {
+                            "name": "Success",
+                            "value": 0
+                        },
+                        {
+                            "name": "Allow",
+                            "value": 1
+                        },
+                        {
+                            "name": "Disallow",
+                            "value": 2
+                        },
+                        {
+                            "name": "PermNotFound",
+                            "value": 3
+                        },
+                        {
+                            "name": "CookieNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "OptionNotFound",
+                            "value": 4
+                        },
+                        {
+                            "name": "GroupNotFound",
+                            "value": 5
+                        },
+                        {
+                            "name": "ChildGroupNotFound",
+                            "value": 6
+                        },
+                        {
+                            "name": "ParentGroupNotFound",
+                            "value": 7
+                        },
+                        {
+                            "name": "ActorUserNotFound",
+                            "value": 8
+                        },
+                        {
+                            "name": "TargetUserNotFound",
+                            "value": 9
+                        },
+                        {
+                            "name": "GroupAlreadyExist",
+                            "value": 10
+                        },
+                        {
+                            "name": "UserAlreadyExist",
+                            "value": 11
+                        },
+                        {
+                            "name": "CallbackAlreadyExist",
+                            "value": 12
+                        },
+                        {
+                            "name": "CallbackNotFound",
+                            "value": 13
+                        },
+                        {
+                            "name": "PermAlreadyGranted",
+                            "value": 14
+                        },
+                        {
+                            "name": "TemporalGroup",
+                            "value": 15
+                        },
+                        {
+                            "name": "PermanentGroup",
+                            "value": 16
+                        },
+                        {
+                            "name": "GroupNotDefined",
+                            "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
+                        }
+                    ]
+                }
+            },
+            "group": "UserListeners",
+            "description": "Unregister listener on user immunity set"
         },
 
         {
             "name": "OnGroupPermissionChange_Register",
             "funcName": "OnGroupPermissionChange_Register",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
@@ -7422,7 +7704,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -7507,6 +7789,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -7519,111 +7809,10 @@
             "funcName": "OnGroupPermissionChange_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "GroupPermissionCallback",
-                        "funcName": "GroupPermissionCallback",
-                        "description": "Callback invoked when a permission is added or removed from a group.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "action",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "Action performed (Add or Remove).",
-                                "enum": {
-                                    "name": "Action",
-                                    "values": [
-                                        {
-                                            "name": "Add",
-                                            "value": 0
-                                        },
-                                        {
-                                            "name": "Remove",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Replace",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "ReplaceToWC",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "groupName",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the group."
-                            },
-                            {
-                                "name": "perm",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Permission line affected."
-                            },
-                            {
-                                "name": "oldState",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "State before the change (Allow, Disallow, or PermNotFound).",
-                                "enum": {
-                                    "name": "Status",
-                                    "values": [
-                                        {
-                                            "name": "Allow",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Disallow",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "PermNotFound",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "newState",
-                                "type": "int32",
-                                "ref": false,
-                                "description": "Current state after the change (the newly assigned state).",
-                                "enum": {
-                                    "name": "Status",
-                                    "values": [
-                                        {
-                                            "name": "Allow",
-                                            "value": 1
-                                        },
-                                        {
-                                            "name": "Disallow",
-                                            "value": 2
-                                        },
-                                        {
-                                            "name": "PermNotFound",
-                                            "value": 3
-                                        }
-                                    ]
-                                }
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -7706,6 +7895,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -7714,17 +7911,23 @@
             "description": "Unregister listener on group permissions add/remove"
         },
         {
-            "name": "OnGroupSetOption_Register",
-            "funcName": "OnGroupSetOption_Register",
+            "name": "OnGroupOptionChange_Register",
+            "funcName": "OnGroupOptionChange_Register",
             "paramTypes": [
+                {
+                    "name": "pluginID",
+                    "type": "int64",
+                    "ref": false,
+                    "description": "Identifier of the plugin that initiated the call."
+                },
                 {
                     "name": "callback",
                     "type": "function",
                     "ref": false,
                     "description": "Function callback.",
                     "prototype": {
-                        "name": "SetOptionGroupCallback",
-                        "funcName": "SetOptionGroupCallback",
+                        "name": "GroupOptionCallback",
+                        "funcName": "GroupOptionCallback",
                         "description": "Callback invoked when a option value is set for a group.",
                         "paramTypes": [
                             {
@@ -7753,7 +7956,7 @@
                             }
                         ],
                         "retType": {
-                            "type": "void"
+                            "type": "bool"
                         }
                     }
                 }
@@ -7838,6 +8041,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }
@@ -7846,48 +8057,14 @@
             "description": "Register listener on group option sets"
         },
         {
-            "name": "OnGroupSetOption_Unregister",
-            "funcName": "OnGroupSetOption_Unregister",
+            "name": "OnGroupOptionChange_Unregister",
+            "funcName": "OnGroupOptionChange_Unregister",
             "paramTypes": [
                 {
-                    "name": "callback",
-                    "type": "function",
+                    "name": "pluginID",
+                    "type": "int64",
                     "ref": false,
-                    "description": "Function callback.",
-                    "prototype": {
-                        "name": "SetOptionGroupCallback",
-                        "funcName": "SetOptionGroupCallback",
-                        "description": "Callback invoked when a option value is set for a group.",
-                        "paramTypes": [
-                            {
-                                "name": "pluginID",
-                                "type": "int64",
-                                "ref": false,
-                                "description": "Identifier of the plugin that initiated the call."
-                            },
-                            {
-                                "name": "groupName",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the group."
-                            },
-                            {
-                                "name": "optionName",
-                                "type": "string",
-                                "ref": false,
-                                "description": "Name of the option being set."
-                            },
-                            {
-                                "name": "value",
-                                "type": "any",
-                                "ref": false,
-                                "description": "Value of the option."
-                            }
-                        ],
-                        "retType": {
-                            "type": "void"
-                        }
-                    }
+                    "description": "Identifier of the plugin that initiated the call."
                 }
             ],
             "retType": {
@@ -7970,6 +8147,14 @@
                         {
                             "name": "GroupNotDefined",
                             "value": 17
+                        },
+                        {
+                            "name": "StorageError",
+                            "value": 18
+                        },
+                        {
+                            "name": "DBNotReady",
+                            "value": 19
                         }
                     ]
                 }

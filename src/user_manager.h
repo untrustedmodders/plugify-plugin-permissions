@@ -42,7 +42,7 @@ public:
 			const auto it = _users.find(targetID);
 			if (it == _users.end())
 				return false;
-			it->second->_queue.Shutdown();
+			//it->second->_queue.Shutdown();
 		}
 		std::unique_lock lock(_lock);
 
@@ -64,6 +64,15 @@ enum class PlayerState : uint32_t {
     Online = 1,
     Offline = 2,
 };
+
+/**
+ * @brief Callback invoked when immunity is set for a user.
+ *
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param targetID	Player ID of the user.
+ * @param immunity	Immunity.
+ */
+using UserImmunityCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity);
 
 /**
  * @brief Callback invoked when a permission is added, removed, or replaced for a user.
@@ -88,7 +97,7 @@ using UserPermissionCallback = bool (*)(const int64_t pluginID, const Action act
  * @param name		Name of the cookie.
  * @param cookie	Value of the cookie.
  */
-using UserSetCookieCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
+using UserCookieCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie);
 
 /**
@@ -174,6 +183,13 @@ using UserLoadedCallback = void(*)(const int64_t pluginID, const uint64_t target
  */
 using UserRequestCallback = void(*)(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, UserLoadedCallback callback);
 
+struct UserImmunityCallbacks
+{
+	std::shared_mutex _lock;
+	phmap::flat_hash_map<int64_t, UserImmunityCallback> _callbacks;
+	std::atomic_int _counter;
+};
+
 struct UserPermissionCallbacks
 {
     std::shared_mutex _lock;
@@ -181,10 +197,10 @@ struct UserPermissionCallbacks
     std::atomic_int _counter;
 };
 
-struct UserSetCookieCallbacks
+struct UserCookieCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserSetCookieCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, UserCookieCallback> _callbacks;
     std::atomic_int _counter;
 };
 

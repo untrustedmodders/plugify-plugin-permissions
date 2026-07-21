@@ -103,7 +103,7 @@ using SetParentCallback = bool (*)(const int64_t pluginID, const plg::string& ch
  * @param optionName	Name of the option being set.
  * @param value			Value of the option.
  */
-using SetOptionGroupCallback = bool (*)(const int64_t pluginID, const plg::string& groupName,
+using GroupOptionCallback = bool (*)(const int64_t pluginID, const plg::string& groupName,
                                         const plg::string& optionName, const plg::any& value);
 
 /**
@@ -160,10 +160,10 @@ struct SetParentCallbacks
     std::atomic_int _counter;
 };
 
-struct SetOptionGroupCallbacks
+struct GroupOptionCallbacks
 {
     std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, SetOptionGroupCallback> _callbacks;
+    phmap::flat_hash_map<int64_t, GroupOptionCallback> _callbacks;
     std::atomic_int _counter;
 };
 
