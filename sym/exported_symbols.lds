@@ -2,6 +2,8 @@ _Plugify_PluginStart
 _Plugify_PluginUpdate
 _Plugify_PluginEnd
 _Plugify_PluginContext
+_SetConnectorID
+_ResetConnectorID
 _HasPermission
 _HasPermissionExtended
 _HasGroup
@@ -53,6 +55,8 @@ _OnUserDelete_Register
 _OnUserDelete_Unregister
 _OnUserGroupChange_Register
 _OnUserGroupChange_Unregister
+_OnUserImmunityChange_Register
+_OnUserImmunityChange_Unregister
 _OnUserPermissionChange_Register
 _OnUserPermissionChange_Unregister
 _OnPermissionExpirationCallback_Register
@@ -67,9 +71,9 @@ _OnGroupDelete_Register
 _OnGroupDelete_Unregister
 _OnGroupSetParent_Register
 _OnGroupSetParent_Unregister
-_OnGroupSetOption_Register
-_OnGroupSetOption_Unregister
+_OnGroupOptionChange_Register
+_OnGroupOptionChange_Unregister
 _OnGroupPermissionChange_Register
 _OnGroupPermissionChange_Unregister
-_OnUserSetCookie_Register
-_OnUserSetCookie_Unregister
+_OnUserCookieChange_Register
+_OnUserCookieChange_Unregister
