@@ -249,7 +249,7 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
                                            const time_t timestamp, const bool dontBroadcast)
 {
 	if (perm.empty())
-		return Status::Error;
+		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -292,72 +292,42 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
     	if (replaceToWC)
     		act = Action::ReplaceToWC;
     }
+	int64_t cID = connectorID.load();
+	const plg::string prm = denied ? perm.substr(1) : perm;
 	if (!dontBroadcast) {
-		s_user->_queue.Enqueue([timestamp, s_user, targetID, old_timestamp, perm_type, replaceToWC, act, pluginID, oldState, denied, perm ]()
-		{
-			const plg::string prm = denied ? perm.substr(1) : perm;
-			const int64_t cID = connectorID.load();
-			if (cID != -1) {
-				UserPermissionCallback callback = nullptr;
-				{
-					std::shared_lock lock2(user_permission_callbacks._lock);
-					const auto it = user_permission_callbacks._callbacks.find(cID);
-					if (it != user_permission_callbacks._callbacks.end())
-						callback = it->second;
-				}
-				if (callback && !callback(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp)) {
-					{
-						std::shared_lock lock2(user_permission_callbacks._lock);
-						const auto it = user_permission_callbacks._callbacks.find(pluginID);
-						if (it != user_permission_callbacks._callbacks.end())
-							callback = it->second;
-						else
-							callback = nullptr;
-					}
-					if (callback)
-						callback(pluginID, act, targetID, prm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA, old_timestamp, timestamp);
-					return;
-				}
-			}
-
-			plg::vector<plg::string> deleted_perms;
-
-			if (timestamp != 0)
-				s_user->addPerm(perm, timestamp, targetID);
-			else
+		if (cID != -1) {
+			UserPermissionCallback callback = nullptr;
 			{
-				if (perm_type == PermSource::UserTemp)
-					s_user->delTempPerm(perm, false, deleted_perms);
-				s_user->addPerm(perm, 0, 0);
+				std::shared_lock lock2(user_permission_callbacks._lock);
+				const auto it = user_permission_callbacks._callbacks.find(cID);
+				if (it != user_permission_callbacks._callbacks.end())
+					callback = it->second;
 			}
-
-			if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
-				s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
-
-
-			std::shared_lock lock2(user_permission_callbacks._lock);
-			for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
-				if (id == cID)
-					[[unlikely]] continue;
-				cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
-			}
-		});
-		return Status::Async;
-	}
-	{
-		plg::vector<plg::string> deleted_perms;
-
-		if (timestamp != 0)
-			s_user->addPerm(perm, timestamp, targetID);
-		else
-		{
-			if (perm_type == PermSource::UserTemp)
-				s_user->delTempPerm(perm, false, deleted_perms);
-			s_user->addPerm(perm, 0, 0);
+			if (callback && !callback(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp))
+				return Status::DBNotReady;
 		}
+	}
+	plg::vector<plg::string> deleted_perms;
 
-		if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
-			s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
+	if (timestamp != 0)
+		s_user->addPerm(perm, timestamp, targetID);
+	else
+	{
+		if (perm_type == PermSource::UserTemp)
+			s_user->delTempPerm(perm, false, deleted_perms);
+		s_user->addPerm(perm, 0, 0);
+	}
+
+	if (replaceToWC && timestamp != old_timestamp && timestamp == 0)
+		s_user->delTempPerm(std::string_view(perm).substr(0, perm.length() - 2), false, deleted_perms);
+
+	if (!dontBroadcast) {
+		std::shared_lock lock2(user_permission_callbacks._lock);
+		for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
+			cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+		}
 	}
     return Status::Success;
 }
@@ -376,7 +346,7 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
                                            const time_t timestamp, const bool dontBroadcast)
 {
 	if (perm.empty())
-		return Status::Error;
+		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -424,81 +394,49 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 	if (replaceToWC)
 		act = Action::ReplaceToWC;
 
+	const plg::string prm = denied ? perm.substr(1) : perm;
+	const int64_t cID = connectorID.load();
+
 	if (!dontBroadcast) {
-		s_user->_queue.Enqueue([act, perm_type, timestamp, old_timestamp, s_user, targetID, pluginID, oldState, denied, perm]()
-		{
-			const plg::string prm = denied ? perm.substr(1) : perm;
-			const int64_t cID = connectorID.load();
-			if (cID != -1) {
-				UserPermissionCallback callback = nullptr;
-				{
-					std::shared_lock lock2(user_permission_callbacks._lock);
-					const auto it = user_permission_callbacks._callbacks.find(cID);
-					if (it != user_permission_callbacks._callbacks.end())
-						callback = it->second;
-				}
-				if (callback && !callback(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp)) {
-					{
-						std::shared_lock lock2(user_permission_callbacks._lock);
-						const auto it = user_permission_callbacks._callbacks.find(pluginID);
-						if (it != user_permission_callbacks._callbacks.end())
-							callback = it->second;
-						else
-							callback = nullptr;
-					}
-					if (callback)
-						callback(pluginID, act, targetID, prm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA, old_timestamp, timestamp);
-					return;
-				}
-			}
-
-			if (act == Action::Replace || act == Action::ReplaceToWC) {
-				plg::vector<plg::string> deleted_perms;
-				switch (perm_type)
-				{
-					case PermSource::UserTemp:
-						if (timestamp == 0)
-							s_user->delTempPerm(perm, false, deleted_perms);
-						break;
-					case PermSource::User:
-						if (timestamp != 0)
-							s_user->delPerm(perm, false, deleted_perms);
-						break;
-					default:
-						break;
-				}
-			}
-
-			s_user->addPerm(perm, timestamp, targetID);
-
-			std::shared_lock lock2(user_permission_callbacks._lock);
-			for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
-				if (id == cID)
-					[[unlikely]] continue;
-				cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
-			}
-		});
-		return Status::Async;
-	}
-	{
-		if (act == Action::Replace || act == Action::ReplaceToWC) {
-			plg::vector<plg::string> deleted_perms;
-			switch (perm_type)
+		if (cID != -1) {
+			UserPermissionCallback callback = nullptr;
 			{
-				case PermSource::UserTemp:
-					if (timestamp == 0)
-						s_user->delTempPerm(perm, false, deleted_perms);
-					break;
-				case PermSource::User:
-					if (timestamp != 0)
-						s_user->delPerm(perm, false, deleted_perms);
-					break;
-				default:
-					break;
+				std::shared_lock lock2(user_permission_callbacks._lock);
+				const auto it = user_permission_callbacks._callbacks.find(cID);
+				if (it != user_permission_callbacks._callbacks.end())
+					callback = it->second;
+			}
+			if (callback && !callback(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp)) {
+				return Status::DBNotReady;
 			}
 		}
+	}
 
-		s_user->addPerm(perm, timestamp, targetID);
+	if (act == Action::Replace || act == Action::ReplaceToWC) {
+		plg::vector<plg::string> deleted_perms;
+		switch (perm_type)
+		{
+			case PermSource::UserTemp:
+				if (timestamp == 0)
+					s_user->delTempPerm(perm, false, deleted_perms);
+				break;
+			case PermSource::User:
+				if (timestamp != 0)
+					s_user->delPerm(perm, false, deleted_perms);
+				break;
+			default:
+				break;
+		}
+	}
+
+	s_user->addPerm(perm, timestamp, targetID);
+	if (!dontBroadcast) {
+		std::shared_lock lock2(user_permission_callbacks._lock);
+		for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
+			cb(pluginID, act, targetID, prm, oldState, denied ? Status::Disallow : Status::Allow, old_timestamp, timestamp);
+		}
 	}
     return Status::Success;
 }
@@ -513,10 +451,10 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
  * @return Success, TargetUserNotFound, PermNotFound
  */
 extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
-                                              const bool recursiveDeletion)
+                                              const bool recursiveDeletion, const bool dontBroadcast)
 {
 	if (perm.empty())
-		return Status::Error;
+		return Status::Success;
     PermSource perm_type;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
@@ -528,9 +466,8 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
-	s_user->_queue.Enqueue([perm_type, recursiveDeletion, s_user, pluginID, targetID, old_timestamp, perm, oldState]()
-	{
-		const int64_t cID = connectorID.load();
+	const int64_t cID = connectorID.load();
+	if (!dontBroadcast) {
 		if (cID != -1) {
 			UserPermissionCallback callback = nullptr;
 			{
@@ -539,30 +476,21 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
 				if (it != user_permission_callbacks._callbacks.end())
 					callback = it->second;
 			}
-			if (callback && !callback(pluginID, Action::Remove, targetID, perm, oldState, Status::PermNotFound, old_timestamp, 0)) {
-				{
-					std::shared_lock lock2(user_permission_callbacks._lock);
-					const auto it = user_permission_callbacks._callbacks.find(pluginID);
-					if (it != user_permission_callbacks._callbacks.end())
-						callback = it->second;
-					else
-						callback = nullptr;
-				}
-				if (callback)
-					callback(pluginID, Action::Remove, targetID, perm, oldState, Status::VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA, old_timestamp, 0);
-				return;
-			}
+			if (callback && !callback(pluginID, Action::Remove, targetID, perm, oldState, Status::PermNotFound, old_timestamp, 0))
+				return Status::DBNotReady;
 		}
+	}
 
-		plg::vector<plg::string> deleted_perms;
-		bool ret;
-		if (perm_type == PermSource::User)
-			ret = s_user->delPerm(perm, recursiveDeletion, deleted_perms);
-		else
-			ret = s_user->delTempPerm(perm, recursiveDeletion, deleted_perms);
-		// if (!ret)
-		// 	return Status::PermNotFound;
+	plg::vector<plg::string> deleted_perms;
+	bool ret;
+	if (perm_type == PermSource::User)
+		ret = s_user->delPerm(perm, recursiveDeletion, deleted_perms);
+	else
+		ret = s_user->delTempPerm(perm, recursiveDeletion, deleted_perms);
+	// if (!ret)
+	// 	return Status::PermNotFound;
 
+	if (!dontBroadcast) {
 		std::shared_lock lock2(user_permission_callbacks._lock);
 		for (const auto& [id, cb] : user_permission_callbacks._callbacks) {
 			if (id == cID)
@@ -570,9 +498,8 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
 			for (const plg::string& s : deleted_perms)
 				cb(pluginID, Action::Remove, targetID, s, oldState, Status::PermNotFound, old_timestamp, 0);
 		}
-	});
-
-    return Status::Async;
+	}
+	return Status::Success;
 }
 
 /**
@@ -589,7 +516,7 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
                                       const time_t timestamp, const bool dontBroadcast)
 {
 	if (groupName.empty())
-		return Status::Error;
+		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -618,33 +545,33 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
 				return Status::GroupAlreadyExist;
 		}
 	}
-	if (!dontBroadcast)
-	{
-		s_user->_queue.Enqueue([delete_temp, s_user, timestamp, targetID, act, old_timestamp, pluginID, groupName]()
-		{
-			std::scoped_lock lock3(global_mutex);
-
-			Group* l_req_group = g_GroupManager.Get(groupName);
-			if (l_req_group == nullptr)
-				return;
-
-			// TODO: Probe from Fr4nch
-
-			time_t l_old_timestamp = old_timestamp;
-			if (delete_temp)
-				s_user->delGroup(l_req_group, l_old_timestamp);
-			s_user->addGroup(l_req_group, timestamp, targetID);
-
-			std::shared_lock lock2(user_group_callbacks._lock);
-			for (const UserGroupCallback cb : user_group_callbacks._callbacks | std::views::values)
-				cb(pluginID, act, targetID, groupName, l_old_timestamp, timestamp);
-		});
-
-		return Status::Async;
-    }
+	const int64_t cID = connectorID.load();
+	if (!dontBroadcast) {
+		if (cID != -1) {
+			UserGroupCallback callback = nullptr;
+			{
+				std::shared_lock lock2(user_group_callbacks._lock);
+				const auto it = user_group_callbacks._callbacks.find(cID);
+				if (it != user_group_callbacks._callbacks.end())
+					callback = it->second;
+			}
+			if (callback && !callback(pluginID, act, targetID, groupName, old_timestamp, timestamp))
+				return Status::DBNotReady;
+		}
+	}
 	if (delete_temp)
 		s_user->delGroup(req_group, old_timestamp);
-	return s_user->addGroup(req_group, timestamp, targetID);
+	s_user->addGroup(req_group, timestamp, targetID);
+	if (!dontBroadcast)
+	{
+		std::shared_lock lock2(user_group_callbacks._lock);
+		for (const auto& [id, cb] : user_group_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
+			cb(pluginID, act, targetID, groupName, old_timestamp, timestamp);
+		}
+	}
+	return Status::Success;
 }
 
 /**
@@ -655,10 +582,10 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
  * @param groupName Group name.
  * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
  */
-extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName)
+extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName, const bool dontBroadcast)
 {
 	if (groupName.empty())
-		return Status::Error;
+		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -666,19 +593,37 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
     Group* g = g_GroupManager.Get(groupName);
     if (g == nullptr)
         return Status::ChildGroupNotFound;
+	const int64_t cID = connectorID.load();
+	time_t timestamp;
+	bool parent = false;
+	Status s = s_user->hasGroup(g, timestamp, parent);
+	if (s == Status::GroupNotDefined || parent)
+		return Status::ParentGroupNotFound;
+	if (!dontBroadcast) {
+		if (cID != -1) {
+			UserGroupCallback callback = nullptr;
+			{
+				std::shared_lock lock2(user_group_callbacks._lock);
+				const auto it = user_group_callbacks._callbacks.find(cID);
+				if (it != user_group_callbacks._callbacks.end())
+					callback = it->second;
+			}
+			if (callback && !callback(pluginID, Action::Remove, targetID, groupName, timestamp, 0))
+				return Status::DBNotReady;
+		}
+	}
 
-	s_user->_queue.Enqueue([s_user, pluginID, targetID, groupName, g]()
-	{
-		// TODO: Probe from Fr4nch
-		time_t timestamp;
-		if (!s_user->delGroup(g, timestamp))
-			return;
+	s_user->delGroup(g, timestamp);
 
+	if (!dontBroadcast) {
 		std::shared_lock lock2(user_group_callbacks._lock);
-		for (const UserGroupCallback cb : user_group_callbacks._callbacks | std::views::values)
+		for (const auto& [id, cb] : user_group_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
 			cb(pluginID, Action::Remove, targetID, groupName, timestamp, 0);
-	});
-	return Status::Async;
+		}
+	}
+	return Status::Success;
 }
 
 /**
@@ -692,7 +637,7 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
 extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::string& name, plg::any& value)
 {
 	if (name.empty())
-		return Status::Error;
+		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -716,47 +661,34 @@ extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t ta
                                        const plg::any& cookie, const bool dontBroadcast)
 {
 	if (name.empty())
-		return Status::Error;
+		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
 
+	const int64_t cID = connectorID.load();
 	if (!dontBroadcast) {
-		s_user->_queue.Enqueue([s_user, name, cookie, pluginID, targetID]()
-		{
-			const int64_t cID = connectorID.load();
-			if (cID != -1) {
-				UserSetCookieCallback callback = nullptr;
-				{
-					std::shared_lock lock2(user_set_cookie_callbacks._lock);
-					const auto it = user_set_cookie_callbacks._callbacks.find(cID);
-					if (it != user_set_cookie_callbacks._callbacks.end())
-						callback = it->second;
-				}
-				if (callback && !callback(pluginID, targetID, name, cookie)) {
-					// {
-					// 	std::shared_lock lock2(user_set_cookie_callbacks._lock);
-					// 	const auto it = user_set_cookie_callbacks._callbacks.find(pluginID);
-					// 	if (it != user_set_cookie_callbacks._callbacks.end())
-					// 		callback = it->second;
-					// 	else
-					// 		callback = nullptr;
-					// }
-					return;
-				}
+		if (cID != -1) {
+			UserSetCookieCallback callback = nullptr;
+			{
+				std::shared_lock lock2(user_set_cookie_callbacks._lock);
+				const auto it = user_set_cookie_callbacks._callbacks.find(cID);
+				if (it != user_set_cookie_callbacks._callbacks.end())
+					callback = it->second;
 			}
-			s_user->setCookie(name, cookie);
-
-			std::shared_lock lock2(user_set_cookie_callbacks._lock);
-			for (const auto& [id, cb] : user_set_cookie_callbacks._callbacks) {
-				if (id == cID)
-					[[unlikely]] continue;
-				cb(pluginID, targetID, name, cookie);
-			}
-		});
-		return Status::Async;
+			if (callback && !callback(pluginID, targetID, name, cookie))
+				return Status::DBNotReady;
+		}
 	}
 	s_user->setCookie(name, cookie);
+	if (!dontBroadcast) {
+		std::shared_lock lock2(user_set_cookie_callbacks._lock);
+		for (const auto& [id, cb] : user_set_cookie_callbacks._callbacks) {
+			if (id == cID)
+				[[unlikely]] continue;
+			cb(pluginID, targetID, name, cookie);
+		}
+	}
     return Status::Success;
 }
 
@@ -809,8 +741,6 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
     }
 
     g_UserManager.Add(targetID, immunity, offline, groupsList);
-	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
-	// s_user->_queue.Enqueue([pluginID, targetID, immunity, offline, groupsList]()
     {
         std::shared_lock lock2(user_create_callbacks._lock);
         for (const UserCreateCallback cb : user_create_callbacks._callbacks | std::views::values)
@@ -829,16 +759,15 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
 extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t targetID)
 {
 	std::scoped_lock lock(global_mutex);
-    const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
-    if (s_user == nullptr)
+    if (!g_UserManager.Exists(targetID))
         return Status::TargetUserNotFound;
-    {
-        std::shared_lock lock2(user_delete_callbacks._lock);
-        for (const UserDeleteCallback cb : user_delete_callbacks._callbacks | std::views::values)
-            cb(pluginID, targetID);
-    }
 
 	g_UserManager.Delete(targetID);
+	{
+		std::shared_lock lock2(user_delete_callbacks._lock);
+		for (const UserDeleteCallback cb : user_delete_callbacks._callbacks | std::views::values)
+			cb(pluginID, targetID);
+	}
     return Status::Success;
 }
 

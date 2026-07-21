@@ -50,7 +50,7 @@ struct User
     int _immunity;
     bool _offline;
 
-	AsyncTaskQueue _queue;
+	// AsyncTaskQueue _queue;
 
     [[nodiscard]] PLUGIFY_FORCE_INLINE int getImmunity() const
     {
@@ -346,6 +346,6 @@ struct User
         Node::forceRehash(this->user_nodes.nodes);
         Node::forceRehash(this->temp_nodes.nodes);
 
-    	_queue.Run();
+    	// _queue.Start();
     }
 };
