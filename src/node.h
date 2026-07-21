@@ -35,9 +35,8 @@ enum class Status : int32_t
     TemporalGroup = 15,
     PermanentGroup = 16,
     GroupNotDefined = 17,
-	Error = 18,
-	Async = 19,
-	VASHA_EBANAYA_BD_OTLETELA_NAHUY_PIZDUYTE_CHINIT_POKA_IGROKI_NE_ZAMETILI_OTVAL_UYEBISHNOGO_SERVAKA = 20
+	StorageError = 18,
+	DBNotReady = 19
 };
 
 struct string_hash

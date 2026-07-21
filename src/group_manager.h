@@ -62,7 +62,7 @@ public:
 				cur_group = cur_group->_parent;
 			}
 		}
-		g->_queue.Shutdown();
+		// g->_queue.Shutdown();
 		g_TimerSystem.CreateTimer(10, &DelayedDelete, TimerFlag::Default, {static_cast<void*>(g)});
 		return true;
 	}
