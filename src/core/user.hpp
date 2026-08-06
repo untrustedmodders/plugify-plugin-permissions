@@ -1,13 +1,13 @@
 #pragma once
-#include "async_queue.h"
-#include "group.h"
+
+#include "group.hpp"
 
 #include <parallel_hashmap/phmap.h>
 #include <plg/any.hpp>
 #include <plg/string.hpp>
 #include <plg/vector.hpp>
 
-#include "timer_system.h"
+#include "timer_system.hpp"
 
 struct User;
 
@@ -49,8 +49,6 @@ struct User
     plg::vector<TempGroup> _groups; // groups that player belongs to
     int _immunity;
     bool _offline;
-
-	// AsyncTaskQueue _queue;
 
     [[nodiscard]] PLUGIFY_FORCE_INLINE int getImmunity() const
     {

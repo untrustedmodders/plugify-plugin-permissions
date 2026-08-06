@@ -1,12 +1,10 @@
 #pragma once
-#include "basic.h"
-#include "group.h"
-#include "user.h"
-#include "group_manager.h"
+#include "basic.hpp"
+#include "group.hpp"
+#include "user.hpp"
 
 #include <plg/any.hpp>
 #include <plugin_export.h>
-#include <set>
 
 struct UserManager {
 private:

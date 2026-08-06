@@ -1,14 +1,11 @@
 #pragma once
-#include <string_view>
-#include <ranges>
-#include <stack>
 
 #include <parallel_hashmap/phmap.h>
 #include <xxhash.h>
 #include <plg/string.hpp>
 #include <plg/vector.hpp>
 
-#include "timer_system.h"
+#include "timer_system.hpp"
 
 const uint64_t AllAccess = XXH3_64bits("*", 1);
 
@@ -29,14 +26,15 @@ enum class Status : int32_t
     TargetUserNotFound = 9,
     GroupAlreadyExist = 10,
     UserAlreadyExist = 11,
-    CallbackAlreadyExist = 12,
-    CallbackNotFound = 13,
-    PermAlreadyGranted = 14,
-    TemporalGroup = 15,
-    PermanentGroup = 16,
-    GroupNotDefined = 17,
-	StorageError = 18,
-	DBNotReady = 19
+    CallbackInvalid = 12,
+    CallbackAlreadyExist = 13,
+    CallbackNotFound = 14,
+    PermAlreadyGranted = 15,
+    TemporalGroup = 16,
+    PermanentGroup = 17,
+    GroupNotDefined = 18,
+	StorageError = 19,
+	DBNotReady = 20
 };
 
 struct string_hash

@@ -1,21 +1,14 @@
 #pragma once
 
-#include "basic.h"
-#include "group.h"
-#include "user.h"
-#include "user_manager.h"
-#include "group_manager.h"
+#include "basic.hpp"
+#include "group.hpp"
+#include "user_manager.hpp"
+#include "group_manager.hpp"
+#include "listeners_manager.hpp"
 
 #include <plg/any.hpp>
 
-template<typename Func>
-struct CallbackManager {
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, Func> _callbacks;
-    std::atomic_int _counter;
-};
-
-#define CALLBACK_LIST(X) \
+#define LISTENER_LIST(X) \
     /* Storage */ \
     /* User */ \
     X(OnUserRequest, UserRequestCallback, user_request) \
@@ -34,25 +27,28 @@ struct CallbackManager {
     X(OnGroupDeleteStorage, GroupDeleteStorageCallback, group_delete_storage) \
     /* Notification */ \
     /* User */ \
-    X(OnUserImmunity, UserImmunityCallback, user_immunity) \
-    X(OnUserPermission, UserPermissionCallback, user_permission) \
-    X(OnUserCookie, UserCookieCallback, user_cookie) \
-    X(OnUserGroup, UserGroupCallback, user_group) \
+    X(OnUserImmunityChange, UserImmunityCallback, user_immunity) \
+    X(OnUserPermissionChange, UserPermissionCallback, user_permission) \
+    X(OnUserCookieChange, UserCookieCallback, user_cookie) \
+    X(OnUserGroupChange, UserGroupCallback, user_group) \
     X(OnUserCreate, UserCreateCallback, user_create) \
     X(OnUserDelete, UserDeleteCallback, user_delete) \
     X(OnPermissionExpiration, PermExpirationCallback, perm_expiration) \
     X(OnGroupExpiration, GroupExpirationCallback, group_expiration) \
     /* Group */ \
     X(OnSetParent, SetParentCallback, set_parent) \
-    X(OnGroupOption, GroupOptionCallback, group_option) \
-    X(OnGroupPermission, GroupPermissionCallback, group_permission) \
+    X(OnGroupOptionChange, GroupOptionCallback, group_option) \
+    X(OnGroupPermissionChange, GroupPermissionCallback, group_permission) \
     X(OnGroupCreate, GroupCreateCallback, group_create) \
     X(OnGroupDelete, GroupDeleteCallback, group_delete) \
     X(OnGroupsLoad, LoadGroupsCallback, load_groups)
 
 
-#define DECLARE_CALLBACK_MANAGER(ApiName, CbType, VarName) \
-extern CallbackManager<CbType> VarName##_callbacks;
+extern "C" {
+#define DECLARE_ACCESSOR(ApiName, CbType, VarName) \
+    static constexpr const char VarName##_name[] = #VarName; \
+    inline ListenerManager<VarName##_name, CbType> VarName##_callbacks;
 
-CALLBACK_LIST(DECLARE_CALLBACK_MANAGER)
-#undef DECLARE_CALLBACK_MANAGER
+    LISTENER_LIST(DECLARE_ACCESSOR)
+}
+#undef DECLARE_ACCESSOR
