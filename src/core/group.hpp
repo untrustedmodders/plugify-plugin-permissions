@@ -1,6 +1,6 @@
 #pragma once
-#include "async_queue.h"
-#include "node.h"
+
+#include "node.hpp"
 
 #include <xxhash.h>
 #include <parallel_hashmap/phmap.h>
@@ -17,8 +17,6 @@ struct Group
     Node _nodes; // nodes of group
 	int _priority; // priority of group
 
-	// AsyncTaskQueue _queue;
-
     Group(const plg::vector<plg::string>& perms, const plg::string& name, const int priority, Group* parent = nullptr)
     {
         this->_name = name;
@@ -28,7 +26,6 @@ struct Group
         for (const plg::string& perm: perms)
             this->_nodes.addPerm(perm);
         Node::forceRehash(this->_nodes.nodes);
-    	// _queue.Start();
     }
 
 	PLUGIFY_FORCE_INLINE void addPerm(const std::string_view& perm)

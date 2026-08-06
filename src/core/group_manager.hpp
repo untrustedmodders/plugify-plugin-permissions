@@ -1,7 +1,7 @@
 #pragma once
-#include "basic.h"
-#include "group.h"
-#include "user_manager.h"
+#include "basic.hpp"
+#include "group.hpp"
+#include "user_manager.hpp"
 
 #include <parallel_hashmap/phmap.h>
 #include <plugin_export.h>

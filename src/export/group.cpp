@@ -1,5 +1,5 @@
-#include "core/group_manager.h"
-#include "core/listeners.h"
+#include "core/group_manager.hpp"
+#include "core/listeners.hpp"
 
 GroupManager g_GroupManager;
 
@@ -37,21 +37,13 @@ extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string
     if (!g2)
         return Status::ParentGroupNotFound;
 
-	{
-		std::shared_lock lock2(set_parent_storage_callbacks._lock);
-		for (const auto& cb : set_parent_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, childName, parentName))
-				return Status::DBNotReady;
-		}
-	}
+	if (set_parent_storage_callbacks(pluginID, childName, parentName))
+		return Status::DBNotReady;
 
     g1->_parent.store(empty_group ? nullptr : g2);
 
 	if (!dontBroadcast) {
-		std::shared_lock lock2(set_parent_callbacks._lock);
-		for (const auto& cb : set_parent_callbacks._callbacks | std::views::values) {
-			cb(pluginID, childName, parentName);
-		}
+		set_parent_callbacks(pluginID, childName, parentName);
 	}
 
     return Status::Success;
@@ -221,22 +213,13 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 			act = Action::ReplaceToWC;
 	}
 
-	{
-		std::shared_lock lock2(group_permission_storage_callbacks._lock);
-		for (const auto& cb : group_permission_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
-				return Status::DBNotReady;
-		}
-	}
+	if (group_permission_storage_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
+		return Status::DBNotReady;
 
 	g->addPerm(perm);
 
 	if (!dontBroadcast) {
-		const plg::string prm = denied ? perm.substr(1) : perm;
-		std::shared_lock lock3(group_permission_callbacks._lock);
-		for (const auto& cb : group_permission_callbacks._callbacks | std::views::values) {
-			cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
-		}
+		group_permission_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
 	}
 
     return Status::Success;
@@ -278,22 +261,13 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 	if (!diff)
 		return Status::PermAlreadyGranted;
 
-	{
-		std::shared_lock lock2(group_permission_storage_callbacks._lock);
-		for (const auto& cb : group_permission_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
-				return Status::DBNotReady;
-		}
-	}
+	if (group_permission_storage_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
+		return Status::DBNotReady;
 
 	g->addPerm(perm);
 
 	if (!dontBroadcast) {
-		const plg::string prm = denied ? perm.substr(1) : perm;
-		std::shared_lock lock3(group_permission_callbacks._lock);
-		for (const auto& cb : group_permission_callbacks._callbacks | std::views::values) {
-			cb(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
-		}
+		group_permission_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
 	}
 
 	return Status::Success;
@@ -321,13 +295,8 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 	if (oldState == Status::PermNotFound)
 		return Status::PermNotFound;
 
-	{
-		std::shared_lock lock2(group_permission_storage_callbacks._lock);
-		for (const auto& cb : group_permission_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, Action::Remove, name, perm, oldState, Status::PermNotFound))
-				return Status::DBNotReady;
-		}
-	}
+	if (group_permission_storage_callbacks(pluginID, Action::Remove, name, perm, oldState, Status::PermNotFound))
+		return Status::DBNotReady;
 
 	plg::vector<plg::string> deleted_perms;
 	g->delPerm(perm, recursiveDeletion, deleted_perms);
@@ -335,11 +304,8 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 		deleted_perms.push_back(perm);
 
 	if (!dontBroadcast) {
-		std::shared_lock lock3(group_permission_callbacks._lock);
-		for (const auto& cb : group_permission_callbacks._callbacks | std::views::values) {
-			for (const plg::string& s : deleted_perms)
-				cb(pluginID, Action::Remove, s, perm, oldState, Status::PermNotFound);
-		}
+		for (const plg::string& s : deleted_perms)
+			group_permission_callbacks(pluginID, Action::Remove, s, perm, oldState, Status::PermNotFound);
 	}
 	return Status::Success;
 }
@@ -379,21 +345,13 @@ extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::s
 	if (!g)
 		return Status::GroupNotFound;
 
-	{
-		std::shared_lock lock2(group_option_storage_callbacks._lock);
-		for (const auto& cb : group_option_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, groupName, optionName, value))
-				return Status::DBNotReady;
-		}
-	}
+	if (group_option_storage_callbacks(pluginID, groupName, optionName, value))
+		return Status::DBNotReady;
 
 	g->setCookie(optionName, value);
 
 	if (!dontBroadcast) {
-		std::shared_lock lock3(group_option_callbacks._lock);
-		for (const auto& cb : group_option_callbacks._callbacks | std::views::values) {
-			cb(pluginID, groupName, optionName, value);
-		}
+		group_option_callbacks(pluginID, groupName, optionName, value);
 	}
 
     return Status::Success;
@@ -444,21 +402,13 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
 			return Status::ParentGroupNotFound;
 	}
 
-	{
-		std::shared_lock lock2(group_create_storage_callbacks._lock);
-		for (const auto& cb : group_create_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, name, perms, priority, parent))
-				return Status::DBNotReady;
-		}
-	}
+	if (group_create_storage_callbacks(pluginID, name, perms, priority, parent))
+		return Status::DBNotReady;
 
 	g_GroupManager.Add(perms, name, priority, parentGroup);
 
 	if (!dontBroadcast) {
-		std::shared_lock lock3(group_create_callbacks._lock);
-		for (const auto& cb : group_create_callbacks._callbacks | std::views::values) {
-			cb(pluginID, name, perms, priority, parent);
-		}
+		group_create_callbacks(pluginID, name, perms, priority, parent);
 	}
 
     return Status::Success;
@@ -479,13 +429,8 @@ extern "C" PLUGIN_API Status DeleteGroup(const int64_t pluginID, const plg::stri
 	if (!g)
 		return Status::GroupNotFound;
 
-	{
-		std::shared_lock lock2(group_delete_storage_callbacks._lock);
-		for (const auto& cb : group_delete_storage_callbacks._callbacks | std::views::values) {
-			if (cb && !cb(pluginID, name))
-				return Status::DBNotReady;
-		}
-	}
+	if (group_delete_storage_callbacks(pluginID, name))
+		return Status::DBNotReady;
 
     g_GroupManager.Delete(name);
 
@@ -497,10 +442,7 @@ extern "C" PLUGIN_API Status DeleteGroup(const int64_t pluginID, const plg::stri
 	}
 
 	if (!dontBroadcast) {
-		std::shared_lock lock3(group_delete_callbacks._lock);
-		for (const auto& cb : group_delete_callbacks._callbacks | std::views::values) {
-			cb(pluginID, name);
-		}
+		group_delete_callbacks(pluginID, name);
 	}
 
     return Status::Success;
@@ -532,14 +474,8 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
  */
 extern "C" PLUGIN_API Status LoadGroups(const int64_t pluginID, [[maybe_unused]] const bool dontBroadcast)
 {
-	std::shared_lock lock2(load_groups_callbacks._lock);
-	if (load_groups_callbacks._callbacks.empty())
+	if (load_groups_callbacks(pluginID))
 		return Status::DBNotReady;
-
-	for (const auto& cb : load_groups_callbacks._callbacks | std::views::values) {
-		if (cb && !cb(pluginID))
-			return Status::DBNotReady;
-	}
 
 	return Status::Success;
 }

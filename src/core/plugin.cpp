@@ -1,9 +1,8 @@
-#include <print>
+
 #include <plg/plugin.hpp>
 #include <plg/string.hpp>
 #include <plugin_export.h>
-#include "timer_system.h"
-#include <atomic>
+#include "timer_system.hpp"
 
 std::mutex global_mutex;
 

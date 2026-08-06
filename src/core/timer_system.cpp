@@ -1,4 +1,4 @@
-#include "timer_system.h"
+#include "timer_system.hpp"
 
 void TimerSystem::RunFrame() {
 	std::scoped_lock lock(m_mutex);
