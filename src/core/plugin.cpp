@@ -6,7 +6,6 @@
 #include <atomic>
 
 std::mutex global_mutex;
-std::atomic<int64_t> storageID = -1;
 
 class PlugifyPermissions final : public plg::Plugin
 {

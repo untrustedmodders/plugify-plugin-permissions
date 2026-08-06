@@ -1,8 +1,7 @@
 {
     global:
         Plugify_*;
-        SetConnectorID;
-        ResetConnectorID;
+
         HasPermission;
         HasPermissionExtended;
         HasGroup;
@@ -44,38 +43,9 @@
         CreateGroup;
         LoadGroups;
         DeleteGroup;
-        OnLoadUser_Register;
-        OnLoadUser_Unregister;
-        OnLoadedUser_Register;
-        OnLoadedUser_Unregister;
-        OnUserCreate_Register;
-        OnUserCreate_Unregister;
-        OnUserDelete_Register;
-        OnUserDelete_Unregister;
-        OnUserGroupChange_Register;
-        OnUserGroupChange_Unregister;
-        OnUserImmunityChange_Register;
-        OnUserImmunityChange_Unregister;
-        OnUserPermissionChange_Register;
-        OnUserPermissionChange_Unregister;
-        OnPermissionExpirationCallback_Register;
-        OnPermissionExpirationCallback_Unregister;
-        OnGroupExpirationCallback_Register;
-        OnGroupExpirationCallback_Unregister;
-        OnLoadGroups_Register;
-        OnLoadGroups_Unregister;
-        OnGroupCreate_Register;
-        OnGroupCreate_Unregister;
-        OnGroupDelete_Register;
-        OnGroupDelete_Unregister;
-        OnGroupSetParent_Register;
-        OnGroupSetParent_Unregister;
-        OnGroupOptionChange_Register;
-        OnGroupOptionChange_Unregister;
-        OnGroupPermissionChange_Register;
-        OnGroupPermissionChange_Unregister;
-        OnUserCookieChange_Register;
-        OnUserCookieChange_Unregister;
+
+        *_Register;
+        *_Unregister;
 
     local: *;
 };

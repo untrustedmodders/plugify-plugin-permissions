@@ -92,7 +92,9 @@ extern GroupManager g_GroupManager;
  * @param childName		Name of the child group.
  * @param parentName	Name of the parent group being assigned.
  */
-using SetParentCallback = bool (*)(const int64_t pluginID, const plg::string& childName,
+using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& childName,
+								   const plg::string& parentName);
+using SetParentStorageCallback = bool (*)(const int64_t pluginID, const plg::string& childName,
                                    const plg::string& parentName);
 
 /**
@@ -103,8 +105,10 @@ using SetParentCallback = bool (*)(const int64_t pluginID, const plg::string& ch
  * @param optionName	Name of the option being set.
  * @param value			Value of the option.
  */
-using GroupOptionCallback = bool (*)(const int64_t pluginID, const plg::string& groupName,
+using GroupOptionCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
                                         const plg::string& optionName, const plg::any& value);
+using GroupOptionStorageCallback = bool (*)(const int64_t pluginID, const plg::string& groupName,
+										const plg::string& optionName, const plg::any& value);
 
 /**
  * @brief Callback invoked when a permission is added or removed from a group.
@@ -116,8 +120,10 @@ using GroupOptionCallback = bool (*)(const int64_t pluginID, const plg::string& 
  * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
  * @param newState      Current state after the change (the newly assigned state).
  */
-using GroupPermissionCallback = bool (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
+using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
                                          const plg::string& perm, const Status oldState, const Status newState);
+using GroupPermissionStorageCallback = bool (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
+										 const plg::string& perm, const Status oldState, const Status newState);
 
 /**
  * @brief Callback invoked after a group is successfully created.
@@ -128,9 +134,12 @@ using GroupPermissionCallback = bool (*)(const int64_t pluginID, const Action ac
  * @param priority	Priority of the group.
  * @param parent	Name of the parent group (empty if none).
  */
-using GroupCreateCallback = bool (*)(const int64_t pluginID, const plg::string& name,
+using GroupCreateCallback = void (*)(const int64_t pluginID, const plg::string& name,
                                      const plg::vector<plg::string>& perms, const int priority,
                                      const plg::string& parent);
+using GroupCreateStorageCallback = bool (*)(const int64_t pluginID, const plg::string& name,
+									 const plg::vector<plg::string>& perms, const int priority,
+									 const plg::string& parent);
 
 /**
  * @brief Callback invoked before a group is deleted.
@@ -138,7 +147,8 @@ using GroupCreateCallback = bool (*)(const int64_t pluginID, const plg::string& 
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param name		Name of the group being deleted.
  */
-using GroupDeleteCallback = bool (*)(const int64_t pluginID, const plg::string& name);
+using GroupDeleteCallback = void (*)(const int64_t pluginID, const plg::string& name);
+using GroupDeleteStorageCallback = bool (*)(const int64_t pluginID, const plg::string& name);
 
 /**
  * @brief Called when the core requests loading of server groups.
@@ -150,47 +160,4 @@ using GroupDeleteCallback = bool (*)(const int64_t pluginID, const plg::string& 
  *
  * @param pluginID Identifier of the plugin that initiated the call.
  */
-using LoadGroupsCallback = void(*)(const int64_t pluginID);
-
-
-struct SetParentCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, SetParentCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct GroupOptionCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, GroupOptionCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct GroupPermissionCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, GroupPermissionCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct GroupCreateCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, GroupCreateCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct GroupDeleteCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, GroupDeleteCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct LoadGroupsCallbacks
-{
-	std::shared_mutex _lock;
-	phmap::flat_hash_map<int64_t, LoadGroupsCallback> _callbacks;
-	std::atomic_int _counter;
-};
+using LoadGroupsCallback = bool (*)(const int64_t pluginID);

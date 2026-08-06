@@ -72,7 +72,8 @@ enum class PlayerState : uint32_t {
  * @param targetID	Player ID of the user.
  * @param immunity	Immunity.
  */
-using UserImmunityCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity);
+using UserImmunityCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const int immunity);
+using UserImmunityStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity);
 
 /**
  * @brief Callback invoked when a permission is added, removed, or replaced for a user.
@@ -86,8 +87,12 @@ using UserImmunityCallback = bool (*)(const int64_t pluginID, const uint64_t tar
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New duration (timestamp) assigned to the permission.
  */
-using UserPermissionCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
-                                        const plg::string& perm, const Status oldState, const Status newState, const time_t oldTimestamp, const time_t newTimestamp);
+using UserPermissionCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
+                                        const plg::string& perm, const Status oldState, const Status newState,
+                                        const time_t oldTimestamp, const time_t newTimestamp);
+using UserPermissionStorageCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
+										const plg::string& perm, const Status oldState, const Status newState,
+										const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
  * @brief Callback invoked when a cookie is set for a user.
@@ -97,8 +102,10 @@ using UserPermissionCallback = bool (*)(const int64_t pluginID, const Action act
  * @param name		Name of the cookie.
  * @param cookie	Value of the cookie.
  */
-using UserCookieCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
+using UserCookieCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie);
+using UserCookieStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
+									   const plg::any& cookie);
 
 /**
  * @brief Callback invoked when a group is added or removed from a user.
@@ -110,8 +117,10 @@ using UserCookieCallback = bool (*)(const int64_t pluginID, const uint64_t targe
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
  * @param newTimestamp  New group duration.
  */
-using UserGroupCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
+using UserGroupCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
+using UserGroupStorageCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
+								   const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
 
 /**
  * @brief Callback invoked after a user is successfully created.
@@ -122,8 +131,10 @@ using UserGroupCallback = bool (*)(const int64_t pluginID, const Action action, 
  * @param offline       Indicates whether the user's data was loaded without user presence on server.
  * @param groupNames	Array of groups inherited by the user.
  */
-using UserCreateCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
+using UserCreateCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
                                     const bool offline, const plg::vector<plg::string>& groupNames);
+using UserCreateStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
+									const bool offline, const plg::vector<plg::string>& groupNames);
 
 /**
  * @brief Callback invoked before a user is deleted.
@@ -131,7 +142,8 @@ using UserCreateCallback = bool (*)(const int64_t pluginID, const uint64_t targe
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
  */
-using UserDeleteCallback = bool (*)(const int64_t pluginID, const uint64_t targetID);
+using UserDeleteCallback = void (*)(const int64_t pluginID, const uint64_t targetID);
+using UserDeleteStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID);
 
 /**
  * @brief Callback invoked when a permission in user has been expired.
@@ -151,6 +163,22 @@ using PermExpirationCallback = void(*)(const uint64_t targetID, const plg::strin
 using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::string& group);
 
 /**
+ * @brief Called when a user data load is requested.
+ *
+ * This callback is triggered by the core when it requires
+ * user data to be loaded from an external storage (e.g. database).
+ * Extensions can subscribe to this event to perform the actual
+ * loading process and initialize the user in memory.
+ * This event does NOT guarantee that the user object already exists in memory.
+ *
+ * @param pluginID	Identifier of the plugin that initiated the call.
+ * @param targetID	PlayerID of the user whose data should be loaded.
+ * @param username  The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
+ * @param offline   Insdicates whether the user's data was loaded without user presence on server.
+ */
+using UserRequestCallback = bool(*)(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline);
+
+/**
  * @brief Called when a user's data has been fully loaded.
  *
  * This callback is triggered after a storage extension has completed
@@ -165,90 +193,3 @@ using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::stri
  * @param playerState  Indicates whether the user's data was loaded without user presence on server.
  */
 using UserLoadedCallback = void(*)(const int64_t pluginID, const uint64_t targetID, const PlayerState playerState);
-
-/**
- * @brief Called when a user data load is requested.
- *
- * This callback is triggered by the core when it requires
- * user data to be loaded from an external storage (e.g. database).
- * Extensions can subscribe to this event to perform the actual
- * loading process and initialize the user in memory.
- * This event does NOT guarantee that the user object already exists in memory.
- *
- * @param pluginID	Identifier of the plugin that initiated the call.
- * @param targetID	PlayerID of the user whose data should be loaded.
- * @param username  The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
- * @param offline   Insdicates whether the user's data was loaded without user presence on server.
- * @param callback  Callback function to be invoked by the storage provider upon completion of the loading operation to return the retrieved data.
- */
-using UserRequestCallback = void(*)(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, UserLoadedCallback callback);
-
-struct UserImmunityCallbacks
-{
-	std::shared_mutex _lock;
-	phmap::flat_hash_map<int64_t, UserImmunityCallback> _callbacks;
-	std::atomic_int _counter;
-};
-
-struct UserPermissionCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserPermissionCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserCookieCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserCookieCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserGroupCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserGroupCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserCreateCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserCreateCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserDeleteCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserDeleteCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct PermExpirationCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, PermExpirationCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct GroupExpirationCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, GroupExpirationCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserLoadCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserRequestCallback> _callbacks;
-    std::atomic_int _counter;
-};
-
-struct UserLoadedCallbacks
-{
-    std::shared_mutex _lock;
-    phmap::flat_hash_map<int64_t, UserLoadedCallback> _callbacks;
-    std::atomic_int _counter;
-};
