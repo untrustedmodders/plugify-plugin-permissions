@@ -14,27 +14,35 @@ extern void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg:
 enum class Status : int32_t
 {
     Success = 0,
+
     Allow = 1,
     Disallow = 2,
     PermNotFound = 3,
-    CookieNotFound = 4,
+    PermAlreadyGranted = 4,
+
+    CookieNotFound = 5,
     OptionNotFound = CookieNotFound,
-    GroupNotFound = 5,
-    ChildGroupNotFound = 6,
-    ParentGroupNotFound = 7,
-    ActorUserNotFound = 8,
-    TargetUserNotFound = 9,
-    GroupAlreadyExist = 10,
-    UserAlreadyExist = 11,
-    CallbackInvalid = 12,
-    CallbackAlreadyExist = 13,
-    CallbackNotFound = 14,
-    PermAlreadyGranted = 15,
-    TemporalGroup = 16,
-    PermanentGroup = 17,
-    GroupNotDefined = 18,
-	StorageError = 19,
-	DBNotReady = 20
+
+    GroupNotFound = 6,
+    ChildGroupNotFound = 7,
+    ParentGroupNotFound = 8,
+
+    ActorUserNotFound = 9,
+    TargetUserNotFound = 10,
+
+    GroupAlreadyExist = 11,
+    UserAlreadyExist = 12,
+
+    TemporalGroup = 13,
+    PermanentGroup = 14,
+    GroupNotDefined = 15,
+
+    CallbackInvalid = 16,
+    CallbackAlreadyExist = 17,
+    CallbackNotFound = 18,
+
+	StorageError = 20,
+	DBNotReady = 21
 };
 
 struct string_hash
@@ -240,8 +248,11 @@ struct Node
             }
 			if (!hasWildcard)
             {
-                base_name += '.';
-                base_name += names[counter];
+                if (counter > 0)
+                {
+                    base_name += '.';
+                    base_name += names[counter];
+                }
             }
 			else if (!recursive_delete)
         		base_name += ".*";
