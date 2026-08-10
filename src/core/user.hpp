@@ -246,7 +246,7 @@ struct User
     	cookies[name] = value;
     }
 
-	PLUGIFY_FORCE_INLINE void dumpCookies(plg::vector<plg::string> names, plg::vector<plg::any> values)
+	PLUGIFY_FORCE_INLINE void dumpCookies(plg::vector<plg::string>& names, plg::vector<plg::any>& values)
 	{
     	names.clear();
     	values.clear();
