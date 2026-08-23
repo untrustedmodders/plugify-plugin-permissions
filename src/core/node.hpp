@@ -64,7 +64,7 @@ struct string_hash
     }
 };
 
-PLUGIFY_FORCE_INLINE bool isWildcard(std::string_view perm)
+inline bool isWildcard(std::string_view perm)
 {
     if (perm.starts_with('-'))
         perm = perm.substr(1);
@@ -73,7 +73,7 @@ PLUGIFY_FORCE_INLINE bool isWildcard(std::string_view perm)
     return perm.ends_with(".*");
 }
 
-PLUGIFY_FORCE_INLINE void parseTempString(const std::string_view& input, std::string_view& output, time_t& timestamp)
+inline void parseTempString(const std::string_view& input, std::string_view& output, time_t& timestamp)
 {
     int j = 0;
     auto spl = std::views::split(input, ' ');
