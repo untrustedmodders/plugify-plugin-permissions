@@ -1,9 +1,6 @@
 #include "core/user_manager.hpp"
 #include "core/listeners.hpp"
 
-#include <oneapi/tbb/detail/_template_helpers.h>
-
-
 UserManager g_UserManager;
 
 void g_PermExpirationCallback([[maybe_unused]] uint32_t timer, const plg::vector<plg::any>& userData)
