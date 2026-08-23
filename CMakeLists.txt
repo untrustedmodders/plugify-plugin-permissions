@@ -9,18 +9,18 @@ endif()
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" VERSION_FILE_CONTENTS)
 string(STRIP "${VERSION_FILE_CONTENTS}" VERSION_FILE_CONTENTS)
-set(PLUGIN_VERSION "${VERSION_FILE_CONTENTS}" CACHE STRING "Set version name")
-set(PLUGIN_PACKAGE "plugify-permissions" CACHE STRING "Set package name")
-string(REPLACE "v" "" PLUGIN_VERSION "${PLUGIN_VERSION}")
-string(REGEX REPLACE "[.+-]" ";" PLUGIN_VERSION_LIST ${PLUGIN_VERSION})
-list(GET PLUGIN_VERSION_LIST 0 PLUGIN_VERSION_MAJOR)
-list(GET PLUGIN_VERSION_LIST 1 PLUGIN_VERSION_MINOR)
-list(GET PLUGIN_VERSION_LIST 2 PLUGIN_VERSION_PATCH)
+set(PERMISSIONS_VERSION "${VERSION_FILE_CONTENTS}" CACHE STRING "Set version name")
+set(PERMISSIONS_PACKAGE "permissions" CACHE STRING "Set package name")
+string(REPLACE "v" "" PERMISSIONS_VERSION "${PERMISSIONS_VERSION}")
+string(REGEX REPLACE "[.+-]" ";" PERMISSIONS_VERSION_LIST ${PERMISSIONS_VERSION})
+list(GET PERMISSIONS_VERSION_LIST 0 PERMISSIONS_VERSION_MAJOR)
+list(GET PERMISSIONS_VERSION_LIST 1 PERMISSIONS_VERSION_MINOR)
+list(GET PERMISSIONS_VERSION_LIST 2 PERMISSIONS_VERSION_PATCH)
 
 project(plugify-permissions
-        VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}"
+        VERSION "${PERMISSIONS_VERSION_MAJOR}.${PERMISSIONS_VERSION_MINOR}.${PERMISSIONS_VERSION_PATCH}"
         DESCRIPTION "Minimalistic permissions core"
-        HOMEPAGE_URL "https://github.com/untrustedmodders/plugify-permissions"
+        HOMEPAGE_URL "https://github.com/untrustedmodders/plugify-plugin-permissions"
         LANGUAGES CXX C
 )
 
@@ -81,7 +81,7 @@ if(NOT COMPILER_SUPPORTS_FORMAT)
 endif()
 
 include(GenerateExportHeader)
-generate_export_header(${PROJECT_NAME} EXPORT_MACRO_NAME PLUGIN_API EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/plugin_export.h)
+generate_export_header(${PROJECT_NAME} EXPORT_MACRO_NAME PERMISSIONS_API EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/plugin_export.h)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/exports)
 
 if(APPLE)
@@ -91,8 +91,8 @@ elseif(UNIX)
 endif()
 
 configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugify-permissions.pplugin.in
-        ${CMAKE_CURRENT_BINARY_DIR}/plugify-permissions.pplugin
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugify-plugin-permissions.pplugin.in
+        ${CMAKE_CURRENT_BINARY_DIR}/plugify-plugin-permissions.pplugin
 )
 
 find_program(CLANG_DOC clang-doc)
