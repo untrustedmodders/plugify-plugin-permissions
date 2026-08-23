@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.4...v1.1.5) (2026-08-23)
+
+
+### Bug Fixes
+
+* build windows ([913c5a6](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/913c5a6f775ae325f6af02eb157995aee47963a5))
+
 ## [1.1.4](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.3...v1.1.4) (2026-08-23)
 
 
