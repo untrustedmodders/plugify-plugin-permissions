@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.1...v1.1.2) (2026-08-23)
+
+
+### Bug Fixes
+
+* build ([cfddc47](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/cfddc4782905685a98b2bc7719eb963707ba3434))
+
 ## [1.1.1](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.0...v1.1.1) (2026-08-23)
 
 
