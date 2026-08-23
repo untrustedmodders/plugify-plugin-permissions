@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.2...v1.1.3) (2026-08-23)
+
+
+### Bug Fixes
+
+* remove include `_template_helpers.h` ([67266ad](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/67266ad1c5bbfd2216b87593abffae9e013982db))
+
 ## [1.1.2](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.1...v1.1.2) (2026-08-23)
 
 
