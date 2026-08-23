@@ -17,7 +17,7 @@ list(GET PERMISSIONS_VERSION_LIST 0 PERMISSIONS_VERSION_MAJOR)
 list(GET PERMISSIONS_VERSION_LIST 1 PERMISSIONS_VERSION_MINOR)
 list(GET PERMISSIONS_VERSION_LIST 2 PERMISSIONS_VERSION_PATCH)
 
-project(plugify-permissions
+project(plugify-plugin-permissions
         VERSION "${PERMISSIONS_VERSION_MAJOR}.${PERMISSIONS_VERSION_MINOR}.${PERMISSIONS_VERSION_PATCH}"
         DESCRIPTION "Minimalistic permissions core"
         HOMEPAGE_URL "https://github.com/untrustedmodders/plugify-plugin-permissions"
