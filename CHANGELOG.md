@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.3...v1.1.4) (2026-08-23)
+
+
+### Bug Fixes
+
+* add `GetGroup` implementation ([13ae42b](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/13ae42b17962270716ec1f2da46e6cb5eeae341d))
+
 ## [1.1.3](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.2...v1.1.3) (2026-08-23)
 
 
