@@ -83,7 +83,8 @@ PLUGIFY_FORCE_INLINE void parseTempString(const std::string_view& input, std::st
             output = std::string_view(ss);
         else
         {
-            std::from_chars(ss.begin(), ss.begin() + ss.size(), timestamp);
+            const std::string_view sv(ss);
+            std::from_chars(sv.data(), sv.data() + sv.size(), timestamp);
             break;
         }
         ++j;

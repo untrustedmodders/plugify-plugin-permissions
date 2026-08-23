@@ -6,7 +6,7 @@
 	"author": "untrustedmodders",
 	"website": "https://github.com/untrustedmodders/",
 	"license": "GPLv3",
-	"entry": "bin/plugify-permissions",
+	"entry": "bin/plugify-plugin-permissions",
 	"platforms": [],
 	"language": "cpp",
 	"dependencies": [],
