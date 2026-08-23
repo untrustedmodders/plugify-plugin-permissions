@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.0...v1.1.1) (2026-08-23)
+
+
+### Bug Fixes
+
+* CMakeLists.txt ([0a7e9a7](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/0a7e9a7413dcb18edf887d4c7bc827491ec7a649))
+
 ## [1.1.0](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.0.0...v1.1.0) (2026-08-23)
 
 
