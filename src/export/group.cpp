@@ -3,6 +3,11 @@
 
 GroupManager g_GroupManager;
 
+Group* GetGroup(const std::string_view name)
+{
+	return g_GroupManager.Get(name);
+}
+
 // phmap::flat_hash_map<uint64_t, Group*> groups;
 
 std::shared_mutex groups_mtx;

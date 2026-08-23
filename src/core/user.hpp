@@ -35,7 +35,7 @@ enum class PermSource : uint32_t
 void g_PermExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 void g_GroupExpirationCallback(uint32_t, const plg::vector<plg::any>&);
 
-extern Group* GetGroup(const std::string_view& name);
+extern Group* GetGroup(const std::string_view name);
 
 struct User
 {
