@@ -307,6 +307,8 @@ struct Node
     PLUGIFY_FORCE_INLINE Node* addPerm(std::string_view perm)
     {
         const bool allow = !perm.starts_with('-');
+        if (!allow)
+            perm = perm.substr(1);
         bool hasWildcard = false;
         auto spl = std::views::split(perm, '.');
 
@@ -314,7 +316,6 @@ struct Node
         for (auto&& s : spl)
         {
             auto ss = std::string_view(s);
-            if (ss.starts_with('-')) ss = ss.substr(1);
             if (ss == "*")
             {
                 hasWildcard = true;
