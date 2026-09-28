@@ -18,31 +18,34 @@ enum class Status : int32_t
     Allow = 1,
     Disallow = 2,
     PermNotFound = 3,
-    PermAlreadyGranted = 4,
 
-    CookieNotFound = 5,
+    TemporalGroup = 4,
+    PermanentGroup = 5,
+    GroupNotDefined = 6,
+
+    ErrorsStart = 30,
+
+    PermAlreadyGranted = 31,
+
+    CookieNotFound = 32,
     OptionNotFound = CookieNotFound,
 
-    GroupNotFound = 6,
-    ChildGroupNotFound = 7,
-    ParentGroupNotFound = 8,
+    GroupNotFound = 33,
+    ChildGroupNotFound = 34,
+    ParentGroupNotFound = 35,
+    GroupAlreadyExist = 36,
+    GroupHierarchyCycle = 37,
 
-    ActorUserNotFound = 9,
-    TargetUserNotFound = 10,
+    ActorUserNotFound = 38,
+    TargetUserNotFound = 39,
+    UserAlreadyExist = 40,
 
-    GroupAlreadyExist = 11,
-    UserAlreadyExist = 12,
+    CallbackInvalid = 41,
+    CallbackAlreadyExist = 42,
+    CallbackNotFound = 43,
 
-    TemporalGroup = 13,
-    PermanentGroup = 14,
-    GroupNotDefined = 15,
-
-    CallbackInvalid = 16,
-    CallbackAlreadyExist = 17,
-    CallbackNotFound = 18,
-
-	StorageError = 20,
-	DBNotReady = 21
+    StorageError = 44,
+    DBNotReady = 45
 };
 
 struct string_hash

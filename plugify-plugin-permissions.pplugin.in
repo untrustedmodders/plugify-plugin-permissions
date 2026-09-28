@@ -4133,76 +4133,84 @@
                     "value": 3
                 },
                 {
-                    "name": "PermAlreadyGranted",
+                    "name": "TemporalGroup",
                     "value": 4
                 },
                 {
-                    "name": "CookieNotFound",
-                    "value": 5
-                },
-                {
-                    "name": "OptionNotFound",
-                    "value": 5
-                },
-                {
-                    "name": "GroupNotFound",
-                    "value": 6
-                },
-                {
-                    "name": "ChildGroupNotFound",
-                    "value": 7
-                },
-                {
-                    "name": "ParentGroupNotFound",
-                    "value": 8
-                },
-                {
-                    "name": "ActorUserNotFound",
-                    "value": 9
-                },
-                {
-                    "name": "TargetUserNotFound",
-                    "value": 10
-                },
-                {
-                    "name": "GroupAlreadyExist",
-                    "value": 11
-                },
-                {
-                    "name": "UserAlreadyExist",
-                    "value": 12
-                },
-                {
-                    "name": "TemporalGroup",
-                    "value": 13
-                },
-                {
                     "name": "PermanentGroup",
-                    "value": 14
+                    "value": 5
                 },
                 {
                     "name": "GroupNotDefined",
-                    "value": 15
+                    "value": 6
+                },
+                {
+                    "name": "ErrorsStart",
+                    "value": 30
+                },
+                {
+                    "name": "PermAlreadyGranted",
+                    "value": 31
+                },
+                {
+                    "name": "CookieNotFound",
+                    "value": 32
+                },
+                {
+                    "name": "OptionNotFound",
+                    "value": 32
+                },
+                {
+                    "name": "GroupNotFound",
+                    "value": 33
+                },
+                {
+                    "name": "ChildGroupNotFound",
+                    "value": 34
+                },
+                {
+                    "name": "ParentGroupNotFound",
+                    "value": 35
+                },
+                {
+                    "name": "GroupAlreadyExist",
+                    "value": 36
+                },
+                {
+                    "name": "GroupHierarchyCycle",
+                    "value": 37
+                },
+                {
+                    "name": "ActorUserNotFound",
+                    "value": 38
+                },
+                {
+                    "name": "TargetUserNotFound",
+                    "value": 39
+                },
+                {
+                    "name": "UserAlreadyExist",
+                    "value": 40
                 },
                 {
                     "name": "CallbackInvalid",
-                    "value": 16
+                    "value": 41
                 },
                 {
                     "name": "CallbackAlreadyExist",
-                    "value": 17
+                    "value": 42
                 },
                 {
                     "name": "CallbackNotFound",
-                    "value": 18
+                    "value": 43
                 },
                 {
                     "name": "StorageError",
-                    "value": 20
+                    "value": 44
                 },
                 {
                     "name": "DBNotReady",
-                    "value": 21
+                    "value": 45
                 }
             ]
         },
