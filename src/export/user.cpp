@@ -233,13 +233,15 @@ extern "C" PLUGIN_API Status SetImmunity(const int64_t pluginID, const uint64_t 
  * @param perm Permission line.
  * @param timestamp Permission duration
  * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
- * @return Success, TargetUserNotFound, PermAlreadyGranted
+ * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission
  */
 extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
 	if (perm.empty())
 		return Status::Success;
+	if (hasInnerWildcard(perm))
+		return Status::InvalidPermission;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -316,13 +318,15 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
  * @param perm Permission line.
  * @param timestamp Permission duration
  * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
- * @return Success, TargetUserNotFound, PermAlreadyGranted
+ * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission
  */
 extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
 	if (perm.empty())
 		return Status::Success;
+	if (hasInnerWildcard(perm))
+		return Status::InvalidPermission;
 
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
@@ -409,13 +413,15 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
  * @param targetID Player ID.
  * @param perm Permission line.
  * @param recursiveDeletion Delete all nested perms.
- * @return Success, TargetUserNotFound, PermNotFound
+ * @return Success, TargetUserNotFound, PermNotFound, InvalidPermission
  */
 extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                               const bool recursiveDeletion, const bool dontBroadcast)
 {
 	if (perm.empty())
 		return Status::Success;
+	if (hasInnerWildcard(perm))
+		return Status::InvalidPermission;
     PermSource perm_type;
 
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);

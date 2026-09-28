@@ -45,7 +45,9 @@ enum class Status : int32_t
     CallbackNotFound = 43,
 
     StorageError = 44,
-    DBNotReady = 45
+    DBNotReady = 45,
+
+    InvalidPermission = 46
 };
 
 struct string_hash
@@ -74,6 +76,14 @@ inline bool isWildcard(std::string_view perm)
     if (perm == "*")
         return true;
     return perm.ends_with(".*");
+}
+
+// '*' is allowed only as the last segment: "*", "a.*"
+inline bool hasInnerWildcard(std::string_view perm)
+{
+    if (perm.starts_with('-'))
+        perm = perm.substr(1);
+    return perm.starts_with("*.") || perm.find(".*.") != std::string_view::npos;
 }
 
 inline void parseTempString(const std::string_view& input, std::string_view& output, time_t& timestamp)

@@ -188,12 +188,14 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  * @param name Group name.
  * @param perm Permission line.
  * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered GroupPermission listeners. The permission is still applied internally.
- * @return Success, GroupNotFound, PermAlreadyGranted
+ * @return Success, GroupNotFound, PermAlreadyGranted, InvalidPermission
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const plg::string& name,
                                                 const plg::string& perm, const bool dontBroadcast) {
 	if (perm.empty())
 		return Status::Allow;
+	if (hasInnerWildcard(perm))
+		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
 	if (!g)
 		return Status::GroupNotFound;
@@ -244,6 +246,8 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 {
 	if (perm.empty())
 		return Status::Allow;
+	if (hasInnerWildcard(perm))
+		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
 	if (!g)
 		return Status::GroupNotFound;
@@ -294,12 +298,14 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
  * @param name Group name.
  * @param perm Permission line.
  * @param recursiveDeletion Delete all nested perms.
- * @return Success, GroupNotFound, PermNotFound
+ * @return Success, GroupNotFound, PermNotFound, InvalidPermission
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const plg::string& name,
                                                    const plg::string& perm, const bool recursiveDeletion, const bool dontBroadcast) {
 	if (perm.empty())
 		return Status::Success;
+	if (hasInnerWildcard(perm))
+		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
 	if (!g)
 		return Status::GroupNotFound;
@@ -400,7 +406,7 @@ extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, pl
  * @param priority Group priority.
  * @param parent Parent group name.
  * @param dontBroadcast
- * @return Success, GroupAlreadyExist, ParentGroupNotFound
+ * @return Success, GroupAlreadyExist, ParentGroupNotFound, InvalidPermission
  */
 extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::string& name,
                                          const plg::vector<plg::string>& perms, const int priority,
@@ -409,6 +415,9 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
 	std::scoped_lock lock(global_mutex);
 	if (g_GroupManager.Exists(name))
 		return Status::GroupAlreadyExist;
+	for (const plg::string& perm : perms)
+		if (hasInnerWildcard(perm))
+			return Status::InvalidPermission;
 	Group* parentGroup = nullptr;
 	if (!parent.empty()) {
 		parentGroup = g_GroupManager.Get(parent);

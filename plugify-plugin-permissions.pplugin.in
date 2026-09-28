@@ -4211,6 +4211,10 @@
                 {
                     "name": "DBNotReady",
                     "value": 45
+                },
+                {
+                    "name": "InvalidPermission",
+                    "value": 46
                 }
             ]
         },
