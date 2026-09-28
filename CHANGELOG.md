@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.6](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.5...v1.1.6) (2026-09-28)
+
+
+### Bug Fixes
+
+* harden group permission and parent handling ([c0959af](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/c0959af12cd1920c4f44fa1eccef7bd8998a9a46))
+* renumber Status enum and add ErrorsStart marker ([ecda237](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/ecda23739185a32786e676e9af03109f9c5f0241))
+
 ## [1.1.5](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.4...v1.1.5) (2026-08-23)
 
 
