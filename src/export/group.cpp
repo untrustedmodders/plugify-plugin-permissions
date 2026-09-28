@@ -27,25 +27,31 @@ PLUGIFY_WARN_IGNORE (4190)
  * @param childName Child group name
  * @param parentName Parent group name to set
  * @param dontBroadcast
- * @return Success, ChildGroupNotFound, ParentGroupNotFound
+ * @return Success, ChildGroupNotFound, ParentGroupNotFound, GroupHierarchyCycle, DBNotReady
  */
 extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string& childName,
                                        const plg::string& parentName, const bool dontBroadcast)
 {
+	const bool empty_parent = parentName.empty();
+
+	std::scoped_lock lock(global_mutex);
+
     Group* g1 = g_GroupManager.Get(childName);
     Group* g2 = g_GroupManager.Get(parentName);
 
-	const bool empty_group = childName.empty();
+	if (!g1)
+		return Status::ChildGroupNotFound;
+	if (!g2 && !empty_parent)
+		return Status::ParentGroupNotFound;
 
-    if (!g1 && !empty_group)
-    	return Status::ChildGroupNotFound;
-    if (!g2)
-        return Status::ParentGroupNotFound;
+	// temporary solution
+	if (childName == parentName || g2->hasParent(g1))
+		return Status::GroupHierarchyCycle;
 
 	if (set_parent_storage_callbacks(pluginID, childName, parentName))
 		return Status::DBNotReady;
 
-    g1->_parent.store(empty_group ? nullptr : g2);
+    g1->_parent.store(empty_parent ? nullptr : g2);
 
 	if (!dontBroadcast) {
 		set_parent_callbacks(pluginID, childName, parentName);
@@ -84,6 +90,8 @@ extern "C" PLUGIN_API Status GetParent(const plg::string& groupName, plg::string
 extern "C" PLUGIN_API Status DumpPermissionsGroup(const plg::string& name, plg::vector<plg::string>& perms)
 {
 	Group* g = g_GroupManager.Get(name);
+	if (!g)
+		return Status::GroupNotFound;
 
     perms = g->dumpPerms();
 
@@ -213,9 +221,10 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 			replaceToWC = true;
 		}
 
-		act = Action::Replace;
-		if (replaceToWC)
-			act = Action::ReplaceToWC;
+		if (!replaceToWC)
+			return Status::PermAlreadyGranted;
+
+		act = Action::ReplaceToWC;
 	}
 
 	if (group_permission_storage_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
@@ -310,7 +319,7 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 
 	if (!dontBroadcast) {
 		for (const plg::string& s : deleted_perms)
-			group_permission_callbacks(pluginID, Action::Remove, s, perm, oldState, Status::PermNotFound);
+			group_permission_callbacks(pluginID, Action::Remove, name, s, oldState, Status::PermNotFound);
 	}
 	return Status::Success;
 }

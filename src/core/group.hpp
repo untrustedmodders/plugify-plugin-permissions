@@ -115,11 +115,11 @@ struct Group
 
     Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz, const bool exact, bool& w_wildcard)
     {
-        const Group* i = this;
-		std::shared_lock lock(this->perms_lock);
+        Group* i = this;
         while (i)
         {
             time_t _timestamp;
+            std::shared_lock lock(i->perms_lock);
             Status temp = i->_nodes._hasPermission(names, hashes, sz, exact, w_wildcard, _timestamp);
             if (temp == Status::PermNotFound) i = i->_parent;
             else return temp;
