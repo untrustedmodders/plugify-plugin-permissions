@@ -103,6 +103,8 @@ struct Group
         int i = 0;
         for (auto&& s : ispl)
         {
+            if (i == 256)
+                return Status::PermNotFound;
             const auto ptr = s.empty() ? nullptr : &*s.begin();
             const auto len = s.size();
             hashes[i] = XXH3_64bits(ptr, len);

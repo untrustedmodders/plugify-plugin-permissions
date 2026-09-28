@@ -171,6 +171,8 @@ struct Node
         int i = 0;
         for (const auto&& s : ispl)
         {
+            if (i == 256)
+                return false;
             hashes[i] = XXH3_64bits(s.data(), s.size());
             names[i] = std::string_view(s);
             ++i;

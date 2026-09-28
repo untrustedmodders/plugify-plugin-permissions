@@ -67,6 +67,11 @@ struct User
         int i = 0;
         for (auto&& s : ispl)
         {
+            if (i == 256)
+            {
+                perm_type = PermSource::NotFound;
+                return Status::PermNotFound;
+            }
             // hashes[i] = calcHash(s);
             hashes[i] = XXH3_64bits(s.data(), s.size());
             names[i] = std::string_view(s);
