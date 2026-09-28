@@ -434,7 +434,8 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
     if (perm_type > PermSource::User)
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
-	if (user_permission_storage_callbacks(pluginID, Action::Remove, targetID, perm, oldState, Status::PermNotFound, old_timestamp, 0))
+	const plg::string prm = perm.starts_with('-') ? perm.substr(1) : perm;
+	if (user_permission_storage_callbacks(pluginID, Action::Remove, targetID, prm, oldState, Status::PermNotFound, old_timestamp, 0))
 		return Status::DBNotReady;
 
 	plg::vector<plg::string> deleted_perms;

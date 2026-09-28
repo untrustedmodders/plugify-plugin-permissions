@@ -229,13 +229,14 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 		act = Action::ReplaceToWC;
 	}
 
-	if (group_permission_storage_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
+	const plg::string prm = denied ? perm.substr(1) : perm;
+	if (group_permission_storage_callbacks(pluginID, act, name, prm, oldState, denied ? Status::Disallow : Status::Allow))
 		return Status::DBNotReady;
 
 	g->addPerm(perm);
 
 	if (!dontBroadcast) {
-		group_permission_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
+		group_permission_callbacks(pluginID, act, name, prm, oldState, denied ? Status::Disallow : Status::Allow);
 	}
 
     return Status::Success;
@@ -279,13 +280,14 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 	if (!diff)
 		return Status::PermAlreadyGranted;
 
-	if (group_permission_storage_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow))
+	const plg::string prm = denied ? perm.substr(1) : perm;
+	if (group_permission_storage_callbacks(pluginID, act, name, prm, oldState, denied ? Status::Disallow : Status::Allow))
 		return Status::DBNotReady;
 
 	g->addPerm(perm);
 
 	if (!dontBroadcast) {
-		group_permission_callbacks(pluginID, act, name, perm, oldState, denied ? Status::Disallow : Status::Allow);
+		group_permission_callbacks(pluginID, act, name, prm, oldState, denied ? Status::Disallow : Status::Allow);
 	}
 
 	return Status::Success;
@@ -315,13 +317,14 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 	if (oldState == Status::PermNotFound)
 		return Status::PermNotFound;
 
-	if (group_permission_storage_callbacks(pluginID, Action::Remove, name, perm, oldState, Status::PermNotFound))
+	const plg::string prm = perm.starts_with('-') ? perm.substr(1) : perm;
+	if (group_permission_storage_callbacks(pluginID, Action::Remove, name, prm, oldState, Status::PermNotFound))
 		return Status::DBNotReady;
 
 	plg::vector<plg::string> deleted_perms;
 	g->delPerm(perm, recursiveDeletion, deleted_perms);
 	if (deleted_perms.size() == 0)
-		deleted_perms.push_back(perm);
+		deleted_perms.push_back(prm);
 
 	if (!dontBroadcast) {
 		for (const plg::string& s : deleted_perms)
