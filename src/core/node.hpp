@@ -146,12 +146,12 @@ struct Node
 
             // save current position
             current = &it->second;
-            // save last wildcard position (a wildcard covers only descendants, not the node itself)
-            if (current->wildcard && i + 1 < counter) lastWild = current;
+            // save last wildcard position
+            if (current->wildcard) lastWild = current;
         }
 
-        // Check non-intermediate node ("a.*" doesn't grant "a", "a" doesn't grant "a.*")
-        if (current->end_node && (exact || current->wildcard == l_wildcard))
+        // Check non-intermediate node
+        if (current->end_node)
         {
             w_wildcard = current->wildcard;
             w_timestamp = current->timestamp;
