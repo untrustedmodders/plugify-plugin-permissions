@@ -462,9 +462,6 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
 extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName,
                                       const time_t timestamp, const bool dontBroadcast)
 {
-	if (groupName.empty())
-		return Status::Success;
-
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -515,26 +512,23 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
- * @return Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound
+ * @return Success, TargetUserNotFound, GroupNotFound, GroupNotDefined, DBNotReady
  */
 extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName, const bool dontBroadcast)
 {
-	if (groupName.empty())
-		return Status::Success;
-
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
 
     Group* g = g_GroupManager.Get(groupName);
     if (g == nullptr)
-        return Status::ChildGroupNotFound;
+        return Status::GroupNotFound;
 
 	time_t timestamp;
 	bool parent = false;
 	Status s = s_user->hasGroup(g, timestamp, parent);
 	if (s == Status::GroupNotDefined || parent)
-		return Status::ParentGroupNotFound;
+		return Status::GroupNotDefined;
 
 	if (user_group_storage_callbacks(pluginID, Action::Remove, targetID, groupName, timestamp, 0))
 		return Status::DBNotReady;
