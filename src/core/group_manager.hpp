@@ -160,3 +160,13 @@ using GroupDeleteStorageCallback = bool (*)(const int64_t pluginID, const plg::s
  * @param pluginID Identifier of the plugin that initiated the call.
  */
 using LoadGroupsCallback = bool (*)(const int64_t pluginID);
+
+/**
+ * @brief Called when server groups have been loaded.
+ *
+ * This callback is triggered after LoadGroups has successfully dispatched
+ * the loading request to storage extensions.
+ *
+ * @param pluginID Identifier of the plugin that initiated the loading.
+ */
+using GroupsLoadedCallback = void (*)(const int64_t pluginID);

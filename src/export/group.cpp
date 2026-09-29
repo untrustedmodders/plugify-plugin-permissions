@@ -497,12 +497,17 @@ extern "C" PLUGIN_API bool GroupExists(const plg::string& name)
  * Thread-safe: acquires a shared lock while iterating over callbacks.
  *
  * @param pluginID   Identifier of the calling plugin.
- * @param dontBroadcast
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupsLoaded event.
+ * @return Success, DBNotReady
  */
-extern "C" PLUGIN_API Status LoadGroups(const int64_t pluginID, [[maybe_unused]] const bool dontBroadcast)
+extern "C" PLUGIN_API Status LoadGroups(const int64_t pluginID, const bool dontBroadcast)
 {
 	if (load_groups_callbacks(pluginID))
 		return Status::DBNotReady;
+
+	if (!dontBroadcast) {
+		groups_loaded_callbacks(pluginID);
+	}
 
 	return Status::Success;
 }

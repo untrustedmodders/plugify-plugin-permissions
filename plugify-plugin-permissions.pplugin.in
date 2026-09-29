@@ -1028,6 +1028,74 @@
             "description": "Unregisters a previously registered listener for the OnGroupsLoad event."
         },
         {
+            "name": "OnGroupsLoaded_Register",
+            "funcName": "OnGroupsLoaded_Register",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "prototype": {
+                        "name": "GroupsLoadedCallback",
+                        "funcName": "GroupsLoadedCallback",
+                        "description": "Called when server groups have been loaded.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the loading."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    },
+                    "description": "The callback to register."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": "Status"
+            },
+            "group": "Listeners",
+            "description": "Registers a listener for the OnGroupsLoaded event. Called when server groups have been loaded."
+        },
+        {
+            "name": "OnGroupsLoaded_Unregister",
+            "funcName": "OnGroupsLoaded_Unregister",
+            "paramTypes": [
+                {
+                    "name": "callback",
+                    "type": "function",
+                    "ref": false,
+                    "prototype": {
+                        "name": "GroupsLoadedCallback",
+                        "funcName": "GroupsLoadedCallback",
+                        "description": "Called when server groups have been loaded.",
+                        "paramTypes": [
+                            {
+                                "name": "pluginID",
+                                "type": "int64",
+                                "ref": false,
+                                "description": "Identifier of the plugin that initiated the loading."
+                            }
+                        ],
+                        "retType": {
+                            "type": "void"
+                        }
+                    },
+                    "description": "The callback to unregister."
+                }
+            ],
+            "retType": {
+                "type": "int32",
+                "enum": "Status"
+            },
+            "group": "Listeners",
+            "description": "Unregisters a previously registered listener for the OnGroupsLoaded event."
+        },
+        {
             "name": "OnPermissionExpiration_Register",
             "funcName": "OnPermissionExpiration_Register",
             "paramTypes": [
@@ -3625,12 +3693,14 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupsLoaded event."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "enum": "Status"
+                "enum": "Status",
+                "description": "Success, DBNotReady"
             },
             "group": "Group",
             "description": "Dispatches a request to load server groups for a plugin."

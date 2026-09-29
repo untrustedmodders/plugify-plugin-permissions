@@ -39,6 +39,7 @@
     X(OnGroupPermissionChange, GroupPermissionCallback, group_permission) \
     X(OnGroupCreate, GroupCreateCallback, group_create) \
     X(OnGroupDelete, GroupDeleteCallback, group_delete) \
+    X(OnGroupsLoaded, GroupsLoadedCallback, groups_loaded) \
     X(OnGroupsLoad, LoadGroupsCallback, load_groups)
 
 
