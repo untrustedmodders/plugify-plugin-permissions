@@ -81,7 +81,7 @@ extern "C" PLUGIN_API Status CanAffectUser(const uint64_t actorID, const uint64_
 	if (st_user == nullptr)
 		return Status::TargetUserNotFound;
 
-    return sa_user->_immunity >= st_user->_immunity ? Status::Allow : Status::Disallow;
+    return sa_user->getImmunity() >= st_user->getImmunity() ? Status::Allow : Status::Disallow;
 }
 
 /**
