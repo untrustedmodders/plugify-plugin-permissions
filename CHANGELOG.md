@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.2.0](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.6...v1.2.0) (2026-09-29)
+
+
+### Features
+
+* add inherit option to group permission lookup ([b7a6ea8](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/b7a6ea890278f85ab4c8654cb14daae361643f21))
+
+
+### Bug Fixes
+
+* avoid null dereference in SetParent ([da34700](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/da347009addb47517c83b5d2d9af580d344d2680))
+* pass permission without negation prefix to permission callbacks ([315a873](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/315a8734b354d25783453d6e5cbaabe9b25be646))
+* plain permission no longer grants wildcard ([0da8d97](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/0da8d97015e2e8030e40eea471d69bc29eeb31c8))
+* prevent stack overflow on permissions with more than 256 segments ([22bbc39](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/22bbc39083e83ed1c60425e5c8bf5c7c75c3ad89))
+* reject permissions with a wildcard in the middle ([67c7670](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/67c7670bc33af9d39482320d41f3e7630c0cc03f))
+* remove only existing own permissions ([24d4826](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/24d4826d8a06ce9afb8826b9e2c95d4612e51ab3))
+* strip negation prefix only at the start of the permission in addPerm ([4479256](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/447925617e321a2179c50817d5431dd64db7a664))
+* update plg headers ([f35c7a9](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/f35c7a982cf8d2ceff1f7e6d1b6cee63f7cf07a3))
+* validate permission segments ([ea8ac38](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/ea8ac382ef2a58644cc92310c06edd32e5dbbdd4))
+* wildcard permission no longer grants its base node ([bc1b530](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/bc1b530652e1997e2795c1fffbb42102bfb5c0ef))
+
+
+### Reverts
+
+* wildcard permission grants its base node again ([7d658e2](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/7d658e24196823f33e05146e10e906d1b5650c14))
+
 ## [1.1.6](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.5...v1.1.6) (2026-09-28)
 
 
