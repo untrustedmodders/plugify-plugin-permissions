@@ -552,8 +552,6 @@ extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t 
  */
 extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::string& name, plg::any& value)
 {
-	if (name.empty())
-		return Status::Success;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;
@@ -571,13 +569,13 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
  * @param name Cookie name.
  * @param cookie Cookie value.
  * @param dontBroadcast If set to `true`, suppresses dispatching of the cookie change event to registered UserSetCookie listeners. The cookie is still applied internally.
- * @return Success, TargetUserNotFound
+ * @return Success, TargetUserNotFound, InvalidCookieName
  */
 extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie, const bool dontBroadcast)
 {
 	if (name.empty())
-		return Status::Success;
+		return Status::InvalidCookieName;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
 		return Status::TargetUserNotFound;

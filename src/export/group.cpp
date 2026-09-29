@@ -353,11 +353,13 @@ extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const 
  * @param optionName Option name
  * @param value Option value.
  * @param dontBroadcast
- * @return Success, GroupNotFound
+ * @return Success, GroupNotFound, InvalidOptionName
  */
 extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::string& groupName,
                                             const plg::string& optionName, const plg::any& value, const bool dontBroadcast)
 {
+	if (optionName.empty())
+		return Status::InvalidOptionName;
 	Group* g = g_GroupManager.Get(groupName);
 	if (!g)
 		return Status::GroupNotFound;

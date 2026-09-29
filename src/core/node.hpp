@@ -48,7 +48,9 @@ enum class Status : int32_t
     DBNotReady = 45,
 
     InvalidPermission = 46,
-    InvalidGroupName = 47
+    InvalidGroupName = 47,
+    InvalidCookieName = 48,
+    InvalidOptionName = InvalidCookieName
 };
 
 struct string_hash

@@ -4023,6 +4023,14 @@
                 {
                     "name": "InvalidGroupName",
                     "value": 47
+                },
+                {
+                    "name": "InvalidCookieName",
+                    "value": 48
+                },
+                {
+                    "name": "InvalidOptionName",
+                    "value": 48
                 }
             ]
         },
