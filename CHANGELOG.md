@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.3.0](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.2.0...v1.3.0) (2026-09-29)
+
+
+### Features
+
+* add OnGroupsLoaded listener ([1a03de1](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/1a03de1c2a6868ff24c5b6396d29c7558c34af3a))
+
+
+### Bug Fixes
+
+* correct RemoveGroup statuses ([009da30](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/009da30257cc40d984a757a991eff71333d2ea6a))
+* export LoadUser on windows ([91a93cf](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/91a93cff6877baf417afdab6ed4266643d1e24b8))
+* notify user create/delete instead of storage ([025126d](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/025126d2bbbbb6d6e30fb012ba1ba9be57cfbcb4))
+* reject empty cookie and option names ([c67c2b5](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/c67c2b599716e824480ebfefcb07816f78b9fe65))
+* reject empty group name ([e61ee7a](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/e61ee7af65ded2bd8d3bffeaac8d01959283f255))
+* reject empty permissions ([1d4e87b](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/1d4e87b570a57f52960767271d5a5d066bdd5151))
+* use group priority in CanAffectUser ([e1ff8f4](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/e1ff8f41706b1b03bdd929ab98c4e6f25478a8fa))
+
 ## [1.2.0](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.1.6...v1.2.0) (2026-09-29)
 
 
