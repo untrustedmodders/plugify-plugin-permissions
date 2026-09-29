@@ -5,7 +5,7 @@
 	"description": "Minimalistic permissions core",
 	"author": "untrustedmodders",
 	"website": "https://github.com/untrustedmodders/",
-	"license": "GPLv3",
+	"license": "MIT",
 	"entry": "bin/plugify-plugin-permissions",
 	"platforms": [],
 	"language": "cpp",

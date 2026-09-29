@@ -23,7 +23,6 @@
         DumpUsersList;
         CreateUser;
         LoadUser;
-        LoadedUser;
         DeleteUser;
         GetAllGroups;
         GetParent;
