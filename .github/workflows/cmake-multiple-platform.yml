@@ -151,44 +151,21 @@ jobs:
           name: ${{ env.PROJECT_NAME }}-build-${{ matrix.platform }}-${{ needs.setup.outputs.github_sha_short }}
           path: conda/
 
-      - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v2
-        with:
-          environment-name: build-env
-          condarc: |
-            channels:
-              - conda-forge
-          create-args: >-
-            boa
-          init-shell: >-
-            bash
-            powershell
-          cache-downloads: true
-          cache-environment: true
-
       - name: Prepare recipe
-        shell: bash -el {0}
+        shell: bash
         run: |
-          # Replace version in meta.yaml
+          # Pass version to recipe.yaml
           version="${{ needs.setup.outputs.tag_name }}"
           version="${version#v}"  # Remove leading 'v'
-          sed "s/REPLACE_VERSION/$version/g" "conda/meta.yaml.example" > "conda/meta.yaml"
-
-          # Ensure build.sh is executable on Linux
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            chmod +x "conda/build.sh"
-          fi
+          echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
 
       - name: Build conda package
-        shell: bash -el {0}
-        run: |
-          set -e
-          # log (for debug)
-          conda env list
-          conda config --show channels
-
-          # build
-          conda mambabuild "conda" --output-folder conda-bld --no-test --channel conda-forge
+        uses: prefix-dev/rattler-build-action@v0.2.39
+        with:
+          rattler-build-version: v0.76.1
+          recipe-path: conda/recipe.yaml
+          upload-artifact: false
+          build-args: --output-dir conda-bld --test skip --package-format tar-bz2 --no-include-recipe
 
       - name: Prepare channel directory
         shell: bash -el {0}
