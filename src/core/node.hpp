@@ -47,7 +47,8 @@ enum class Status : int32_t
     StorageError = 44,
     DBNotReady = 45,
 
-    InvalidPermission = 46
+    InvalidPermission = 46,
+    InvalidGroupName = 47
 };
 
 struct string_hash

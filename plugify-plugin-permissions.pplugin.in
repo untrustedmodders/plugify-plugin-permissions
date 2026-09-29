@@ -4019,6 +4019,10 @@
                 {
                     "name": "InvalidPermission",
                     "value": 46
+                },
+                {
+                    "name": "InvalidGroupName",
+                    "value": 47
                 }
             ]
         },

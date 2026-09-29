@@ -403,12 +403,14 @@ extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, pl
  * @param priority Group priority.
  * @param parent Parent group name.
  * @param dontBroadcast
- * @return Success, GroupAlreadyExist, ParentGroupNotFound
+ * @return Success, GroupAlreadyExist, ParentGroupNotFound, InvalidGroupName
  */
 extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::string& name,
                                          const plg::vector<plg::string>& perms, const int priority,
                                          const plg::string& parent, const bool dontBroadcast)
 {
+	if (name.empty())
+		return Status::InvalidGroupName;
 	std::scoped_lock lock(global_mutex);
 	if (g_GroupManager.Exists(name))
 		return Status::GroupAlreadyExist;
