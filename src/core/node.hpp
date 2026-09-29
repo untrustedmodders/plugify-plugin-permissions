@@ -151,8 +151,8 @@ struct Node
             if (current->wildcard) lastWild = current;
         }
 
-        // Check non-intermediate node
-        if (current->end_node)
+        // Check non-intermediate node ("a" doesn't grant "a.*")
+        if (current->end_node && (exact || !l_wildcard || current->wildcard))
         {
             w_wildcard = current->wildcard;
             w_timestamp = current->timestamp;
