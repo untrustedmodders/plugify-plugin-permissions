@@ -655,7 +655,7 @@ extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t t
     }
 
     g_UserManager.Add(targetID, immunity, offline, groupsList);
-    user_create_storage_callbacks(pluginID, targetID, immunity, offline, groupsList);
+    user_create_callbacks(pluginID, targetID, immunity, offline, groupsList);
 
     return Status::Success;
 }
@@ -674,7 +674,7 @@ extern "C" PLUGIN_API Status DeleteUser(const int64_t pluginID, const uint64_t t
         return Status::TargetUserNotFound;
 
 	g_UserManager.Delete(targetID);
-	user_delete_storage_callbacks(pluginID, targetID);
+	user_delete_callbacks(pluginID, targetID);
 
     return Status::Success;
 }

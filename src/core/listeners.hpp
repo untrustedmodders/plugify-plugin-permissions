@@ -17,8 +17,6 @@
     X(OnUserPermissionChangeStorage, UserPermissionStorageCallback, user_permission_storage) \
     X(OnUserCookieChangeStorage, UserCookieStorageCallback, user_cookie_storage) \
     X(OnUserGroupChangeStorage, UserGroupStorageCallback, user_group_storage) \
-    X(OnUserCreateStorage, UserCreateStorageCallback, user_create_storage) \
-    X(OnUserDeleteStorage, UserDeleteStorageCallback, user_delete_storage) \
     /* Group */ \
     X(OnSetParentStorage, SetParentStorageCallback, set_parent_storage) \
     X(OnGroupOptionChangeStorage, GroupOptionStorageCallback, group_option_storage) \

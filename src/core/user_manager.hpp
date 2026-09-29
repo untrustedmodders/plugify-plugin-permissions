@@ -131,8 +131,6 @@ using UserGroupStorageCallback = bool (*)(const int64_t pluginID, const Action a
  */
 using UserCreateCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
                                     const bool offline, const plg::vector<plg::string>& groupNames);
-using UserCreateStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity,
-									const bool offline, const plg::vector<plg::string>& groupNames);
 
 /**
  * @brief Callback invoked before a user is deleted.
@@ -141,7 +139,6 @@ using UserCreateStorageCallback = bool (*)(const int64_t pluginID, const uint64_
  * @param targetID	Player ID of the user being deleted.
  */
 using UserDeleteCallback = void (*)(const int64_t pluginID, const uint64_t targetID);
-using UserDeleteStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID);
 
 /**
  * @brief Callback invoked when a permission in user has been expired.
