@@ -93,7 +93,7 @@ struct Group
     	return false;
     }
 
-    [[nodiscard]] Status hasPermission(std::string_view perm, const bool exact, bool& w_wildcard)
+    [[nodiscard]] Status hasPermission(std::string_view perm, const bool exact, bool& w_wildcard, const bool inherit = true)
     {
     	if (perm.starts_with('-'))
     		perm = perm.substr(1);
@@ -112,10 +112,10 @@ struct Group
             ++i;
         }
 
-        return _hasPermission(names, hashes, i, exact, w_wildcard);
+        return _hasPermission(names, hashes, i, exact, w_wildcard, inherit);
     }
 
-    Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz, const bool exact, bool& w_wildcard)
+    Status _hasPermission(const std::string_view names[], const uint64_t hashes[], const int sz, const bool exact, bool& w_wildcard, const bool inherit = true)
     {
         Group* i = this;
         while (i)
@@ -123,7 +123,7 @@ struct Group
             time_t _timestamp;
             std::shared_lock lock(i->perms_lock);
             Status temp = i->_nodes._hasPermission(names, hashes, sz, exact, w_wildcard, _timestamp);
-            if (temp == Status::PermNotFound) i = i->_parent;
+            if (temp == Status::PermNotFound) i = inherit ? i->_parent.load() : nullptr;
             else return temp;
         }
         return Status::PermNotFound;
