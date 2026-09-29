@@ -93,11 +93,14 @@ extern GroupManager g_GroupManager;
  */
 using SetParentCallback = void (*)(const int64_t pluginID, const plg::string& childName,
 								   const plg::string& parentName);
+/**
+ * @brief Storage callback invoked before a parent group is set for a child group. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using SetParentStorageCallback = bool (*)(const int64_t pluginID, const plg::string& childName,
                                    const plg::string& parentName);
 
 /**
- * @brief Callback invoked when a option value is set for a group.
+ * @brief Callback invoked when an option value is set for a group.
  *
  * @param pluginID		Identifier of the plugin that initiated the call.
  * @param groupName		Name of the group.
@@ -106,14 +109,17 @@ using SetParentStorageCallback = bool (*)(const int64_t pluginID, const plg::str
  */
 using GroupOptionCallback = void (*)(const int64_t pluginID, const plg::string& groupName,
                                         const plg::string& optionName, const plg::any& value);
+/**
+ * @brief Storage callback invoked before an option value is set for a group. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using GroupOptionStorageCallback = bool (*)(const int64_t pluginID, const plg::string& groupName,
 										const plg::string& optionName, const plg::any& value);
 
 /**
- * @brief Callback invoked when a permission is added or removed from a group.
+ * @brief Callback invoked when a permission is added, replaced, or removed from a group.
  *
  * @param pluginID      Identifier of the plugin that initiated the call.
- * @param action        Action performed (Add or Remove).
+ * @param action        Action performed (Add, Remove, Replace, or ReplaceToWC).
  * @param groupName 	Name of the group.
  * @param perm	        Permission line affected.
  * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
@@ -121,6 +127,9 @@ using GroupOptionStorageCallback = bool (*)(const int64_t pluginID, const plg::s
  */
 using GroupPermissionCallback = void (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
                                          const plg::string& perm, const Status oldState, const Status newState);
+/**
+ * @brief Storage callback invoked before a permission is added, replaced, or removed from a group. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using GroupPermissionStorageCallback = bool (*)(const int64_t pluginID, const Action action, const plg::string& groupName,
 										 const plg::string& perm, const Status oldState, const Status newState);
 
@@ -136,17 +145,23 @@ using GroupPermissionStorageCallback = bool (*)(const int64_t pluginID, const Ac
 using GroupCreateCallback = void (*)(const int64_t pluginID, const plg::string& name,
                                      const plg::vector<plg::string>& perms, const int priority,
                                      const plg::string& parent);
+/**
+ * @brief Storage callback invoked before a group is created. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using GroupCreateStorageCallback = bool (*)(const int64_t pluginID, const plg::string& name,
 									 const plg::vector<plg::string>& perms, const int priority,
 									 const plg::string& parent);
 
 /**
- * @brief Callback invoked before a group is deleted.
+ * @brief Callback invoked after a group is deleted.
  *
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param name		Name of the group being deleted.
  */
 using GroupDeleteCallback = void (*)(const int64_t pluginID, const plg::string& name);
+/**
+ * @brief Storage callback invoked before a group is deleted. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using GroupDeleteStorageCallback = bool (*)(const int64_t pluginID, const plg::string& name);
 
 /**

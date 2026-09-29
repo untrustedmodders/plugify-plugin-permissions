@@ -57,7 +57,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked after a group is successfully created."
+                        "description": "Storage callback invoked before a group is created. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -67,7 +67,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnGroupCreateStorage event. Callback invoked after a group is successfully created."
+            "description": "Registers a listener for the OnGroupCreateStorage event. Storage callback invoked before a group is created. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnGroupCreateStorage_Unregister",
@@ -115,7 +115,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked after a group is successfully created."
+                        "description": "Storage callback invoked before a group is created. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -271,7 +271,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked before a group is deleted."
+                        "description": "Storage callback invoked before a group is deleted. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -281,7 +281,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnGroupDeleteStorage event. Callback invoked before a group is deleted."
+            "description": "Registers a listener for the OnGroupDeleteStorage event. Storage callback invoked before a group is deleted. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnGroupDeleteStorage_Unregister",
@@ -311,7 +311,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked before a group is deleted."
+                        "description": "Storage callback invoked before a group is deleted. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -334,7 +334,7 @@
                     "prototype": {
                         "name": "GroupDeleteCallback",
                         "funcName": "GroupDeleteCallback",
-                        "description": "Callback invoked before a group is deleted.",
+                        "description": "Callback invoked after a group is deleted.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -361,7 +361,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnGroupDelete event. Callback invoked before a group is deleted."
+            "description": "Registers a listener for the OnGroupDelete event. Callback invoked after a group is deleted."
         },
         {
             "name": "OnGroupDelete_Unregister",
@@ -374,7 +374,7 @@
                     "prototype": {
                         "name": "GroupDeleteCallback",
                         "funcName": "GroupDeleteCallback",
-                        "description": "Callback invoked before a group is deleted.",
+                        "description": "Callback invoked after a group is deleted.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -523,7 +523,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when an option value is set for a group."
+                        "description": "Storage callback invoked before an option value is set for a group. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -533,7 +533,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnGroupOptionChangeStorage event. Callback invoked when an option value is set for a group."
+            "description": "Registers a listener for the OnGroupOptionChangeStorage event. Storage callback invoked before an option value is set for a group. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnGroupOptionChangeStorage_Unregister",
@@ -575,7 +575,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when an option value is set for a group."
+                        "description": "Storage callback invoked before an option value is set for a group. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -714,7 +714,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "groupName",
@@ -746,7 +746,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a permission is added or removed from a group."
+                        "description": "Storage callback invoked before a permission is added, replaced, or removed from a group. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -756,7 +756,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnGroupPermissionChangeStorage event. Callback invoked when a permission is added or removed from a group."
+            "description": "Registers a listener for the OnGroupPermissionChangeStorage event. Storage callback invoked before a permission is added, replaced, or removed from a group. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnGroupPermissionChangeStorage_Unregister",
@@ -781,7 +781,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "groupName",
@@ -813,7 +813,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a permission is added or removed from a group."
+                        "description": "Storage callback invoked before a permission is added, replaced, or removed from a group. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -836,7 +836,7 @@
                     "prototype": {
                         "name": "GroupPermissionCallback",
                         "funcName": "GroupPermissionCallback",
-                        "description": "Callback invoked when a permission is added or removed from a group.",
+                        "description": "Callback invoked when a permission is added, replaced, or removed from a group.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -849,7 +849,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "groupName",
@@ -890,7 +890,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnGroupPermissionChange event. Callback invoked when a permission is added or removed from a group."
+            "description": "Registers a listener for the OnGroupPermissionChange event. Callback invoked when a permission is added, replaced, or removed from a group."
         },
         {
             "name": "OnGroupPermissionChange_Unregister",
@@ -903,7 +903,7 @@
                     "prototype": {
                         "name": "GroupPermissionCallback",
                         "funcName": "GroupPermissionCallback",
-                        "description": "Callback invoked when a permission is added or removed from a group.",
+                        "description": "Callback invoked when a permission is added, replaced, or removed from a group.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -916,7 +916,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "groupName",
@@ -1223,7 +1223,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a parent group is set for a child group."
+                        "description": "Storage callback invoked before a parent group is set for a child group. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -1233,7 +1233,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnSetParentStorage event. Callback invoked when a parent group is set for a child group."
+            "description": "Registers a listener for the OnSetParentStorage event. Storage callback invoked before a parent group is set for a child group. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnSetParentStorage_Unregister",
@@ -1269,7 +1269,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a parent group is set for a child group."
+                        "description": "Storage callback invoked before a parent group is set for a child group. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -1413,7 +1413,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a cookie is set for a user."
+                        "description": "Storage callback invoked before a cookie is set for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -1423,7 +1423,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnUserCookieChangeStorage event. Callback invoked when a cookie is set for a user."
+            "description": "Registers a listener for the OnUserCookieChangeStorage event. Storage callback invoked before a cookie is set for a user. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnUserCookieChangeStorage_Unregister",
@@ -1465,7 +1465,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a cookie is set for a user."
+                        "description": "Storage callback invoked before a cookie is set for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -1708,7 +1708,7 @@
                     "prototype": {
                         "name": "UserDeleteCallback",
                         "funcName": "UserDeleteCallback",
-                        "description": "Callback invoked before a user is deleted.",
+                        "description": "Callback invoked after a user is deleted.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -1735,7 +1735,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnUserDelete event. Callback invoked before a user is deleted."
+            "description": "Registers a listener for the OnUserDelete event. Callback invoked after a user is deleted."
         },
         {
             "name": "OnUserDelete_Unregister",
@@ -1748,7 +1748,7 @@
                     "prototype": {
                         "name": "UserDeleteCallback",
                         "funcName": "UserDeleteCallback",
-                        "description": "Callback invoked before a user is deleted.",
+                        "description": "Callback invoked after a user is deleted.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -1800,7 +1800,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, or Replace)."
                             },
                             {
                                 "name": "targetID",
@@ -1830,7 +1830,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a group is added or removed from a user."
+                        "description": "Storage callback invoked before a group is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -1840,7 +1840,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnUserGroupChangeStorage event. Callback invoked when a group is added or removed from a user."
+            "description": "Registers a listener for the OnUserGroupChangeStorage event. Storage callback invoked before a group is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnUserGroupChangeStorage_Unregister",
@@ -1865,7 +1865,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, or Replace)."
                             },
                             {
                                 "name": "targetID",
@@ -1895,7 +1895,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a group is added or removed from a user."
+                        "description": "Storage callback invoked before a group is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -1918,7 +1918,7 @@
                     "prototype": {
                         "name": "UserGroupCallback",
                         "funcName": "UserGroupCallback",
-                        "description": "Callback invoked when a group is added or removed from a user.",
+                        "description": "Callback invoked when a group is added, replaced, or removed for a user.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -1931,7 +1931,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, or Replace)."
                             },
                             {
                                 "name": "targetID",
@@ -1970,7 +1970,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnUserGroupChange event. Callback invoked when a group is added or removed from a user."
+            "description": "Registers a listener for the OnUserGroupChange event. Callback invoked when a group is added, replaced, or removed for a user."
         },
         {
             "name": "OnUserGroupChange_Unregister",
@@ -1983,7 +1983,7 @@
                     "prototype": {
                         "name": "UserGroupCallback",
                         "funcName": "UserGroupCallback",
-                        "description": "Callback invoked when a group is added or removed from a user.",
+                        "description": "Callback invoked when a group is added, replaced, or removed for a user.",
                         "paramTypes": [
                             {
                                 "name": "pluginID",
@@ -1996,7 +1996,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add or Remove)."
+                                "description": "Action performed (Add, Remove, or Replace)."
                             },
                             {
                                 "name": "targetID",
@@ -2071,7 +2071,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when immunity is set for a user."
+                        "description": "Storage callback invoked before immunity is set for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -2081,7 +2081,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnUserImmunityChangeStorage event. Callback invoked when immunity is set for a user."
+            "description": "Registers a listener for the OnUserImmunityChangeStorage event. Storage callback invoked before immunity is set for a user. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnUserImmunityChangeStorage_Unregister",
@@ -2117,7 +2117,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when immunity is set for a user."
+                        "description": "Storage callback invoked before immunity is set for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -2338,7 +2338,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add, Remove, or Replace)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "targetID",
@@ -2382,7 +2382,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a permission is added, removed, or replaced for a user."
+                        "description": "Storage callback invoked before a permission is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to register."
                 }
@@ -2392,7 +2392,7 @@
                 "enum": "Status"
             },
             "group": "Listeners",
-            "description": "Registers a listener for the OnUserPermissionChangeStorage event. Callback invoked when a permission is added, removed, or replaced for a user."
+            "description": "Registers a listener for the OnUserPermissionChangeStorage event. Storage callback invoked before a permission is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady."
         },
         {
             "name": "OnUserPermissionChangeStorage_Unregister",
@@ -2417,7 +2417,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add, Remove, or Replace)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "targetID",
@@ -2461,7 +2461,7 @@
                         "retType": {
                             "type": "bool"
                         },
-                        "description": "Callback invoked when a permission is added, removed, or replaced for a user."
+                        "description": "Storage callback invoked before a permission is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady."
                     },
                     "description": "The callback to unregister."
                 }
@@ -2497,7 +2497,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add, Remove, or Replace)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "targetID",
@@ -2576,7 +2576,7 @@
                                 "type": "int32",
                                 "ref": false,
                                 "enum": "Action",
-                                "description": "Action performed (Add, Remove, or Replace)."
+                                "description": "Action performed (Add, Remove, Replace, or ReplaceToWC)."
                             },
                             {
                                 "name": "targetID",

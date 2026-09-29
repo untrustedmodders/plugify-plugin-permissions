@@ -71,13 +71,16 @@ enum class PlayerState : uint32_t {
  * @param immunity	Immunity.
  */
 using UserImmunityCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const int immunity);
+/**
+ * @brief Storage callback invoked before immunity is set for a user. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using UserImmunityStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const int immunity);
 
 /**
  * @brief Callback invoked when a permission is added, removed, or replaced for a user.
  *
  * @param pluginID      Identifier of the plugin that initiated the call.
- * @param action        Action performed (Add, Remove, or Replace).
+ * @param action        Action performed (Add, Remove, Replace, or ReplaceToWC).
  * @param targetID      Player ID of the affected user.
  * @param perm          Permission line affected.
  * @param oldState      State before the change (Allow, Disallow, or PermNotFound).
@@ -88,6 +91,9 @@ using UserImmunityStorageCallback = bool (*)(const int64_t pluginID, const uint6
 using UserPermissionCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                         const plg::string& perm, const Status oldState, const Status newState,
                                         const time_t oldTimestamp, const time_t newTimestamp);
+/**
+ * @brief Storage callback invoked before a permission is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using UserPermissionStorageCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
 										const plg::string& perm, const Status oldState, const Status newState,
 										const time_t oldTimestamp, const time_t newTimestamp);
@@ -102,14 +108,17 @@ using UserPermissionStorageCallback = bool (*)(const int64_t pluginID, const Act
  */
 using UserCookieCallback = void (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie);
+/**
+ * @brief Storage callback invoked before a cookie is set for a user. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using UserCookieStorageCallback = bool (*)(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
 									   const plg::any& cookie);
 
 /**
- * @brief Callback invoked when a group is added or removed from a user.
+ * @brief Callback invoked when a group is added, replaced, or removed for a user.
  *
  * @param pluginID	    Identifier of the plugin that initiated the call.
- * @param action	    Action performed (Add or Remove).
+ * @param action	    Action performed (Add, Remove, or Replace).
  * @param targetID	    Player ID of the affected user.
  * @param group		    Name of the group added or removed.
  * @param oldTimestamp  Duration before the change (-1 if it didn't exist).
@@ -117,6 +126,9 @@ using UserCookieStorageCallback = bool (*)(const int64_t pluginID, const uint64_
  */
 using UserGroupCallback = void (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
                                    const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
+/**
+ * @brief Storage callback invoked before a group is added, replaced, or removed for a user. Return `false` to cancel the change, the method then returns DBNotReady.
+ */
 using UserGroupStorageCallback = bool (*)(const int64_t pluginID, const Action action, const uint64_t targetID,
 								   const plg::string& group, const time_t oldTimestamp, const time_t newTimestamp);
 
@@ -133,7 +145,7 @@ using UserCreateCallback = void (*)(const int64_t pluginID, const uint64_t targe
                                     const bool offline, const plg::vector<plg::string>& groupNames);
 
 /**
- * @brief Callback invoked before a user is deleted.
+ * @brief Callback invoked after a user is deleted.
  *
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	Player ID of the user being deleted.
@@ -169,7 +181,7 @@ using GroupExpirationCallback = void(*)(const uint64_t targetID, const plg::stri
  * @param pluginID	Identifier of the plugin that initiated the call.
  * @param targetID	PlayerID of the user whose data should be loaded.
  * @param username  The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
- * @param offline   Insdicates whether the user's data was loaded without user presence on server.
+ * @param offline   Indicates whether the user's data was loaded without user presence on server.
  */
 using UserRequestCallback = bool(*)(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline);
 
