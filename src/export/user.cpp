@@ -165,7 +165,7 @@ extern "C" PLUGIN_API Status HasGroup(const uint64_t targetID, const plg::string
 }
 
 /**
- * @Brief Get user groups.
+ * @brief Get user groups.
  *
  * @param targetID Player ID.
  * @param outGroups Groups
@@ -204,8 +204,8 @@ extern "C" PLUGIN_API Status GetImmunity(const uint64_t targetID, int& immunity)
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param immunity Immunity.
- * @param dontBroadcast
- * @return Success, TargetUserNotFound
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserImmunityChange event. The change is still applied.
+ * @return Success, TargetUserNotFound, DBNotReady
  */
 extern "C" PLUGIN_API Status SetImmunity(const int64_t pluginID, const uint64_t targetID, const int immunity, const bool dontBroadcast)
 {
@@ -232,8 +232,8 @@ extern "C" PLUGIN_API Status SetImmunity(const int64_t pluginID, const uint64_t 
  * @param targetID Player ID.
  * @param perm Permission line.
  * @param timestamp Permission duration
- * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
- * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied.
+ * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
@@ -315,8 +315,8 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
  * @param targetID Player ID.
  * @param perm Permission line.
  * @param timestamp Permission duration
- * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally.
- * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied.
+ * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
@@ -409,7 +409,8 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
  * @param targetID Player ID.
  * @param perm Permission line.
  * @param recursiveDeletion Delete all nested perms.
- * @return Success, TargetUserNotFound, PermNotFound, InvalidPermission
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied.
+ * @return Success, TargetUserNotFound, PermNotFound, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                               const bool recursiveDeletion, const bool dontBroadcast)
@@ -456,8 +457,8 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
  * @param targetID Player ID.
  * @param groupName Group name.
  * @param timestamp Group duration.
- * @param dontBroadcast If set to `true`, suppresses dispatching of the group change event to registered UserGroup listeners. The group is still applied internally.
- * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserGroupChange event. The change is still applied.
+ * @return Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist, DBNotReady
  */
 extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName,
                                       const time_t timestamp, const bool dontBroadcast)
@@ -512,6 +513,7 @@ extern "C" PLUGIN_API Status AddGroup(const int64_t pluginID, const uint64_t tar
  * @param pluginID Identifier of the plugin that calls the method.
  * @param targetID Player ID.
  * @param groupName Group name.
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserGroupChange event. The change is still applied.
  * @return Success, TargetUserNotFound, GroupNotFound, GroupNotDefined, DBNotReady
  */
 extern "C" PLUGIN_API Status RemoveGroup(const int64_t pluginID, const uint64_t targetID, const plg::string& groupName, const bool dontBroadcast)
@@ -568,8 +570,8 @@ extern "C" PLUGIN_API Status GetCookie(const uint64_t targetID, const plg::strin
  * @param targetID Player ID.
  * @param name Cookie name.
  * @param cookie Cookie value.
- * @param dontBroadcast If set to `true`, suppresses dispatching of the cookie change event to registered UserSetCookie listeners. The cookie is still applied internally.
- * @return Success, TargetUserNotFound, InvalidCookieName
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserCookieChange event. The change is still applied.
+ * @return Success, TargetUserNotFound, InvalidCookieName, DBNotReady
  */
 extern "C" PLUGIN_API Status SetCookie(const int64_t pluginID, const uint64_t targetID, const plg::string& name,
                                        const plg::any& cookie, const bool dontBroadcast)
@@ -620,7 +622,7 @@ extern "C" PLUGIN_API Status GetAllCookies(const uint64_t targetID, plg::vector<
  * @param immunity User immunity (set -1 to return highest group priority).
  * @param offline Create as fake player.
  * @param groupsList Array of groups to inherit ("group timestamp").
- * @return Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound
+ * @return Success, UserAlreadyExist, GroupNotFound
  */
 extern "C" PLUGIN_API Status CreateUser(const int64_t pluginID, const uint64_t targetID, const int immunity,
                                         const bool offline, const plg::vector<plg::string>& groupsList)
@@ -703,8 +705,8 @@ extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
  * @param targetID   PlayerID of the user to be loaded.
  * @param username   The user's current username. Intended for synchronizing the username with external storage (e.g. updating an existing record or setting it during initial user creation).
  * @param offline    Indicates whether the user's data was loaded without user presence on server.
- * @param dontBroadcast
- *
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserLoaded event.
+ * @return Success, DBNotReady
  */
 extern "C" PLUGIN_API Status LoadUser(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, const bool dontBroadcast)
 {

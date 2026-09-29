@@ -2760,12 +2760,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnSetParent event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, ChildGroupNotFound, ParentGroupNotFound",
+                "description": "Success, ChildGroupNotFound, ParentGroupNotFound, GroupHierarchyCycle, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3164,12 +3165,12 @@
                     "name": "dontBroadcast",
                     "type": "bool",
                     "ref": false,
-                    "description": "If set to `true`, suppresses dispatching of the permission change event to registered GroupPermission listeners. The permission is still applied internally."
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, GroupNotFound, PermAlreadyGranted",
+                "description": "Success, GroupNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3225,12 +3226,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnUserImmunityChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound",
+                "description": "Success, TargetUserNotFound, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3243,29 +3245,35 @@
                 {
                     "name": "pluginID",
                     "type": "int64",
-                    "ref": false
+                    "ref": false,
+                    "description": "Identifier of the plugin that calls the method."
                 },
                 {
                     "name": "name",
                     "type": "string",
-                    "ref": false
+                    "ref": false,
+                    "description": "Group name."
                 },
                 {
                     "name": "perm",
                     "type": "string",
-                    "ref": false
+                    "ref": false,
+                    "description": "Permission line."
                 },
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "enum": "Status"
+                "enum": "Status",
+                "description": "Success, GroupNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady"
             },
-            "group": "Group"
+            "group": "Group",
+            "description": "Set a permission to a group (replaces its state if the permission already exists)."
         },
         {
             "name": "AddPermission",
@@ -3299,12 +3307,12 @@
                     "name": "dontBroadcast",
                     "type": "bool",
                     "ref": false,
-                    "description": "If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally."
+                    "description": "If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound, PermAlreadyGranted",
+                "description": "Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3341,12 +3349,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, GroupNotFound, PermNotFound",
+                "description": "Success, GroupNotFound, PermNotFound, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3384,12 +3393,12 @@
                     "name": "dontBroadcast",
                     "type": "bool",
                     "ref": false,
-                    "description": "If set to `true`, suppresses dispatching of the permission change event to registered UserPermission listeners. The permission is still applied internally."
+                    "description": "If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound, PermAlreadyGranted",
+                "description": "Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3457,12 +3466,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupOptionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, GroupNotFound",
+                "description": "Success, GroupNotFound, InvalidOptionName, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3536,12 +3546,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupCreate event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, GroupAlreadyExist, ParentGroupNotFound",
+                "description": "Success, GroupAlreadyExist, ParentGroupNotFound, InvalidGroupName, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3578,12 +3589,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound, PermNotFound",
+                "description": "Success, TargetUserNotFound, PermNotFound, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3608,12 +3620,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnGroupDelete event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success if deleted; GroupNotFound if group not found.",
+                "description": "Success, GroupNotFound, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3651,12 +3664,12 @@
                     "name": "dontBroadcast",
                     "type": "bool",
                     "ref": false,
-                    "description": "If set to `true`, suppresses dispatching of the group change event to registered UserGroup listeners. The group is still applied internally."
+                    "description": "If set to `true`, suppresses dispatching of the OnUserGroupChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist",
+                "description": "Success, TargetUserNotFound, GroupNotFound, GroupAlreadyExist, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3730,12 +3743,13 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnUserGroupChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound, ChildGroupNotFound, ParentGroupNotFound",
+                "description": "Success, TargetUserNotFound, GroupNotFound, GroupNotDefined, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3804,12 +3818,12 @@
                     "name": "dontBroadcast",
                     "type": "bool",
                     "ref": false,
-                    "description": "If set to `true`, suppresses dispatching of the cookie change event to registered UserSetCookie listeners. The cookie is still applied internally."
+                    "description": "If set to `true`, suppresses dispatching of the OnUserCookieChange event. The change is still applied."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound",
+                "description": "Success, TargetUserNotFound, InvalidCookieName, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -3883,7 +3897,7 @@
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, UserAlreadyExist, GroupNotFound, ChildGroupNotFound",
+                "description": "Success, UserAlreadyExist, GroupNotFound",
                 "enum": "Status"
             },
             "group": "User",
@@ -3975,12 +3989,14 @@
                 {
                     "name": "dontBroadcast",
                     "type": "bool",
-                    "ref": false
+                    "ref": false,
+                    "description": "If set to `true`, suppresses dispatching of the OnUserLoaded event."
                 }
             ],
             "retType": {
                 "type": "int32",
-                "enum": "Status"
+                "enum": "Status",
+                "description": "Success, DBNotReady"
             },
             "group": "User",
             "description": "Dispatches a request to load user data."

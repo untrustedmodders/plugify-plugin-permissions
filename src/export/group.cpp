@@ -26,7 +26,7 @@ PLUGIFY_WARN_IGNORE (4190)
  * @param pluginID Identifier of the plugin that calls the method.
  * @param childName Child group name
  * @param parentName Parent group name to set
- * @param dontBroadcast
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnSetParent event. The change is still applied.
  * @return Success, ChildGroupNotFound, ParentGroupNotFound, GroupHierarchyCycle, DBNotReady
  */
 extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string& childName,
@@ -187,8 +187,8 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
  * @param perm Permission line.
- * @param dontBroadcast If set to `true`, suppresses dispatching of the permission change event to registered GroupPermission listeners. The permission is still applied internally.
- * @return Success, GroupNotFound, PermAlreadyGranted, InvalidPermission
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied.
+ * @return Success, GroupNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const plg::string& name,
                                                 const plg::string& perm, const bool dontBroadcast) {
@@ -240,6 +240,15 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
     return Status::Success;
 }
 
+/**
+ * @brief Set a permission to a group (replaces its state if the permission already exists).
+ *
+ * @param pluginID Identifier of the plugin that calls the method.
+ * @param name Group name.
+ * @param perm Permission line.
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied.
+ * @return Success, GroupNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady
+ */
 extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const plg::string& name,
 												const plg::string& perm, const bool dontBroadcast)
 {
@@ -296,7 +305,8 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
  * @param name Group name.
  * @param perm Permission line.
  * @param recursiveDeletion Delete all nested perms.
- * @return Success, GroupNotFound, PermNotFound, InvalidPermission
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied.
+ * @return Success, GroupNotFound, PermNotFound, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const plg::string& name,
                                                    const plg::string& perm, const bool recursiveDeletion, const bool dontBroadcast) {
@@ -352,8 +362,8 @@ extern "C" PLUGIN_API Status GetOptionGroup(const plg::string& groupName, const 
  * @param groupName Group name
  * @param optionName Option name
  * @param value Option value.
- * @param dontBroadcast
- * @return Success, GroupNotFound, InvalidOptionName
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupOptionChange event. The change is still applied.
+ * @return Success, GroupNotFound, InvalidOptionName, DBNotReady
  */
 extern "C" PLUGIN_API Status SetOptionGroup(const int64_t pluginID, const plg::string& groupName,
                                             const plg::string& optionName, const plg::any& value, const bool dontBroadcast)
@@ -404,8 +414,8 @@ extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, pl
  * @param perms Array of permission lines.
  * @param priority Group priority.
  * @param parent Parent group name.
- * @param dontBroadcast
- * @return Success, GroupAlreadyExist, ParentGroupNotFound, InvalidGroupName
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupCreate event. The change is still applied.
+ * @return Success, GroupAlreadyExist, ParentGroupNotFound, InvalidGroupName, DBNotReady
  */
 extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::string& name,
                                          const plg::vector<plg::string>& perms, const int priority,
@@ -446,8 +456,8 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
  *
  * @param pluginID Identifier of the plugin that calls the method.
  * @param name Group name.
- * @param dontBroadcast
- * @return Success if deleted; GroupNotFound if group not found.
+ * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupDelete event. The change is still applied.
+ * @return Success, GroupNotFound, DBNotReady
  */
 extern "C" PLUGIN_API Status DeleteGroup(const int64_t pluginID, const plg::string& name, const bool dontBroadcast)
 {
