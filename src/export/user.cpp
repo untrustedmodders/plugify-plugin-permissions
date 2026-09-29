@@ -720,7 +720,7 @@ extern "C" PLUGIN_API plg::vector<uint64_t> DumpUsersList()
  * @param dontBroadcast
  *
  */
-extern "C" Status LoadUser(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, const bool dontBroadcast)
+extern "C" PLUGIN_API Status LoadUser(const int64_t pluginID, const uint64_t targetID, const plg::string& username, const bool offline, const bool dontBroadcast)
 {
 	if (user_request_callbacks(pluginID, targetID, username, offline))
 		return Status::DBNotReady;
