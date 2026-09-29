@@ -240,7 +240,7 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
 {
 	if (perm.empty())
 		return Status::Success;
-	if (hasInnerWildcard(perm))
+	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
 	if (s_user == nullptr)
@@ -325,7 +325,7 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 {
 	if (perm.empty())
 		return Status::Success;
-	if (hasInnerWildcard(perm))
+	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
@@ -420,7 +420,7 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
 {
 	if (perm.empty())
 		return Status::Success;
-	if (hasInnerWildcard(perm))
+	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
     PermSource perm_type;
 

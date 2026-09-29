@@ -194,7 +194,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
                                                 const plg::string& perm, const bool dontBroadcast) {
 	if (perm.empty())
 		return Status::Allow;
-	if (hasInnerWildcard(perm))
+	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
 	if (!g)
@@ -247,7 +247,7 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
 {
 	if (perm.empty())
 		return Status::Allow;
-	if (hasInnerWildcard(perm))
+	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
 	if (!g)
@@ -306,7 +306,7 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
                                                    const plg::string& perm, const bool recursiveDeletion, const bool dontBroadcast) {
 	if (perm.empty())
 		return Status::Success;
-	if (hasInnerWildcard(perm))
+	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
 	if (!g)
@@ -409,7 +409,7 @@ extern "C" PLUGIN_API Status GetAllOptionsGroup(const plg::string& groupName, pl
  * @param priority Group priority.
  * @param parent Parent group name.
  * @param dontBroadcast
- * @return Success, GroupAlreadyExist, ParentGroupNotFound, InvalidPermission
+ * @return Success, GroupAlreadyExist, ParentGroupNotFound
  */
 extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::string& name,
                                          const plg::vector<plg::string>& perms, const int priority,
@@ -418,9 +418,6 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
 	std::scoped_lock lock(global_mutex);
 	if (g_GroupManager.Exists(name))
 		return Status::GroupAlreadyExist;
-	for (const plg::string& perm : perms)
-		if (hasInnerWildcard(perm))
-			return Status::InvalidPermission;
 	Group* parentGroup = nullptr;
 	if (!parent.empty()) {
 		parentGroup = g_GroupManager.Get(parent);
@@ -428,13 +425,19 @@ extern "C" PLUGIN_API Status CreateGroup(const int64_t pluginID, const plg::stri
 			return Status::ParentGroupNotFound;
 	}
 
-	if (group_create_storage_callbacks(pluginID, name, perms, priority, parent))
+	// Invalid permissions are skipped, the group is still created
+	plg::vector<plg::string> validPerms;
+	for (const plg::string& perm : perms)
+		if (!isInvalidPermission(perm))
+			validPerms.push_back(perm);
+
+	if (group_create_storage_callbacks(pluginID, name, validPerms, priority, parent))
 		return Status::DBNotReady;
 
-	g_GroupManager.Add(perms, name, priority, parentGroup);
+	g_GroupManager.Add(validPerms, name, priority, parentGroup);
 
 	if (!dontBroadcast) {
-		group_create_callbacks(pluginID, name, perms, priority, parent);
+		group_create_callbacks(pluginID, name, validPerms, priority, parent);
 	}
 
     return Status::Success;
