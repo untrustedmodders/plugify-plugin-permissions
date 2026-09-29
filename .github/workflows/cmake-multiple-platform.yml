@@ -152,7 +152,7 @@ jobs:
           path: conda/
 
       - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: build-env
           condarc: |
