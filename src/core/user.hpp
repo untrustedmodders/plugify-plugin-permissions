@@ -23,12 +23,20 @@ inline bool sortFF(const TempGroup& i, const TempGroup& j)
     return i.group->_priority > j.group->_priority;
 }
 
+/**
+ * @brief Where a permission was found.
+ */
 enum class PermSource : uint32_t
 {
+    /// Temporary user permission.
     UserTemp = 0,
+    /// Permanent user permission.
     User = 1,
+    /// From a temporary group.
     GroupTemp = 2,
+    /// From a permanent group.
     Group = 3,
+    /// Permission not found.
     NotFound = 4,
 };
 

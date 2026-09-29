@@ -4005,181 +4005,225 @@
 	"enums": [
         {
             "name": "Status",
+            "description": "Result codes returned by the API. Values after ErrorsStart are errors.",
             "values": [
                 {
                     "name": "Success",
-                    "value": 0
+                    "value": 0,
+                    "description": "Operation completed successfully."
                 },
                 {
                     "name": "Allow",
-                    "value": 1
+                    "value": 1,
+                    "description": "Permission is allowed."
                 },
                 {
                     "name": "Disallow",
-                    "value": 2
+                    "value": 2,
+                    "description": "Permission is explicitly denied."
                 },
                 {
                     "name": "PermNotFound",
-                    "value": 3
+                    "value": 3,
+                    "description": "Permission is not defined."
                 },
                 {
                     "name": "TemporalGroup",
-                    "value": 4
+                    "value": 4,
+                    "description": "User has the group temporarily."
                 },
                 {
                     "name": "PermanentGroup",
-                    "value": 5
+                    "value": 5,
+                    "description": "User has the group permanently."
                 },
                 {
                     "name": "GroupNotDefined",
-                    "value": 6
+                    "value": 6,
+                    "description": "User doesn't have the group."
                 },
                 {
                     "name": "ErrorsStart",
-                    "value": 30
+                    "value": 30,
+                    "description": "Marker: every value greater than this is an error."
                 },
                 {
                     "name": "PermAlreadyGranted",
-                    "value": 31
+                    "value": 31,
+                    "description": "Permission already exists with the same state, or conflicts with an existing wildcard."
                 },
                 {
                     "name": "CookieNotFound",
-                    "value": 32
+                    "value": 32,
+                    "description": "Cookie (user) or option (group) is not set."
                 },
                 {
                     "name": "OptionNotFound",
-                    "value": 32
+                    "value": 32,
+                    "description": "Cookie (user) or option (group) is not set."
                 },
                 {
                     "name": "GroupNotFound",
-                    "value": 33
+                    "value": 33,
+                    "description": "Group doesn't exist."
                 },
                 {
                     "name": "ChildGroupNotFound",
-                    "value": 34
+                    "value": 34,
+                    "description": "Child group doesn't exist."
                 },
                 {
                     "name": "ParentGroupNotFound",
-                    "value": 35
+                    "value": 35,
+                    "description": "Parent group doesn't exist, or the group has no parent."
                 },
                 {
                     "name": "GroupAlreadyExist",
-                    "value": 36
+                    "value": 36,
+                    "description": "Group already exists, or the user already has it."
                 },
                 {
                     "name": "GroupHierarchyCycle",
-                    "value": 37
+                    "value": 37,
+                    "description": "Setting the parent would create a cycle in the group hierarchy."
                 },
                 {
                     "name": "ActorUserNotFound",
-                    "value": 38
+                    "value": 38,
+                    "description": "Actor user is not loaded."
                 },
                 {
                     "name": "TargetUserNotFound",
-                    "value": 39
+                    "value": 39,
+                    "description": "Target user is not loaded."
                 },
                 {
                     "name": "UserAlreadyExist",
-                    "value": 40
+                    "value": 40,
+                    "description": "User is already loaded."
                 },
                 {
                     "name": "CallbackInvalid",
-                    "value": 41
+                    "value": 41,
+                    "description": "Callback is null."
                 },
                 {
                     "name": "CallbackAlreadyExist",
-                    "value": 42
+                    "value": 42,
+                    "description": "Callback is already registered."
                 },
                 {
                     "name": "CallbackNotFound",
-                    "value": 43
+                    "value": 43,
+                    "description": "Callback is not registered."
                 },
                 {
                     "name": "StorageError",
-                    "value": 44
+                    "value": 44,
+                    "description": "Storage error."
                 },
                 {
                     "name": "DBNotReady",
-                    "value": 45
+                    "value": 45,
+                    "description": "A storage callback rejected the change (storage not ready or failed). The change wasn't applied."
                 },
                 {
                     "name": "InvalidPermission",
-                    "value": 46
+                    "value": 46,
+                    "description": "Permission line is malformed (empty, empty segment, or '*' not as the last segment)."
                 },
                 {
                     "name": "InvalidGroupName",
-                    "value": 47
+                    "value": 47,
+                    "description": "Group name is empty."
                 },
                 {
                     "name": "InvalidCookieName",
-                    "value": 48
+                    "value": 48,
+                    "description": "Cookie or option name is empty."
                 },
                 {
                     "name": "InvalidOptionName",
-                    "value": 48
+                    "value": 48,
+                    "description": "Cookie or option name is empty."
                 }
             ]
         },
         {
             "name": "Action",
+            "description": "Kind of change reported to permission and group callbacks.",
             "values": [
                 {
                     "name": "Add",
-                    "value": 0
+                    "value": 0,
+                    "description": "Added."
                 },
                 {
                     "name": "Remove",
-                    "value": 1
+                    "value": 1,
+                    "description": "Removed."
                 },
                 {
                     "name": "Replace",
-                    "value": 2
+                    "value": 2,
+                    "description": "Replaced (state or duration changed)."
                 },
                 {
                     "name": "ReplaceToWC",
-                    "value": 3
+                    "value": 3,
+                    "description": "A plain permission was replaced with its wildcard (\"a\" -> \"a.*\")."
                 }
             ]
         },
         {
             "name": "PlayerState",
+            "description": "User presence state.",
             "values": [
                 {
                     "name": "NotFound",
-                    "value": 0
+                    "value": 0,
+                    "description": "User is not loaded."
                 },
                 {
                     "name": "Online",
-                    "value": 1
+                    "value": 1,
+                    "description": "User is loaded and on the server."
                 },
                 {
                     "name": "Offline",
-                    "value": 2
+                    "value": 2,
+                    "description": "User is loaded without presence on the server."
                 }
             ]
         },
         {
             "name": "PermSource",
+            "description": "Where a permission was found.",
             "values": [
                 {
                     "name": "UserTemp",
-                    "value": 0
+                    "value": 0,
+                    "description": "Temporary user permission."
                 },
                 {
                     "name": "User",
-                    "value": 1
+                    "value": 1,
+                    "description": "Permanent user permission."
                 },
                 {
                     "name": "GroupTemp",
-                    "value": 2
+                    "value": 2,
+                    "description": "From a temporary group."
                 },
                 {
                     "name": "Group",
-                    "value": 3
+                    "value": 3,
+                    "description": "From a permanent group."
                 },
                 {
                     "name": "NotFound",
-                    "value": 4
+                    "value": 4,
+                    "description": "Permission not found."
                 }
             ]
         }

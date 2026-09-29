@@ -57,9 +57,15 @@ public:
 
 extern UserManager g_UserManager;
 
+/**
+ * @brief User presence state.
+ */
 enum class PlayerState : uint32_t {
+    /// User is not loaded.
     NotFound = 0,
+    /// User is loaded and on the server.
     Online = 1,
+    /// User is loaded without presence on the server.
     Offline = 2,
 };
 
