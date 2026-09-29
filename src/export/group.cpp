@@ -192,8 +192,6 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const plg::string& name,
                                                 const plg::string& perm, const bool dontBroadcast) {
-	if (perm.empty())
-		return Status::Allow;
 	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
@@ -245,8 +243,6 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const plg::string& name,
 												const plg::string& perm, const bool dontBroadcast)
 {
-	if (perm.empty())
-		return Status::Allow;
 	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);
@@ -304,8 +300,6 @@ extern "C" PLUGIN_API Status SetPermissionGroup(const int64_t pluginID, const pl
  */
 extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const plg::string& name,
                                                    const plg::string& perm, const bool recursiveDeletion, const bool dontBroadcast) {
-	if (perm.empty())
-		return Status::Success;
 	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	Group* g = g_GroupManager.Get(name);

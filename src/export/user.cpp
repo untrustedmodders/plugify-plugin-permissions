@@ -238,8 +238,6 @@ extern "C" PLUGIN_API Status SetImmunity(const int64_t pluginID, const uint64_t 
 extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
-	if (perm.empty())
-		return Status::Success;
 	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 	const std::shared_ptr<User> s_user = g_UserManager.Get(targetID);
@@ -323,8 +321,6 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
 extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
 {
-	if (perm.empty())
-		return Status::Success;
 	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
 
@@ -418,8 +414,6 @@ extern "C" PLUGIN_API Status SetPermission(const int64_t pluginID, const uint64_
 extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                               const bool recursiveDeletion, const bool dontBroadcast)
 {
-	if (perm.empty())
-		return Status::Success;
 	if (isInvalidPermission(perm))
 		return Status::InvalidPermission;
     PermSource perm_type;
