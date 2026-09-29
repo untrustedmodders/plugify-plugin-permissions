@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.3.0...v1.3.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* add PermConflict status ([a99511a](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/a99511a91ddfda2278d9f45bd75d60d383e2c313))
+
 ## [1.3.0](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.2.0...v1.3.0) (2026-09-29)
 
 
