@@ -45,7 +45,7 @@ extern "C" PLUGIN_API Status SetParent(const int64_t pluginID, const plg::string
 		return Status::ParentGroupNotFound;
 
 	// temporary solution
-	if (childName == parentName || g2->hasParent(g1))
+	if (g2 && (childName == parentName || g2->hasParent(g1)))
 		return Status::GroupHierarchyCycle;
 
 	if (set_parent_storage_callbacks(pluginID, childName, parentName))
