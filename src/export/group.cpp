@@ -188,7 +188,7 @@ extern "C" PLUGIN_API Status GetPriorityGroup(const plg::string& groupName, int&
  * @param name Group name.
  * @param perm Permission line.
  * @param dontBroadcast If set to `true`, suppresses dispatching of the OnGroupPermissionChange event. The change is still applied.
- * @return Success, GroupNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady
+ * @return Success, GroupNotFound, PermAlreadyGranted, PermConflict, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const plg::string& name,
                                                 const plg::string& perm, const bool dontBroadcast) {
@@ -209,7 +209,7 @@ extern "C" PLUGIN_API Status AddPermissionGroup(const int64_t pluginID, const pl
 	if (oldState != Status::PermNotFound) // Node is existed - check if user want to rewrite wildcard
 	{
 		if (diff)
-			return Status::PermAlreadyGranted;
+			return Status::PermConflict;
 
 		if (!isWildcard(perm))
 		{

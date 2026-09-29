@@ -81,7 +81,9 @@ enum class Status : int32_t
     /// Cookie or option name is empty.
     InvalidCookieName = 48,
     /// Cookie or option name is empty.
-    InvalidOptionName = InvalidCookieName
+    InvalidOptionName = InvalidCookieName,
+    /// Permission already exists with the opposite state. Use Set* to change it.
+    PermConflict = 49
 };
 
 struct string_hash

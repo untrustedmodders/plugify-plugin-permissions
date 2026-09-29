@@ -233,7 +233,7 @@ extern "C" PLUGIN_API Status SetImmunity(const int64_t pluginID, const uint64_t 
  * @param perm Permission line.
  * @param timestamp Permission duration
  * @param dontBroadcast If set to `true`, suppresses dispatching of the OnUserPermissionChange event. The change is still applied.
- * @return Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady
+ * @return Success, TargetUserNotFound, PermAlreadyGranted, PermConflict, InvalidPermission, DBNotReady
  */
 extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_t targetID, const plg::string& perm,
                                            const time_t timestamp, const bool dontBroadcast)
@@ -258,7 +258,7 @@ extern "C" PLUGIN_API Status AddPermission(const int64_t pluginID, const uint64_
     if (oldState != Status::PermNotFound) // Node is existing - check if user want to rewrite wildcard
     {
 		if (diff)
-            return Status::PermAlreadyGranted;
+            return Status::PermConflict;
 
 		if (!isWildcard(perm))
         {

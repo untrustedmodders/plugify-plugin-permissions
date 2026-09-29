@@ -3170,7 +3170,7 @@
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, GroupNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady",
+                "description": "Success, GroupNotFound, PermAlreadyGranted, PermConflict, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "Group",
@@ -3312,7 +3312,7 @@
             ],
             "retType": {
                 "type": "int32",
-                "description": "Success, TargetUserNotFound, PermAlreadyGranted, InvalidPermission, DBNotReady",
+                "description": "Success, TargetUserNotFound, PermAlreadyGranted, PermConflict, InvalidPermission, DBNotReady",
                 "enum": "Status"
             },
             "group": "User",
@@ -4146,6 +4146,11 @@
                     "name": "InvalidOptionName",
                     "value": 48,
                     "description": "Cookie or option name is empty."
+                },
+                {
+                    "name": "PermConflict",
+                    "value": 49,
+                    "description": "Permission already exists with the opposite state. Use Set* to change it."
                 }
             ]
         },
