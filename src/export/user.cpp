@@ -431,7 +431,7 @@ extern "C" PLUGIN_API Status RemovePermission(const int64_t pluginID, const uint
     bool w_wildcard;
     time_t old_timestamp = -1;
     const auto oldState = s_user->hasPermission(perm, perm_type, true, w_wildcard, old_timestamp);
-    if (perm_type > PermSource::User)
+    if (perm_type > PermSource::User || isWildcard(perm) != w_wildcard)
         return Status::PermNotFound; // Because this permission is in Groups, or not found at all
 
 	const plg::string prm = perm.starts_with('-') ? perm.substr(1) : perm;

@@ -313,8 +313,8 @@ extern "C" PLUGIN_API Status RemovePermissionGroup(const int64_t pluginID, const
 		return Status::GroupNotFound;
 
 	bool w_wildcard;
-	const auto oldState = g->hasPermission(perm, true, w_wildcard);
-	if (oldState == Status::PermNotFound)
+	const auto oldState = g->hasPermission(perm, true, w_wildcard, false); // only own permissions can be removed
+	if (oldState == Status::PermNotFound || isWildcard(perm) != w_wildcard)
 		return Status::PermNotFound;
 
 	const plg::string prm = perm.starts_with('-') ? perm.substr(1) : perm;
