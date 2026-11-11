@@ -35,7 +35,9 @@ about:
   license_file: LICENSE
   summary: Permissions Plugin for Plugify
   description: |
-    A plugin that provides a system to read and write configuration files.
+    A minimalistic permissions core (inspired by LuckPerms and PermissionsEx): users, groups with
+    inheritance and priority, permissions with expiration, immunity and cookies, kept in memory.
+    Saving and loading is done by a storage plugin through the storage callbacks.
   documentation: https://github.com/${{ env.get("GITHUB_REPOSITORY", default="your-org/your-repo") }}/blob/main/README.md
   repository: https://github.com/${{ env.get("GITHUB_REPOSITORY", default="your-org/your-repo") }}
 
