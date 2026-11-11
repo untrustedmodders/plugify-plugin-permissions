@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.3.1...v1.3.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* correct conda package description ([5681a94](https://github.com/untrustedmodders/plugify-plugin-permissions/commit/5681a944879007cbba844fc795fc41bad326ae32))
+
 ## [1.3.1](https://github.com/untrustedmodders/plugify-plugin-permissions/compare/v1.3.0...v1.3.1) (2026-09-29)
 
 
